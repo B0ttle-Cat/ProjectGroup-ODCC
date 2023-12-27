@@ -12,8 +12,7 @@ namespace BC.Base
 		public bool showLog;
 		private List<Component> listenerList;
 		private Dictionary<Type, List<object>> cashListenerList;
-		public List<Component> Managedlist
-		{
+		public List<Component> Managedlist {
 			get
 			{
 				return listenerList;
@@ -26,8 +25,8 @@ namespace BC.Base
 		[System.Diagnostics.Conditional("UNITY_EDITOR")]
 		private void ShowLog(string msg)
 		{
-			if (!showLog) return;
-			Debug.Log(msg);
+			if(!showLog) return;
+			Debug.Log(msg, 5);
 		}
 		private void New()
 		{
@@ -36,7 +35,7 @@ namespace BC.Base
 		}
 		private void Clear()
 		{
-			if (listenerList != null)
+			if(listenerList != null)
 			{
 				listenerList.Clear();
 			}
@@ -44,7 +43,7 @@ namespace BC.Base
 			{
 				listenerList = new List<Component>();
 			}
-			if (cashListenerList != null)
+			if(cashListenerList != null)
 			{
 				cashListenerList.Clear();
 			}
@@ -56,18 +55,18 @@ namespace BC.Base
 
 		private void _AddEventActor(Component actor)
 		{
-			if (actor == null || Contains(actor)) return;
-			if (actor == this) return;
+			if(actor == null || Contains(actor)) return;
+			if(actor == this) return;
 
 			ShowLog($"AddListener {actor.GetType().Name}");
 			Managedlist.Add(actor);
 
 			var keys = cashListenerList.Keys;
-			foreach (var key in keys)
+			foreach(var key in keys)
 			{
-				if (key.IsAssignableFrom(actor.GetType()))
+				if(key.IsAssignableFrom(actor.GetType()))
 				{
-					if (cashListenerList.TryGetValue(key, out List<object> actorsOfType))
+					if(cashListenerList.TryGetValue(key, out List<object> actorsOfType))
 					{
 						actorsOfType.Add(actor);
 					}
@@ -81,15 +80,15 @@ namespace BC.Base
 		}
 		private void _RemoveEventActor(Component actor)
 		{
-			if (actor == null) return;
-			if (actor == this) return;
+			if(actor == null) return;
+			if(actor == this) return;
 
-			if (Contains(actor, out int findIndex))
+			if(Contains(actor, out int findIndex))
 			{
 				ShowLog($"RemoveListener {actor.GetType().Name}");
 				Managedlist.RemoveAt(findIndex);
 
-				foreach (var item in cashListenerList)
+				foreach(var item in cashListenerList)
 				{
 					var list = item.Value;
 					list.Remove(actor);
@@ -98,36 +97,38 @@ namespace BC.Base
 		}
 		private void _CallActionEvent<T>(Func<T, bool> condition, Action<T> action) where T : class
 		{
-			if (action == null) return;
+			if(action == null) return;
+			ShowLog($"_CallActionEvent {typeof(T).Name}");
 
 			List<T> getList = _GetAllEventActor<T>();
 			List<T> resultList = new List<T>();
-			for (int i = 0; i < getList.Count; i++)
+			for(int i = 0 ; i < getList.Count ; i++)
 			{
 				var tValue = getList[i];
-				if (condition == null || condition.Invoke(tValue))
+				if(condition == null || condition.Invoke(tValue))
 				{
 					resultList.Add(tValue);
 				}
 			}
-			for (int i = 0; i < resultList.Count; i++)
+			for(int i = 0 ; i < resultList.Count ; i++)
 			{
 				action.Invoke(resultList[i]);
 			}
 		}
 		private void _CallActionEvent<T, TR>(IEnumerable<T> enumerable, Action<TR> action) where T : class where TR : class
 		{
-			if (action == null) return;
+			if(action == null) return;
+			ShowLog($"_CallActionEvent {typeof(T).Name} => {typeof(TR)}");
 
 			List<TR> resultList = new List<TR>();
-			foreach (var tValue in enumerable)
+			foreach(var tValue in enumerable)
 			{
-				if (tValue is TR trValue)
+				if(tValue is TR trValue)
 				{
 					resultList.Add(trValue);
 				}
 			}
-			for (int i = 0; i < resultList.Count; i++)
+			for(int i = 0 ; i < resultList.Count ; i++)
 			{
 				action.Invoke(resultList[i]);
 			}
@@ -137,19 +138,19 @@ namespace BC.Base
 		{
 			Type type = typeof(T);
 			cashListenerList ??= new Dictionary<Type, List<object>>();
-			if (cashListenerList.TryGetValue(type, out var cachedValue))
+			if(cashListenerList.TryGetValue(type, out var cachedValue))
 			{
 				List<object> actorsOfType = cachedValue as List<object>;
-				if (actorsOfType.Count > 0)
+				if(actorsOfType.Count > 0)
 				{
 					return actorsOfType[0] as T;
 				}
 			}
-			for (int i = 0; i < listenerList.Count; i++)
+			for(int i = 0 ; i < listenerList.Count ; i++)
 			{
-				if (listenerList[i].TryGetComponent<T>(out var find))
+				if(listenerList[i].TryGetComponent<T>(out var find))
 				{
-					if (!cashListenerList.TryGetValue(type, out var newCache))
+					if(!cashListenerList.TryGetValue(type, out var newCache))
 					{
 						newCache = new List<object>();
 						cashListenerList[type] = newCache;
@@ -165,14 +166,14 @@ namespace BC.Base
 		{
 			Type type = typeof(T);
 			cashListenerList ??= new Dictionary<Type, List<object>>();
-			if (cashListenerList.TryGetValue(type, out var cachedValue))
+			if(cashListenerList.TryGetValue(type, out var cachedValue))
 			{
 				return cachedValue.Cast<T>().ToList();
 			}
 			List<T> resultList = new List<T>();
-			for (int i = 0; i < listenerList.Count; i++)
+			for(int i = 0 ; i < listenerList.Count ; i++)
 			{
-				if (listenerList[i].TryGetComponent<T>(out var find))
+				if(listenerList[i].TryGetComponent<T>(out var find))
 				{
 					resultList.Add(find);
 				}
@@ -184,13 +185,13 @@ namespace BC.Base
 		private bool _CallActionEvent<T, TR>(Func<T, bool> condition, Func<T, TR> action, out TR _result) where T : class
 		{
 			_result = default;
-			if (action == null) return false;
+			if(action == null) return false;
 
 			List<T> resultList = _GetAllEventActor<T>();
-			for (int i = 0; i < resultList.Count; i++)
+			for(int i = 0 ; i < resultList.Count ; i++)
 			{
 				var tValue = resultList[i];
-				if (condition == null || condition.Invoke(tValue))
+				if(condition == null || condition.Invoke(tValue))
 				{
 					_result = action.Invoke(tValue);
 					return true;
@@ -223,7 +224,7 @@ namespace BC.Base
 			TR result = defaultValue;
 			Instance(Instance =>
 			{
-				if (Instance._CallActionEvent<T, TR>(null, action, out TR _result))
+				if(Instance._CallActionEvent<T, TR>(null, action, out TR _result))
 				{
 					result = _result;
 				}
@@ -262,7 +263,7 @@ namespace BC.Base
 		public static void AddListener(GameObject actor)
 		{
 			Component[] list = actor.GetComponents<Component>();
-			for (int i = 0; i < list.Length; i++)
+			for(int i = 0 ; i < list.Length ; i++)
 			{
 				Instance(Instance => Instance._AddEventActor(list[i]));
 			}
@@ -270,7 +271,7 @@ namespace BC.Base
 		public static void RemoveListener(GameObject actor)
 		{
 			Component[] list = actor.GetComponents<Component>();
-			for (int i = 0; i < list.Length; i++)
+			for(int i = 0 ; i < list.Length ; i++)
 			{
 				Instance(Instance => Instance._RemoveEventActor(list[i]));
 			}
