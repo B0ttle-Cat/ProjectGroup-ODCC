@@ -1,0 +1,87 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 703712092ca64c642950de88f82ea0d6, type: 3}
+  m_Name: MainThemeAsset
+  m_EditorClassIdentifier: 
+  ColorThemeAssets:
+  - Theme: 0
+    Asset: {r: 0, g: 0, b: 0, a: 0}
+  - Theme: 1
+    Asset: {r: 0, g: 0, b: 0, a: 0}
+  - Theme: 2
+    Asset: {r: 0, g: 0, b: 0, a: 0}
+  - Theme: 3
+    Asset: {r: 0, g: 0, b: 0, a: 0}
+  - Theme: 4
+    Asset: {r: 0, g: 0, b: 0, a: 0}
+  - Theme: 20
+    Asset: {r: 0, g: 0, b: 0, a: 0}
+  - Theme: 21
+    Asset: {r: 0, g: 0, b: 0, a: 0}
+  - Theme: 22
+    Asset: {r: 0, g: 0, b: 0, a: 0}
+  - Theme: 23
+    Asset: {r: 0, g: 0, b: 0, a: 0}
+  - Theme: 24
+    Asset: {r: 0, g: 0, b: 0, a: 0}
+  - Theme: 25
+    Asset: {r: 0, g: 0, b: 0, a: 0}
+  - Theme: -20
+    Asset: {r: 0, g: 0, b: 0, a: 0}
+  - Theme: -19
+    Asset: {r: 0, g: 0, b: 0, a: 0}
+  - Theme: -18
+    Asset: {r: 0, g: 0, b: 0, a: 0}
+  AudioThemeAssets:
+  - Theme: 0
+    Asset: {fileID: 0}
+  - Theme: 20
+    Asset: {fileID: 0}
+  - Theme: 40
+    Asset: {fileID: 0}
+  - Theme: 41
+    Asset: {fileID: 0}
+  - Theme: 42
+    Asset: {fileID: 0}
+  - Theme: 43
+    Asset: {fileID: 0}
+  - Theme: 60
+    Asset: {fileID: 0}
+  - Theme: 61
+    Asset: {fileID: 0}
+  - Theme: 62
+    Asset: {fileID: 0}
+  - Theme: 63
+    Asset: {fileID: 0}
+  TextThemeAssets:
+  - Theme: 0
+    Asset: 
+  - Theme: 10
+    Asset: 
+  - Theme: 11
+    Asset: 
+  - Theme: 20
+    Asset: 
+  - Theme: 21
+    Asset: 
+  - Theme: 30
+    Asset: 
+  - Theme: 31
+    Asset: 
+  - Theme: 32
+    Asset: 
+  - Theme: 33
+    Asset: 
+  - Theme: 34
+    Asset: 
+  - Theme: 35
+    Asset: 

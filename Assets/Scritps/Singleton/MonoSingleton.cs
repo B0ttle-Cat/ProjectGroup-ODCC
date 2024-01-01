@@ -32,13 +32,13 @@ namespace BC.Base
 				return false;
 			}
 
-			if(instance == null)
+			if(instance is null)
 			{
 				instance = GameObject.FindFirstObjectByType<T>(FindObjectsInactive.Include);
-				if(instance == null)
+				if(instance is null)
 				{
 					instance = SingletonPrefabDataList.This.FindTypePrefab<T>();
-					if(instance == null)
+					if(instance is null)
 					{
 						GameObject newObj = new GameObject();
 						instance = newObj.AddComponent<T>();
@@ -46,7 +46,7 @@ namespace BC.Base
 				}
 			}
 
-			if(instance != null)
+			if(instance is not null)
 			{
 				try
 				{

@@ -97,70 +97,8 @@ namespace BC.Base
 		{
 			float multiplier = Mathf.Pow(10, -placesNumber);
 			return Mathf.Floor(value * multiplier) / multiplier;
+
 		}
-
-		#region Math
-		//public static float ToBetaCDF(this float value, float alpha, float beta)
-		//{
-		//	if(value < 0f) value = 0f;
-		//	if(value > 1f) value = 1f;
-
-		//	var betaDistribution = new Beta(alpha, beta);
-		//	return (float)betaDistribution.CumulativeDistribution(value);
-		//}
-		//public static float ToBetaCDFWeight(this float value, float WeightA, float WeightB, float Deviation = 1f)
-		//{
-		//	if(value < 0f) value = 0f;
-		//	if(value > 1f) value = 1f;
-
-		//	float alpha  = 0f;
-		//	float beta   = 0f;
-
-		//	if(WeightA < float.Epsilon)
-		//	{
-		//		WeightA = float.Epsilon;
-		//	}
-		//	if(WeightB < float.Epsilon)
-		//	{
-		//		WeightB = float.Epsilon;
-		//	}
-		//	if(Deviation < float.Epsilon)
-		//	{
-		//		Deviation = float.Epsilon;
-		//	}
-		//	if(WeightA == WeightB)
-		//	{
-		//		WeightA = 1f;
-		//		WeightB = 1f;
-		//	}
-
-		//	float totalWeight = (WeightA + WeightB);
-		//	if(totalWeight < float.Epsilon)
-		//	{
-		//		totalWeight = float.Epsilon;
-		//	}
-		//	alpha = (WeightA) / (totalWeight) * Deviation;
-		//	beta =  (WeightB) / (totalWeight) * Deviation;
-
-		//	var betaDistribution = new Beta(alpha, beta);
-		//	return (float)betaDistribution.CumulativeDistribution(value);
-		//}
-		//public static float ToBetaPDF(this float value, float alpha, float beta)
-		//{
-		//	if(value < 0f) value = 0f;
-		//	if(value > 1f) value = 1f;
-		//	if(alpha == 0f && beta == 0f) return 0.5f;
-
-		//	var betaDistribution = new Beta(alpha, beta);
-		//	return (float)betaDistribution.Density(value);
-		//}
-		//public static float ToBetaSample(float alpha, float beta)
-		//{
-		//	var betaDistribution = new Beta(alpha, beta);
-		//	return (float)betaDistribution.Sample();
-		//}
-
-		#endregion
 
 		#region List
 		public static bool IsNullOrEmpty<T>(this List<T> list)

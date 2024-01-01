@@ -11,7 +11,7 @@ namespace BC.Base
 	{
 		public bool showLog;
 		private List<Component> listenerList;
-		private Dictionary<Type, List<object>> cashListenerList;
+		private Dictionary<Type, IEnumerable<object>> cashListenerList;
 		public List<Component> Managedlist {
 			get
 			{
@@ -31,7 +31,7 @@ namespace BC.Base
 		private void New()
 		{
 			listenerList ??= new List<Component>();
-			cashListenerList = new Dictionary<Type, List<object>>();
+			cashListenerList = new Dictionary<Type, IEnumerable<object>>();
 		}
 		private void Clear()
 		{
@@ -49,14 +49,13 @@ namespace BC.Base
 			}
 			else
 			{
-				cashListenerList = new Dictionary<Type, List<object>>();
+				cashListenerList = new Dictionary<Type, IEnumerable<object>>();
 			}
 		}
 
 		private void _AddEventActor(Component actor)
 		{
-			if(actor == null || Contains(actor)) return;
-			if(actor == this) return;
+			if(actor == null || actor == this || Contains(actor)) return;
 
 			ShowLog($"AddListener {actor.GetType().Name}");
 			Managedlist.Add(actor);
@@ -66,9 +65,11 @@ namespace BC.Base
 			{
 				if(key.IsAssignableFrom(actor.GetType()))
 				{
-					if(cashListenerList.TryGetValue(key, out List<object> actorsOfType))
+					if(cashListenerList.TryGetValue(key, out IEnumerable<object> actorsOfType))
 					{
-						actorsOfType.Add(actor);
+						var list = actorsOfType.ToList();
+						list.Add(actor);
+						cashListenerList[key] = list;
 					}
 					else
 					{
@@ -80,29 +81,31 @@ namespace BC.Base
 		}
 		private void _RemoveEventActor(Component actor)
 		{
-			if(actor == null) return;
-			if(actor == this) return;
+			if(actor == null || actor == this) return;
 
 			if(Contains(actor, out int findIndex))
 			{
 				ShowLog($"RemoveListener {actor.GetType().Name}");
 				Managedlist.RemoveAt(findIndex);
 
+				Action modify = null;
 				foreach(var item in cashListenerList)
 				{
-					var list = item.Value;
-					list.Remove(actor);
+					var list = item.Value.ToList();
+					if(list.Remove(actor))
+					{
+						modify += () => cashListenerList[item.Key] = list;
+					}
 				}
+				modify?.Invoke();
 			}
 		}
 		private void _CallActionEvent<T>(Func<T, bool> condition, Action<T> action) where T : class
 		{
-			if(action == null) return;
-			ShowLog($"_CallActionEvent {typeof(T).Name}");
-
 			List<T> getList = _GetAllEventActor<T>();
 			List<T> resultList = new List<T>();
-			for(int i = 0 ; i < getList.Count ; i++)
+			int count = getList.Count;
+			for(int i = 0 ; i < count ; i++)
 			{
 				var tValue = getList[i];
 				if(condition == null || condition.Invoke(tValue))
@@ -110,15 +113,14 @@ namespace BC.Base
 					resultList.Add(tValue);
 				}
 			}
-			for(int i = 0 ; i < resultList.Count ; i++)
+			count = resultList.Count;
+			for(int i = 0 ; i < count ; i++)
 			{
 				action.Invoke(resultList[i]);
 			}
 		}
 		private void _CallActionEvent<T, TR>(IEnumerable<T> enumerable, Action<TR> action) where T : class where TR : class
 		{
-			if(action == null) return;
-			ShowLog($"_CallActionEvent {typeof(T).Name} => {typeof(TR)}");
 
 			List<TR> resultList = new List<TR>();
 			foreach(var tValue in enumerable)
@@ -128,7 +130,8 @@ namespace BC.Base
 					resultList.Add(trValue);
 				}
 			}
-			for(int i = 0 ; i < resultList.Count ; i++)
+			int count = resultList.Count;
+			for(int i = 0 ; i < count ; i++)
 			{
 				action.Invoke(resultList[i]);
 			}
@@ -137,7 +140,7 @@ namespace BC.Base
 		private T _GetEventActor<T>() where T : class
 		{
 			Type type = typeof(T);
-			cashListenerList ??= new Dictionary<Type, List<object>>();
+			cashListenerList ??= new Dictionary<Type, IEnumerable<object>>();
 			if(cashListenerList.TryGetValue(type, out var cachedValue))
 			{
 				List<object> actorsOfType = cachedValue as List<object>;
@@ -146,17 +149,22 @@ namespace BC.Base
 					return actorsOfType[0] as T;
 				}
 			}
-			for(int i = 0 ; i < listenerList.Count ; i++)
+			int count = listenerList.Count;
+			for(int i = 0 ; i < count ; i++)
 			{
 				if(listenerList[i].TryGetComponent<T>(out var find))
 				{
-					if(!cashListenerList.TryGetValue(type, out var newCache))
+					if(cashListenerList.TryGetValue(type, out var newCache))
 					{
-						newCache = new List<object>();
-						cashListenerList[type] = newCache;
+						var list = newCache.ToList();
+						list.Add(find);
+						cashListenerList[type] = list;
+					}
+					else
+					{
+						cashListenerList[type] = new List<object>() { find };
 					}
 
-					newCache.Add(find);
 					return find;
 				}
 			}
@@ -164,31 +172,39 @@ namespace BC.Base
 		}
 		private List<T> _GetAllEventActor<T>() where T : class
 		{
+			List<T> resultList = new List<T>();
+
 			Type type = typeof(T);
-			cashListenerList ??= new Dictionary<Type, List<object>>();
+			cashListenerList ??= new Dictionary<Type, IEnumerable<object>>();
 			if(cashListenerList.TryGetValue(type, out var cachedValue))
 			{
-				return cachedValue.Cast<T>().ToList();
+				foreach(var cache in cachedValue)
+				{
+					if(cache is T t)
+					{
+						resultList.Add(t);
+					}
+				}
+				return resultList;
 			}
-			List<T> resultList = new List<T>();
-			for(int i = 0 ; i < listenerList.Count ; i++)
+			int count = listenerList.Count;
+			for(int i = 0 ; i < count ; i++)
 			{
 				if(listenerList[i].TryGetComponent<T>(out var find))
 				{
 					resultList.Add(find);
 				}
 			}
-			cashListenerList[type] = resultList.Cast<object>().ToList();
+			cashListenerList[type] = resultList.Cast<object>();
 			return resultList;
 		}
 
 		private bool _CallActionEvent<T, TR>(Func<T, bool> condition, Func<T, TR> action, out TR _result) where T : class
 		{
 			_result = default;
-			if(action == null) return false;
-
 			List<T> resultList = _GetAllEventActor<T>();
-			for(int i = 0 ; i < resultList.Count ; i++)
+			int count = resultList.Count;
+			for(int i = 0 ; i < count ; i++)
 			{
 				var tValue = resultList[i];
 				if(condition == null || condition.Invoke(tValue))
@@ -221,6 +237,7 @@ namespace BC.Base
 
 		public static TR Call<T, TR>(TR defaultValue, Func<T, TR> action) where T : class
 		{
+			if(action == null) return default;
 			TR result = defaultValue;
 			Instance(Instance =>
 			{
@@ -238,26 +255,32 @@ namespace BC.Base
 		}
 		public static TR Call<T, TR>(Func<T, TR> action, TR defaultValue = default) where T : class
 		{
+			if(action == null) return default;
 			return Call<T, TR>(defaultValue, action);
 		}
 		public static void Call<T>(Action<T> action) where T : class
 		{
+			if(action == null) return;
 			Instance(Instance => Instance._CallActionEvent<T>(null, action));
 		}
 		public static void Call<T>(Func<T, bool> condition, Action<T> action) where T : class
 		{
+			if(action == null) return;
 			Instance(Instance => Instance._CallActionEvent<T>(condition, action));
 		}
 		public static void Call<T, TR>(IEnumerable<T> enumerable, Action<TR> action) where T : class where TR : class
 		{
+			if(action == null) return;
 			Instance(Instance => Instance._CallActionEvent<T, TR>(enumerable, action));
 		}
 		public static void Call<T>(Component order, Action<T> action) where T : Component
 		{
+			if(action == null) return;
 			Call(c => c.gameObject.Equals(order.gameObject), action);
 		}
 		public static void Call<T>(GameObject order, Action<T> action) where T : Component
 		{
+			if(action == null) return;
 			Call(c => c.gameObject.Equals(order), action);
 		}
 		public static void AddListener(GameObject actor)

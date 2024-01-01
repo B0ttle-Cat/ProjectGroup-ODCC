@@ -102,6 +102,17 @@ namespace BC.Base
 	}
 
 	[Serializable]
+	public struct ThemeAsset<TEnum>
+	{
+		public TEnum Theme;
+		public TEnum Asset => Theme;
+
+		public ThemeAsset(TEnum theme)
+		{
+			Theme=theme;
+		}
+	}
+	[Serializable]
 	public struct ThemeAsset<TEnum, TAsset>
 	{
 		public TEnum Theme;
