@@ -13,11 +13,19 @@ namespace BC.Base
 		private static T instance;
 		public static bool Instance(Action<T> result)
 		{
-			return Instance(out bool value, (t) =>
+			if(instance is not null)
 			{
-				result?.Invoke(t);
+				result?.Invoke(instance);
 				return true;
-			});
+			}
+			else
+			{
+				return Instance(out bool value, (t) =>
+				{
+					result?.Invoke(t);
+					return true;
+				});
+			}
 		}
 		public static R Instance<R>(Func<T, R> result)
 		{

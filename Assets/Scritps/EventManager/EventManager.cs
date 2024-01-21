@@ -11,7 +11,7 @@ namespace BC.Base
 	{
 		public bool showLog;
 		private List<Component> listenerList;
-		private Dictionary<Type, IEnumerable<object>> cashListenerList;
+		private Dictionary<Type, IEnumerable<object>> cashListenerList = new Dictionary<Type, IEnumerable<object>>();
 		public List<Component> Managedlist {
 			get
 			{
@@ -104,11 +104,12 @@ namespace BC.Base
 		{
 			List<T> getList = _GetAllEventActor<T>();
 			List<T> resultList = new List<T>();
+			bool passCondition = condition == null;
 			int count = getList.Count;
 			for(int i = 0 ; i < count ; i++)
 			{
 				var tValue = getList[i];
-				if(condition == null || condition.Invoke(tValue))
+				if(passCondition || condition.Invoke(tValue))
 				{
 					resultList.Add(tValue);
 				}
@@ -175,7 +176,7 @@ namespace BC.Base
 			List<T> resultList = new List<T>();
 
 			Type type = typeof(T);
-			cashListenerList ??= new Dictionary<Type, IEnumerable<object>>();
+
 			if(cashListenerList.TryGetValue(type, out var cachedValue))
 			{
 				foreach(var cache in cachedValue)
