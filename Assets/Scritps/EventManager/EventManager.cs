@@ -193,7 +193,8 @@ namespace BC.Base
 			{
 				if(listenerList[i].TryGetComponent<T>(out var find))
 				{
-					resultList.Add(find);
+					if(!resultList.Contains(find))
+						resultList.Add(find);
 				}
 			}
 			cashListenerList[type] = resultList.Cast<object>();

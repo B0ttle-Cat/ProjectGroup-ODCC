@@ -6,6 +6,18 @@ namespace BC.Base
 {
 	public partial class Utils//.Mathematic 
 	{
+		public static void SetNaN(ref this Vector3 vector)
+		{
+			vector.x = float.NaN;
+			vector.y = float.NaN;
+			vector.z = float.NaN;
+		}
+		public static bool IsNaN(this Vector3 vector)
+		{
+			return float.IsNaN(vector.x) || float.IsNaN(vector.y) || float.IsNaN(vector.z);
+		}
+
+
 		/// <summary> <code>
 		/// 두 백터의 각이 얼마나 일치 하는지
 		/// 일치 할수록 1
@@ -43,7 +55,7 @@ namespace BC.Base
 		/// pattern == 2 : HCP
 		/// pattern == 3 : FCC
 		/// </code></summary>
-		public static List<Vector3> ClosePackingSpheres(Vector3 center, Vector3 size, float sphereRadius, int pattern)
+		public static List<Vector3> ClosePackingSpheres(Vector3 center, Vector3 size, float sphereRadius, int pattern, bool onlyPlane)
 		{
 			List<Vector3> packingPosition = new List<Vector3>();
 
@@ -79,6 +91,7 @@ namespace BC.Base
 
 			for(int y = -startIndex ; y <= stapY + startIndex ; y++)
 			{
+				if(onlyPlane) stapY = 0;
 				for(int x = -startIndex ; x <= stapX +startIndex ; x++)
 				{
 					for(int z = -startIndex ; z <= stapZ+startIndex ; z++)
@@ -119,6 +132,7 @@ namespace BC.Base
 						}
 					}
 				}
+				if(onlyPlane) break;
 			}
 
 			Vector3 boundDelta  = maxPosition - minPosition;
@@ -134,7 +148,7 @@ namespace BC.Base
 			bool IsPointInsideBounds(Vector3 point)
 			{
 				return point.x >= minPosition.x && point.x <= maxPosition.x &&
-					   point.y >= minPosition.y && point.y <= maxPosition.y &&
+					   (onlyPlane || point.y >= minPosition.y && point.y <= maxPosition.y) &&
 					   point.z >= minPosition.z && point.z <= maxPosition.z;
 			}
 
