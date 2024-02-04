@@ -8,11 +8,19 @@ namespace BC.Base
 {
 	public static partial class Utils
 	{
+		public static bool IsNullOrWhiteSpace(this string value)
+		{
+			return string.IsNullOrWhiteSpace(value);
+		}
+		public static bool IsNotNullOrWhiteSpace(this string value)
+		{
+			return !string.IsNullOrWhiteSpace(value);
+		}
+
 		public static bool IsDefault<T>(this T value) where T : struct
 		{
 			return value.Equals(default(T));
 		}
-
 		public static bool IsLarger<T>(this T value, T greaterThan) where T : IComparable<T>
 		{
 			return value.CompareTo(greaterThan) > 0;
