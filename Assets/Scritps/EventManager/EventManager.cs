@@ -61,20 +61,22 @@ namespace BC.Base
 			Managedlist.Add(actor);
 
 			var keys = cashListenerList.Keys;
+			Action modify = null;
 			foreach(var key in keys)
 			{
-				if(key.IsAssignableFrom(actor.GetType()))
+				Type modifyKey = key;
+				if(modifyKey.IsAssignableFrom(actor.GetType()))
 				{
-					if(cashListenerList.TryGetValue(key, out IEnumerable<object> actorsOfType))
+					if(cashListenerList.TryGetValue(modifyKey, out IEnumerable<object> actorsOfType))
 					{
 						var list = actorsOfType.ToList();
 						list.Add(actor);
-						cashListenerList[key] = list;
+						modify += () => cashListenerList[modifyKey] = list;
 					}
 					else
 					{
 						actorsOfType = new List<object> { actor };
-						cashListenerList[key] = actorsOfType;
+						modify += () => cashListenerList[modifyKey] = actorsOfType;
 					}
 				}
 			}
