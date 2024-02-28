@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -12,14 +13,30 @@ namespace BC.Base
 	public static class TagAndLayer
 	{
 		#region 미리 정의된 Index
+		public static int NavMeshRaycast = GetLayerToIndex(nameof(NavMeshRaycast));
+		public static int CharacterDetectorRaycast = GetLayerToIndex(nameof(CharacterDetectorRaycast));
+		public static int ShootBulletRaycast = GetLayerToIndex(nameof(ShootBulletRaycast));
+
 		public static int Character = GetLayerToIndex(nameof(Character));
-		public static int Terrain = GetLayerToIndex(nameof(Terrain));
-		public static int VisionObstacle = GetLayerToIndex(nameof(VisionObstacle));
-		public static int MovementObstacle = GetLayerToIndex(nameof(MovementObstacle));
+		public static int Bullet = GetLayerToIndex(nameof(Bullet));
+		public static int Ground = GetLayerToIndex(nameof(Ground));
+		public static int Building = GetLayerToIndex(nameof(Building));
+		public static int StaticWall = GetLayerToIndex(nameof(StaticWall));
+		public static int DynamicWall = GetLayerToIndex(nameof(DynamicWall));
 		#endregion
 
+		// [ValueDropdown("@TagAndLayer.LayerIndexList")] //
+		public static IEnumerable LayerIndexList  = new ValueDropdownList<int>()
+		{
+			{ "Character", TagAndLayer.Character },
+			{ "Bullet", TagAndLayer.Bullet },
+			{ "Ground", TagAndLayer.Ground },
+			{ "Building", TagAndLayer.Building },
+			{ "StaticWall", TagAndLayer.StaticWall },
+		};
+
 		#region 미리 정의된 Mask
-		public static int UnitAgentDetectingMask = GetLayerToMask(nameof(Terrain),nameof(VisionObstacle),nameof(MovementObstacle));
+		public static int UnitAgentDetectingMask = GetLayerToMask(nameof(Ground),nameof(StaticWall),nameof(DynamicWall));
 
 		#endregion
 
@@ -74,6 +91,32 @@ namespace BC.Base
 				}
 			}
 			return layerIndex;
+		}
+		public static int GetHitLayerMask(int index)
+		{
+			int maskValue = 0;
+			for(int i = 0 ; i < 32 ; i++)
+			{
+				if(!Physics.GetIgnoreLayerCollision(index, i))
+				{
+					maskValue |= 1 << i;
+				}
+
+			}
+			return maskValue;
+		}
+		public static int GetIgnoreLayerMask(int index)
+		{
+			int maskValue = 0;
+			for(int i = 0 ; i < 32 ; i++)
+			{
+				if(Physics.GetIgnoreLayerCollision(index, i))
+				{
+					maskValue |= 1 << i;
+				}
+
+			}
+			return maskValue;
 		}
 		#endregion
 	}
@@ -220,7 +263,7 @@ namespace BC.Base
 					UnityEditor.SerializedProperty layer = layersProp.GetArrayElementAtIndex(i);
 					if(i >= LayerThemeAssets.Count)
 					{
-						layer.stringValue = "";
+						layer.stringValue = null;
 					}
 					else
 					{

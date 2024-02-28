@@ -1,6 +1,5 @@
 #if UNITY_EDITOR
 using UnityEditor;
-using UnityEditor.SceneManagement;
 
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -13,9 +12,8 @@ public class RemoveEditorOnlyObject
 		// Play 모드 진입 시 실행되는 초기화 작업
 		EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
 		// 씬이 열릴 때 실행되는 초기화 작업
-		EditorApplication.hierarchyChanged += OnHierarchyChanged;
-
-		EditorSceneManager.sceneSaved += OnSceneSaved;
+		//EditorApplication.hierarchyChanged += OnHierarchyChanged;
+		//EditorSceneManager.sceneSaved += OnSceneSaved;
 	}
 
 	private static void OnSceneSaved(Scene scene)
@@ -25,7 +23,10 @@ public class RemoveEditorOnlyObject
 
 	private static void OnPlayModeStateChanged(PlayModeStateChange state)
 	{
-		_RemoveEditorOnlyObject();
+		if(state == PlayModeStateChange.EnteredPlayMode)
+		{
+			_RemoveEditorOnlyObject();
+		}
 	}
 
 	private static void OnHierarchyChanged()
