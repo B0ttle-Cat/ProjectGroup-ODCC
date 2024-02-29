@@ -13,13 +13,17 @@ namespace BC.Base
 	public static class TagAndLayer
 	{
 		#region 미리 정의된 Index
+		public static int Ground = GetLayerToIndex(nameof(Ground));
+
 		public static int NavMeshRaycast = GetLayerToIndex(nameof(NavMeshRaycast));
 		public static int CharacterDetectorRaycast = GetLayerToIndex(nameof(CharacterDetectorRaycast));
 		public static int ShootBulletRaycast = GetLayerToIndex(nameof(ShootBulletRaycast));
 
 		public static int Character = GetLayerToIndex(nameof(Character));
 		public static int Bullet = GetLayerToIndex(nameof(Bullet));
-		public static int Ground = GetLayerToIndex(nameof(Ground));
+
+		public static int MapAnchor = GetLayerToIndex(nameof(MapAnchor));
+
 		public static int Building = GetLayerToIndex(nameof(Building));
 		public static int StaticWall = GetLayerToIndex(nameof(StaticWall));
 		public static int DynamicWall = GetLayerToIndex(nameof(DynamicWall));
