@@ -217,8 +217,21 @@ namespace BC.Base
 				list[n] = value;
 			}
 		}
+		public static T Random<T>(this List<T> list)
+		{
+			int count = list.Count;
+			if(count == 0) return default;
 
+			int index = UnityEngine.Random.Range(0, count);
+			return list[index];
+		}
+		public static int RandomIndex<T>(this List<T> list)
+		{
+			int count = list.Count;
+			if(count == 0) return -1;
 
+			return UnityEngine.Random.Range(0, count);
+		}
 		#endregion
 	}
 }
