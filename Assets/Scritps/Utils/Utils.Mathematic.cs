@@ -17,6 +17,10 @@ namespace BC.Base
 			return float.IsNaN(vector.x) || float.IsNaN(vector.y) || float.IsNaN(vector.z);
 		}
 
+		public static Vector3 Center(this Vector3 vector, Vector3 other)
+		{
+			return (vector + other) * 0.5f;
+		}
 
 		/// <summary> <code>
 		/// 두 백터의 각이 얼마나 일치 하는지

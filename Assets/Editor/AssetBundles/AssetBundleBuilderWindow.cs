@@ -51,7 +51,7 @@ public class AssetBundleBuilderWindow : EditorWindow
 		EditorGUILayout.Space(10);
 
 		buildOptions = (BuildAssetBundleOptions)EditorGUILayout.EnumPopup("Build Options", buildOptions);
-		targetPlatform = (BuildTarget)EditorGUILayout.EnumPopup("Target Platform", targetPlatform);
+		targetPlatform = (BuildTarget)EditorGUILayout.EnumPopup("TargetPath Platform", targetPlatform);
 
 		EditorGUILayout.Space(10);
 		if(GUILayout.Button("Build Asset Bundles") && foldersToBuild != null)
