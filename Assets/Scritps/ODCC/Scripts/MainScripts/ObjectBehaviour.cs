@@ -1,3 +1,5 @@
+using System;
+
 using Sirenix.OdinInspector;
 using Sirenix.Utilities;
 
@@ -25,8 +27,10 @@ namespace BC.ODCC
 			}
 		}
 
-
 #if UNITY_EDITOR
+		[Obsolete("'ThisContainer'를 대신 사용하세요.", true)]
+		public ContainerObject Container => ThisContainer;
+
 		internal override void Reset()
 		{
 			if(UnityEditor.EditorApplication.isPlaying) return;

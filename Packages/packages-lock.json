@@ -8,7 +8,7 @@
       "hash": "b6d122e7809c6529fb5a4b73d41a67ce1edac987"
     },
     "com.b0ttlecat.thirdparty": {
-      "version": "file:../../6-ProjectGroup-Thirdparty/Assets",
+      "version": "file:../../ProjectGroup-Thirdparty/Assets",
       "depth": 0,
       "source": "local",
       "dependencies": {}

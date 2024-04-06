@@ -1,5 +1,10 @@
 {
-  "name": "com.b0ttlecat.base",
-  "version": "0.0.1",
-  "displayName": "BC.Base"
+	"name": "com.b0ttlecat.base",
+	"version": "0.0.1",
+	"displayName": "BC.Base",
+	"author": {
+		"name": "B0ttle-Cat",
+		"email": "kolazkr.lgb@gmail.com",
+		"url": "https://github.com/B0ttle-Cat/ProjectGroup"
+	}
 }

@@ -2,7 +2,7 @@
     "dependencies": {
         "com.antonysze.custom-play-button": "https://github.com/antonysze/unity-custom-play-button.git",
         "com.marijnzwemmer.unity-toolbar-extender": "https://github.com/marijnz/unity-toolbar-extender.git",
-        "com.b0ttlecat.thirdparty": "file:../../6-ProjectGroup-Thirdparty/Assets",
+        "com.b0ttlecat.thirdparty": "file:../../ProjectGroup-Thirdparty/Assets",
         "com.unity.ai.navigation": "2.0.0",
         "com.unity.collab-proxy": "2.3.1",
         "com.unity.ide.rider": "3.0.28",
