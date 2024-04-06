@@ -1,0 +1,16 @@
+{
+    "name": "BC.ODCC",
+    "rootNamespace": "BC.ODCC",
+    "references": [
+        "GUID:7aa6ab5ead1fe264493d2913bdea2fe1"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

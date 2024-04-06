@@ -1,12 +1,5 @@
 {
   "name": "com.b0ttlecat.base",
   "version": "0.0.1",
-  "displayName": "BC.Base",
-  "dependencies": {
-    "com.unity.inputsystem": "1.7.0",
-    "com.unity.2d.sprite": "1.0.0",
-    "com.unity.memoryprofiler": "1.0.0",
-    "com.unity.render-pipelines.universal": "15.0.7",
-    "com.unity.feature.characters-animation": "0.0.1"
-  }
+  "displayName": "BC.Base"
 }
