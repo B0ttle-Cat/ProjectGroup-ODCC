@@ -33,7 +33,7 @@ namespace BC.BaseUI
 			base.BaseValidate();
 			Data.Text = UI;
 
-			if(Theme.GetAsset(Data.TextTheme, out string themeName))
+			if(Theme.GetAsset(Data.TextTheme, out string themeName) && themeName.IsNotNullOrWhiteSpace())
 			{
 				if(Data.Text.styleSheet != null)
 				{
