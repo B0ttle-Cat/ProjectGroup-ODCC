@@ -25,7 +25,7 @@ namespace BC.ODCC
 		public static Dictionary<OdccQueryLooper, IEnumerator> ForeachQueryPrevUpdate  = new Dictionary<OdccQueryLooper, IEnumerator>();
 		public static Dictionary<OdccQueryLooper, IEnumerator> ForeachQueryNextUpdate  = new Dictionary<OdccQueryLooper, IEnumerator>();
 
-
+		private static readonly Queue<Action> foreachAction = new Queue<Action>();
 		public static void InitForeach()
 		{
 			OdccObjectList = OdccCollector<ObjectBehaviour>.CreateCollector();
@@ -61,29 +61,60 @@ namespace BC.ODCC
 
 			ForeachQueryPrevUpdate.Clear();
 			ForeachQueryNextUpdate.Clear();
+
+			foreachAction.Clear();
 		}
 		private static void BCComponentUpdate(IEnumerable<OCBehaviour> behaviour)
 		{
-			foreach(var item in behaviour)
+			while(foreachAction.Count > 0)
 			{
+				foreachAction.Dequeue().Invoke();
+			}
+			foreach(var _item in behaviour)
+			{
+				var item = _item;
 				if(item.IsEnable || item.IsCanUpdateDisable)
 				{
-					item.BaseUpdate();
+					foreachAction.Enqueue(() =>
+					{
+						item.BaseUpdate();
+					});
 				}
+			}
+			while(foreachAction.Count > 0)
+			{
+				foreachAction.Dequeue().Invoke();
 			}
 		}
 		private static void BCComponentLateUpdate(IEnumerable<OCBehaviour> behaviour)
 		{
-			foreach(var item in behaviour)
+			while(foreachAction.Count > 0)
 			{
+				foreachAction.Dequeue().Invoke();
+			}
+			foreach(var _item in behaviour)
+			{
+				var item = _item;
 				if(item.IsEnable  || item.IsCanUpdateDisable)
 				{
-					item.BaseLateUpdate();
+					foreachAction.Enqueue(() =>
+					{
+						item.BaseLateUpdate();
+					});
 				}
+			}
+			while(foreachAction.Count > 0)
+			{
+				foreachAction.Dequeue().Invoke();
 			}
 		}
 		public static void AddOdccCollectorList(OCBehaviour behaviour)
 		{
+			while(foreachAction.Count > 0)
+			{
+				foreachAction.Dequeue().Invoke();
+			}
+
 			var keyList = OdccCollectorList.Keys.ToList();
 
 			int count = keyList.Count;
@@ -94,24 +125,41 @@ namespace BC.ODCC
 
 			if(behaviour is ObjectBehaviour objectBehaviour)
 			{
-				foreach(var query in OdccQueryCollectors)
+				foreach(var _query in OdccQueryCollectors)
 				{
-					OdccQueryCollector queryCollector = query.Value;
-					queryCollector.AddObject(objectBehaviour);
+					var query  = _query;
+					foreachAction.Enqueue(() =>
+					{
+						OdccQueryCollector queryCollector = query.Value;
+						queryCollector.AddObject(objectBehaviour);
+					});
 				}
 			}
 			else if(behaviour is ComponentBehaviour componentBehaviour)
 			{
-				foreach(var query in OdccQueryCollectors)
+				foreach(var _query in OdccQueryCollectors)
 				{
-					OdccQueryCollector queryCollector = query.Value;
-					ObjectBehaviour thisObject = componentBehaviour.ThisObject;
-					queryCollector.UpdateObjectInQuery(thisObject);
+					var query  = _query;
+					foreachAction.Enqueue(() =>
+					{
+						OdccQueryCollector queryCollector = query.Value;
+						ObjectBehaviour thisObject = componentBehaviour.ThisObject;
+						queryCollector.UpdateObjectInQuery(thisObject);
+					});
 				}
+			}
+
+			while(foreachAction.Count > 0)
+			{
+				foreachAction.Dequeue().Invoke();
 			}
 		}
 		public static void RemoveOdccCollectorList(OCBehaviour behaviour)
 		{
+			while(foreachAction.Count > 0)
+			{
+				foreachAction.Dequeue().Invoke();
+			}
 			var keyList = OdccCollectorList.Keys.ToList();
 
 			int count = keyList.Count;
@@ -122,28 +170,53 @@ namespace BC.ODCC
 
 			if(behaviour is ObjectBehaviour objectBehaviour)
 			{
-				foreach(var query in OdccQueryCollectors)
+				foreach(var _query in OdccQueryCollectors)
 				{
-					OdccQueryCollector queryCollector = query.Value;
-					queryCollector.RemoveObject(objectBehaviour);
+					var query  = _query;
+					foreachAction.Enqueue(() =>
+					{
+						OdccQueryCollector queryCollector = query.Value;
+						queryCollector.RemoveObject(objectBehaviour);
+					});
 				}
 			}
 			else if(behaviour is ComponentBehaviour componentBehaviour)
 			{
-				foreach(var query in OdccQueryCollectors)
+				foreach(var _query in OdccQueryCollectors)
 				{
-					OdccQueryCollector queryCollector = query.Value;
-					ObjectBehaviour thisObject = componentBehaviour.ThisObject;
-					queryCollector.UpdateObjectInQuery(thisObject);
+					var query  = _query;
+					foreachAction.Enqueue(() =>
+					{
+						OdccQueryCollector queryCollector = query.Value;
+						ObjectBehaviour thisObject = componentBehaviour.ThisObject;
+						queryCollector.UpdateObjectInQuery(thisObject);
+					});
 				}
+			}
+
+			while(foreachAction.Count > 0)
+			{
+				foreachAction.Dequeue().Invoke();
 			}
 		}
 		public static void UpdateObjectInQuery(ObjectBehaviour updateObject)
 		{
-			foreach(var query in OdccQueryCollectors)
+			while(foreachAction.Count > 0)
 			{
-				OdccQueryCollector queryCollector = query.Value;
-				queryCollector.UpdateObjectInQuery(updateObject);
+				foreachAction.Dequeue().Invoke();
+			}
+			foreach(var _query in OdccQueryCollectors)
+			{
+				var query  = _query;
+				foreachAction.Enqueue(() =>
+				{
+					OdccQueryCollector queryCollector = query.Value;
+					queryCollector.UpdateObjectInQuery(updateObject);
+				});
+			}
+			while(foreachAction.Count > 0)
+			{
+				foreachAction.Dequeue().Invoke();
 			}
 		}
 

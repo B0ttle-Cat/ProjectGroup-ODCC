@@ -15,6 +15,7 @@ namespace BC.ODCC
 		public OdccContainerTree.ContainerNode ContainerNode;
 		public ObjectBehaviour ThisObject => ContainerNode.thisObject;
 		public ObjectBehaviour ParentObject => ContainerNode.parent;
+		public ContainerObject ParentContainer => ParentObject.ThisContainer;
 		public ObjectBehaviour[] ChildObject => ContainerNode.childs;
 		public ComponentBehaviour[] ComponentList => ContainerNode.componentList;
 		public DataObject[] DataList => ContainerNode.dataList;
@@ -111,11 +112,11 @@ namespace BC.ODCC
 		}
 		public T GetChildObject<T>(Func<T, bool> condition = null) where T : class, IOdccObject
 		{
-			return ChildObject.Get<T, ObjectBehaviour>();
+			return ChildObject.Get<T, ObjectBehaviour>(condition);
 		}
 		public T[] GetChildAllObject<T>(Func<T, bool> condition = null) where T : class, IOdccObject
 		{
-			return ChildObject.GetAll<T, ObjectBehaviour>();
+			return ChildObject.GetAll<T, ObjectBehaviour>(condition);
 		}
 
 		public bool TryGetComponent<T>(out T t, Func<T, bool> condition = null) where T : class, IOdccComponent

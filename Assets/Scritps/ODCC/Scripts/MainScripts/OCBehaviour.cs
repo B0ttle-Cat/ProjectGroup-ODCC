@@ -7,7 +7,8 @@ namespace BC.ODCC
 
 	public abstract class OCBehaviour : SerializedMonoBehaviour, IOdccItem
 	{
-		public Transform ThisTransform { get; protected set; }
+		private Transform _ThisTransform;
+		public Transform ThisTransform { get => _ThisTransform ??= transform; protected set => _ThisTransform = value; }
 		internal bool IsEnable { get; private set; } = false;
 		internal bool IsCanUpdateDisable { get; private set; } = false;
 #if UNITY_EDITOR

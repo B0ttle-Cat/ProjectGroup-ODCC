@@ -12,40 +12,37 @@ using Object = UnityEngine.Object;
 
 namespace BC.Base
 {
-	public enum eLoadType
+	public enum eResourcesLoadType
 	{
-		Resources,
+		ResourcesAsset,
 		AssetBundle,
-		Asset,
+		GameObjectAsset,
 	}
-	[Serializable, InlineProperty, BoxGroup()]
-	public struct ResourcesKey
+	[Serializable, InlineProperty]
+	public struct ResourcesKey : IEquatable<ResourcesKey>
 	{
 		[LabelWidth(80)]
-		public eLoadType LoadType;
+		public eResourcesLoadType LoadType;
 
 		[LabelWidth(80)]
-		[ShowIf("@LoadType == eLoadType.AssetBundle")]
+		[ShowIf("@LoadType == eResourcesLoadType.AssetBundle")]
 		[ValueDropdown("GetAssetBundleNames")]
 		public string BundleName;
 
-		[ShowIf("@LoadType == eLoadType.Resources||LoadType == eLoadType.AssetBundle")]
+		[ShowIf("@LoadType == eResourcesLoadType.ResourcesAsset||LoadType == eResourcesLoadType.AssetBundle")]
 		[LabelWidth(80),ReadOnly]
 		public string FullPath;
 
-		[ShowIf("@LoadType == eLoadType.Asset")]
+		[ShowIf("@LoadType == eResourcesLoadType.GameObjectAsset")]
 		[LabelWidth(80),ReadOnly]
-		public GameObject AssetObject;
+		public GameObject GameObjectAsset;
 
-
-		public bool onDisableLoad;
-
-		public static ResourcesKey Empty => new ResourcesKey() { LoadType = eLoadType.Resources, FullPath = "", BundleName = "" };
+		public static ResourcesKey Empty => new ResourcesKey() { LoadType = eResourcesLoadType.ResourcesAsset, FullPath = "", BundleName = "" };
 		public bool IsEmpty => LoadType switch
 		{
-			eLoadType.Resources => string.IsNullOrWhiteSpace(FullPath),
-			eLoadType.AssetBundle => string.IsNullOrWhiteSpace(FullPath) || string.IsNullOrWhiteSpace(BundleName),
-			eLoadType.Asset => AssetObject == null,
+			eResourcesLoadType.ResourcesAsset => string.IsNullOrWhiteSpace(FullPath),
+			eResourcesLoadType.AssetBundle => string.IsNullOrWhiteSpace(FullPath) || string.IsNullOrWhiteSpace(BundleName),
+			eResourcesLoadType.GameObjectAsset => GameObjectAsset == null,
 			_ => false,
 		};
 
@@ -55,11 +52,11 @@ namespace BC.Base
 		{
 			FullPath = "";
 			BundleName = "";
-			AssetObject = null;
+			GameObjectAsset = null;
 		}
 
 		[ShowInInspector]
-		[ShowIf("@LoadType == eLoadType.AssetBundle")]
+		[ShowIf("@LoadType == eResourcesLoadType.AssetBundle")]
 		[ValueDropdown("GetAllFullPath"), HideLabel]
 		[InfoBox(message: "지정된 번들에서 에셋을 찾을 수 없습니다!", visibleIfMemberName: "@CheckAssetExistence(FullPath)", infoMessageType: InfoMessageType.Error)]
 		private string ShowAssetObjectPath {
@@ -69,10 +66,10 @@ namespace BC.Base
 
 		private GameObject _ShowResourcesObject;
 		[ShowInInspector]
-		[ShowIf("@LoadType == eLoadType.Resources")]
+		[ShowIf("@LoadType == eResourcesLoadType.ResourcesAsset")]
 		[HideLabel]
 		[AssetSelector()]
-		[InfoBox(message: "Resources 에서 해당 Object를 찾을 수 없습니다!", visibleIfMemberName: "@CheckAssetExistence(FullPath)", infoMessageType: InfoMessageType.Error)]
+		[InfoBox(message: "ResourcesAsset 에서 해당 Object를 찾을 수 없습니다!", visibleIfMemberName: "@CheckAssetExistence(FullPath)", infoMessageType: InfoMessageType.Error)]
 		private GameObject ShowResourcesObject {
 			get => _ShowResourcesObject;
 			set
@@ -84,16 +81,16 @@ namespace BC.Base
 		}
 
 		[ShowInInspector]
-		[ShowIf("@LoadType == eLoadType.Asset")]
+		[ShowIf("@LoadType == eResourcesLoadType.GameObjectAsset")]
 		[HideLabel]
 		[AssetsOnly]
-		[InfoBox(message: "Null 이거나 해당 Object를 찾을 수 없습니다!", visibleIfMemberName: "@CheckAssetExistence(AssetObject)", infoMessageType: InfoMessageType.Error)]
+		[InfoBox(message: "Null 이거나 해당 Object를 찾을 수 없습니다!", visibleIfMemberName: "@CheckAssetExistence(GameObjectAsset)", infoMessageType: InfoMessageType.Error)]
 		private GameObject ShowAssetObject {
-			get => AssetObject;
+			get => GameObjectAsset;
 			set
 			{
 				ClearInEditor();
-				AssetObject = value;
+				GameObjectAsset = value;
 			}
 		}
 
@@ -127,7 +124,7 @@ namespace BC.Base
 		{
 			if(UnityEditor.EditorApplication.isPlaying) return new List<string>();
 
-			if(LoadType == eLoadType.Resources)
+			if(LoadType == eResourcesLoadType.ResourcesAsset)
 			{
 				return new List<string>();
 			}
@@ -182,7 +179,7 @@ namespace BC.Base
 		{
 			if(UnityEditor.EditorApplication.isPlaying) return false;
 
-			if(LoadType == eLoadType.AssetBundle && !string.IsNullOrWhiteSpace(path))
+			if(LoadType == eResourcesLoadType.AssetBundle && !string.IsNullOrWhiteSpace(path))
 			{
 				List<string> assetNames = GetAllAssetObjectName(BundleName);
 				if(!assetNames.Contains(path))
@@ -191,7 +188,7 @@ namespace BC.Base
 				}
 
 			}
-			else if(LoadType == eLoadType.Resources && !string.IsNullOrWhiteSpace(path))
+			else if(LoadType == eResourcesLoadType.ResourcesAsset && !string.IsNullOrWhiteSpace(path))
 			{
 				if(!Resources.Load(path))
 				{
@@ -205,7 +202,7 @@ namespace BC.Base
 		{
 			if(UnityEditor.EditorApplication.isPlaying) return false;
 
-			if(LoadType == eLoadType.Asset && picker == null)
+			if(LoadType == eResourcesLoadType.GameObjectAsset && picker == null)
 			{
 				return true;
 			}
@@ -218,7 +215,7 @@ namespace BC.Base
 
 			if(!string.IsNullOrWhiteSpace(fullPath))
 			{
-				string resourcesPath = "Resources/";
+				string resourcesPath = "ResourcesAsset/";
 				int index = fullPath.IndexOf(resourcesPath);
 
 				if(index >= 0)
@@ -241,7 +238,7 @@ namespace BC.Base
 
 				if(!string.IsNullOrWhiteSpace(fullPath))
 				{
-					string resourcesPath = "Resources/";
+					string resourcesPath = $"{nameof(Resources)}/";
 					int startIndex = fullPath.IndexOf(resourcesPath) + resourcesPath.Length;
 					int lastIndex = fullPath.LastIndexOf('.');
 					if(startIndex >= 0 && lastIndex < fullPath.Length && startIndex <= lastIndex)
@@ -259,6 +256,42 @@ namespace BC.Base
 			return fullPath;
 		}
 #endif
+		public override bool Equals(object obj)
+		{
+			return obj is ResourcesKey key&&Equals(key);
+		}
+
+		public bool Equals(ResourcesKey other)
+		{
+			if(other == null && this == null) return true;
+			if(other == null || this == null) return false;
+
+			if(LoadType!=other.LoadType) return false;
+			if(LoadType == eResourcesLoadType.AssetBundle && BundleName != other.BundleName) return false;
+			if((LoadType == eResourcesLoadType.ResourcesAsset||LoadType == eResourcesLoadType.AssetBundle) && FullPath != other.FullPath) return false;
+			if(LoadType == eResourcesLoadType.GameObjectAsset && !EqualityComparer<GameObject>.Default.Equals(GameObjectAsset, other.GameObjectAsset)) return false;
+			return true;
+		}
+
+		public override int GetHashCode()
+		{
+			return base.GetHashCode();
+		}
+
+		public override string ToString()
+		{
+			return base.ToString();
+		}
+
+		public static bool operator ==(ResourcesKey left, ResourcesKey right)
+		{
+			return left.Equals(right);
+		}
+
+		public static bool operator !=(ResourcesKey left, ResourcesKey right)
+		{
+			return !(left==right);
+		}
 	}
 
 	public static class UtilResourcesKey
@@ -270,41 +303,17 @@ namespace BC.Base
 				result?.Invoke(null);
 				return;
 			}
-			if(loadKey.LoadType == eLoadType.Asset)
-			{
-				GameObject newObject = null;
-				try
-				{
-					loadKey.AssetObject.SetActive(!loadKey.onDisableLoad);
-					newObject = GameObject.Instantiate(loadKey.AssetObject);
-				}
-				catch(Exception ex)
-				{
-					Debug.LogException(ex);
-				}
-				if(newObject != null)
-				{
-					result?.Invoke(newObject as T);
-				}
-			}
-			else
-			{
-				ResourcesManager.AsyncInstantiate(loadKey, mono, progress, result);
-			}
-		}
-		public static void AsyncInstantiate<T>(this ResourcesKey loadKey, Action<T> result) where T : Object
-		{
-			AsyncInstantiate(loadKey, null, null, result);
+			ResourcesManager.AsyncInstantiate(loadKey, mono, progress, result);
 		}
 		public static void AsyncInstantiate<T>(this ResourcesKey loadKey, MonoBehaviour mono, Action<T> result) where T : Object
 		{
 			AsyncInstantiate(loadKey, mono, null, result);
 		}
-		public static void Unload(this ResourcesKey loadKey)
+		public static void Unload(this ResourcesKey loadKey, MonoBehaviour mono)
 		{
-			if(loadKey.LoadType != eLoadType.Asset)
+			if(loadKey.LoadType != eResourcesLoadType.GameObjectAsset)
 			{
-				ResourcesManager.Unload(loadKey);
+				ResourcesManager.Unload(loadKey, mono);
 			}
 		}
 

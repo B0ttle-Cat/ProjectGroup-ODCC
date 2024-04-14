@@ -16,6 +16,8 @@ namespace BC.ODCC
 		internal override void Reset()
 		{
 			if(UnityEditor.EditorApplication.isPlaying) return;
+			if(!gameObject.scene.isLoaded) return;
+
 			ThisTransform = transform;
 			if(ThisTransform == null) return;
 			ThisObject = GetComponentInParent<ObjectBehaviour>();
@@ -25,6 +27,8 @@ namespace BC.ODCC
 		internal override void OnValidate()
 		{
 			if(UnityEditor.EditorApplication.isPlaying) return;
+			if(!gameObject.scene.isLoaded) return;
+
 			ThisTransform = transform;
 			if(ThisTransform == null) return;
 			ThisObject = GetComponentInParent<ObjectBehaviour>();

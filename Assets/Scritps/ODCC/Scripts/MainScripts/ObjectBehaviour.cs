@@ -30,10 +30,10 @@ namespace BC.ODCC
 #if UNITY_EDITOR
 		[Obsolete("'ThisContainer'를 대신 사용하세요.", true)]
 		public ContainerObject Container => ThisContainer;
-
 		internal override void Reset()
 		{
 			if(UnityEditor.EditorApplication.isPlaying) return;
+			if(!gameObject.scene.isLoaded) return;
 			ThisTransform = transform;
 			if(ThisTransform == null) return;
 
@@ -50,6 +50,7 @@ namespace BC.ODCC
 		internal override void OnValidate()
 		{
 			if(UnityEditor.EditorApplication.isPlaying) return;
+			if(!gameObject.scene.isLoaded) return;
 			ThisTransform = transform;
 			if(ThisTransform == null) return;
 
@@ -60,6 +61,15 @@ namespace BC.ODCC
 
 			_container.ComponentList?.ForEach(item => item.OnValidate());
 			_container.ChildObject?.ForEach(item => item.OnValidate());
+		}
+		[ContextMenu("ContainerUpdate")]
+		private void ContainerUpdate()
+		{
+			if(_container != null && _container.ContainerNode != null)
+			{
+				_container.ContainerNode.thisObject = this;
+				_container.ContainerNode.AllUpdate();
+			}
 		}
 #endif
 	}
