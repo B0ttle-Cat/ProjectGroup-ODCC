@@ -15,29 +15,30 @@ namespace BC.Base
 {
 	public partial struct ResourcesKey//Editor
 	{
-		[ShowInInspector, PropertyOrder(-10), HorizontalGroup("InEdite", width: 0.3f), LabelWidth(80)]
-		private bool enableEdit { get; set; }
+		//[ShowInInspector, PropertyOrder(-10), HorizontalGroup("InEdite", width: 0.3f), LabelWidth(80)]
+		private static bool enableEdit { get; set; } = false;
 
 
-		[ShowInInspector, PropertyOrder(-10), HorizontalGroup("InEdite"), LabelWidth(40)]
+		[ShowInInspector, PropertyOrder(-10), HideLabel, SuffixLabel("Target____", true)]
+		[ShowIf("@LoadType != eResourcesLoadType.None")]
+		[InlineButton("ClearSetupTarget", "Clear")]
+		[InlineButton("UpdateSetupTarget", "Update")]
 		private Object target { get; set; }
 
 		[ShowInInspector, PropertyOrder(-10), LabelWidth(80)]
-		[ShowIf("@!EnableEdit&&ShowBundleName&&target!=null")]
+		[ShowIf("@LoadType != eResourcesLoadType.None && LoadType == eResourcesLoadType.AssetBundle")]
 		[ValueDropdown("GetPathInBundle"), HideLabel]
 		private string TargetPathInBundle { get; set; }
 
-		private bool UpdateError { get; set; }
-
-		[HorizontalGroup("Button"), PropertyOrder(-9)]
-		[Button("Update Target")]
+		//[ShowIf("@ShowEdit")]
+		//[HorizontalGroup("Button"), PropertyOrder(-9)]
+		//[InlineButton("UpdateSetupTarget")]
 		private void UpdateSetupTarget()
 		{
 			if(UnityEditor.EditorApplication.isPlaying) return;
 			if(LoadType == eResourcesLoadType.None) return;
 			if(target == null) return;
 
-			UpdateError = true;
 			string _BundleName = "";
 			string _FullPath = "";
 			Object _ObjectAsset = null;
@@ -93,26 +94,26 @@ namespace BC.Base
 				Debug.LogException(ex);
 			}
 		}
-		[HorizontalGroup("Button"), PropertyOrder(-9)]
-		[Button("Clear Target")]
+		//[ShowIf("@ShowEdit")]
+		//[HorizontalGroup("Button"), PropertyOrder(-9)]
+		//[Button("Clear")]
 		private void ClearSetupTarget()
 		{
-			UpdateError = false;
 			BundleName = "";
 			FullPath = "";
 			ObjectAsset = null;
 		}
 
 
-		private bool EnableEdit => enableEdit && LoadType != eResourcesLoadType.None;
-		private bool ShowBundleName => EnableEdit || LoadType == eResourcesLoadType.AssetBundle;
-		private bool ShowFullPath => EnableEdit || LoadType == eResourcesLoadType.AssetBundle || LoadType == eResourcesLoadType.ResourcesLoad;
-		private bool ShowObjectAsset => EnableEdit || LoadType == eResourcesLoadType.ObjectAsset;
+		private bool ShowEdit => LoadType == eResourcesLoadType.None;
+		private bool ShowBundleName => ShowEdit || LoadType == eResourcesLoadType.AssetBundle;
+		private bool ShowFullPath => ShowEdit || (LoadType == eResourcesLoadType.AssetBundle || LoadType == eResourcesLoadType.ResourcesLoad);
+		private bool ShowObjectAsset => ShowEdit || LoadType == eResourcesLoadType.ObjectAsset;
 
 
-		private bool EnableBundleName => EnableEdit;
-		private bool EnableFullPath => EnableEdit;
-		private bool EnableObjectAsset => EnableEdit;
+		private bool EnableBundleName => ShowEdit;
+		private bool EnableFullPath => ShowEdit;
+		private bool EnableObjectAsset => ShowEdit;
 
 		string GetResourcePath(string assetPath)
 		{
@@ -177,8 +178,6 @@ namespace BC.Base
 		private const string Fail_CheckResourcesKey = "지정된 에셋을 찾을 수 없습니다!";
 		private bool ShowErrorCheckResourcesKey()
 		{
-			if(UpdateError) return true;
-
 			Object load = null;
 			try
 			{

@@ -23,7 +23,7 @@ namespace BC.Base
 	{
 #if UNITY_EDITOR
 		[InfoBox(Fail_CheckResourcesKey,InfoMessageType.Error,"ShowErrorCheckResourcesKey")]
-		[LabelWidth(80),PropertyOrder(-11)]
+		[LabelWidth(80),PropertyOrder(-11), HideLabel]
 #endif
 		public eResourcesLoadType LoadType;
 #if UNITY_EDITOR
@@ -34,6 +34,7 @@ namespace BC.Base
 #if UNITY_EDITOR
 		[ShowIf("@ShowFullPath"), EnableIf("@EnableFullPath")]
 		[LabelWidth(80)]
+		[Multiline(2)]
 #endif
 		public string FullPath;
 #if UNITY_EDITOR
@@ -51,14 +52,10 @@ namespace BC.Base
 			eResourcesLoadType.ObjectAsset => ObjectAsset == null,
 			_ => false,
 		};
-
-
-
 		public override bool Equals(object obj)
 		{
 			return obj is ResourcesKey key&&Equals(key);
 		}
-
 		public bool Equals(ResourcesKey other)
 		{
 			if(other == null && this == null) return true;
@@ -71,22 +68,18 @@ namespace BC.Base
 			if(LoadType == eResourcesLoadType.ObjectAsset && !EqualityComparer<Object>.Default.Equals(ObjectAsset, other.ObjectAsset)) return false;
 			return true;
 		}
-
 		public override int GetHashCode()
 		{
 			return base.GetHashCode();
 		}
-
 		public override string ToString()
 		{
 			return base.ToString();
 		}
-
 		public static bool operator ==(ResourcesKey left, ResourcesKey right)
 		{
 			return left.Equals(right);
 		}
-
 		public static bool operator !=(ResourcesKey left, ResourcesKey right)
 		{
 			return !(left==right);
