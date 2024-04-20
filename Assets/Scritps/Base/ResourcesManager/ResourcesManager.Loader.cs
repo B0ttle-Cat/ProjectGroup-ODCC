@@ -283,7 +283,7 @@ namespace BC.Base
 
 			protected override IEnumerator Download()
 			{
-				LoadObject = ResourcesKey.GameObjectAsset;
+				LoadObject = ResourcesKey.ObjectAsset;
 				if(LoadObject != null)
 				{
 					Debug.Log("Loaded Success.");

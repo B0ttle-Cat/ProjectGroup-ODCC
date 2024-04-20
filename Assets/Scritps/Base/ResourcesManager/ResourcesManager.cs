@@ -98,9 +98,9 @@ namespace BC.Base
 		{
 			return loadType switch
 			{
-				eResourcesLoadType.ResourcesAsset => new ResourcesAssetLoader(),
+				eResourcesLoadType.ResourcesLoad => new ResourcesAssetLoader(),
 				eResourcesLoadType.AssetBundle => new AssetBundleLoader(),
-				eResourcesLoadType.GameObjectAsset => new GameObjectAssetLoader(),
+				eResourcesLoadType.ObjectAsset => new GameObjectAssetLoader(),
 				_ => null,
 			};
 		}

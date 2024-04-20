@@ -315,7 +315,7 @@ namespace BC.Base
 				if(string.IsNullOrWhiteSpace(AssetName))
 				{
 					LoadState = LoadState.Error;
-					Debug.LogError("GameObjectAsset name is empty or null.");
+					Debug.LogError("ObjectAsset name is empty or null.");
 					_result?.Invoke(null);
 					yield break;
 				}
@@ -345,7 +345,7 @@ namespace BC.Base
 					LoadState = LoadState.Loading;
 
 					// 에셋을 비동기로 로드합니다.
-					Debug.Log($"ResourcesInstantiate GameObjectAsset: {AssetName}");
+					Debug.Log($"ResourcesInstantiate ObjectAsset: {AssetName}");
 					AssetBundleRequest async = null;
 					async = assetBundle.LoadAssetAsync<Object>(AssetName);
 					while(!async.isDone)
@@ -371,7 +371,7 @@ namespace BC.Base
 				if(string.IsNullOrWhiteSpace(AssetName))
 				{
 					LoadState = LoadState.Error;
-					Debug.LogError("GameObjectAsset name is empty or null.");
+					Debug.LogError("ObjectAsset name is empty or null.");
 					_result?.Invoke(null);
 					return;
 				}
@@ -444,7 +444,7 @@ namespace BC.Base
 				if(string.IsNullOrWhiteSpace(BuiltinPath))
 				{
 					LoadState = LoadState.Error;
-					Debug.LogError("GameObjectAsset name is empty or null.");
+					Debug.LogError("ObjectAsset name is empty or null.");
 					_result?.Invoke(null);
 					yield break;
 				}
@@ -489,7 +489,7 @@ namespace BC.Base
 				if(string.IsNullOrWhiteSpace(BuiltinPath))
 				{
 					LoadState = LoadState.Error;
-					Debug.LogError("GameObjectAsset name is empty or null.");
+					Debug.LogError("ObjectAsset name is empty or null.");
 					_result?.Invoke(null);
 					return;
 				}
@@ -1040,7 +1040,7 @@ namespace BC.Base
 		{
 			switch(loadKey.LoadType)
 			{
-				case eResourcesLoadType.ResourcesAsset:
+				case eResourcesLoadType.ResourcesLoad:
 				LoadBuiltinAsset<GameObject>(mono, loadKey.FullPath,
 					value => progress?.Invoke(value),
 					loadAsset =>
@@ -1072,7 +1072,7 @@ namespace BC.Base
 		{
 			switch(loadKey.LoadType)
 			{
-				case eResourcesLoadType.ResourcesAsset:
+				case eResourcesLoadType.ResourcesLoad:
 				UnloadBuiltin(loadKey.FullPath);
 				break;
 				case eResourcesLoadType.AssetBundle:

@@ -54,9 +54,9 @@ public class AssetBundleBuilderWindow : EditorWindow
 		targetPlatform = (BuildTarget)EditorGUILayout.EnumPopup("TargetPath Platform", targetPlatform);
 
 		EditorGUILayout.Space(10);
-		if(GUILayout.Button("Build GameObjectAsset Bundles") && foldersToBuild != null)
+		if(GUILayout.Button("Build Asset Bundles") && foldersToBuild != null)
 		{
-			bool proceed = EditorUtility.DisplayDialog("Build GameObjectAsset Bundles", "정말로 GameObjectAsset Bundles를 빌드하시겠습니까?", "확인", "취소");
+			bool proceed = EditorUtility.DisplayDialog("Build Asset Bundles", "정말 Asset Bundles로 빌드하시겠습니까?", "확인", "취소");
 
 			if(proceed)
 			{
