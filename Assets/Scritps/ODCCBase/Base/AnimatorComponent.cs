@@ -16,11 +16,17 @@ namespace BC.OdccBase
 		}
 
 		protected Animator animator;
-
+		protected AnimatorStateChangeListener stateChangeListener;
 
 		public override void BaseAwake()
 		{
 			animator  = GetComponent<Animator>();
 		}
+
+		internal virtual void SetStateChangeListener(AnimatorStateChangeListener stateChangeListener)
+		{
+			this.stateChangeListener = stateChangeListener;
+		}
+
 	}
 }
