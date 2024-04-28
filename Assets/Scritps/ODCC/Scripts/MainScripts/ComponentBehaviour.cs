@@ -10,8 +10,15 @@ namespace BC.ODCC
 		[ReadOnly, ShowInInspector]
 		[PropertyOrder(-5)]
 		public ObjectBehaviour ThisObject { get; internal set; }
-		public ContainerObject ThisContainer => ThisObject.ThisContainer;
-
+		public ContainerObject ThisContainer {
+			get
+			{
+#if UNITY_EDITOR
+				if(ThisObject == null) Reset();
+#endif
+				return ThisObject.ThisContainer;
+			}
+		}
 #if UNITY_EDITOR
 		internal override void Reset()
 		{
@@ -20,7 +27,7 @@ namespace BC.ODCC
 
 			ThisTransform = transform;
 			if(ThisTransform == null) return;
-			ThisObject = GetComponentInParent<ObjectBehaviour>();
+			ThisObject = GetComponentInParent<ObjectBehaviour>(true);
 			BaseReset();
 			BaseValidate();
 		}
@@ -31,7 +38,7 @@ namespace BC.ODCC
 
 			ThisTransform = transform;
 			if(ThisTransform == null) return;
-			ThisObject = GetComponentInParent<ObjectBehaviour>();
+			ThisObject = GetComponentInParent<ObjectBehaviour>(true);
 			BaseValidate();
 		}
 #endif
