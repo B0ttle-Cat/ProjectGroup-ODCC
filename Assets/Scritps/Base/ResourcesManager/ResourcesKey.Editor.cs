@@ -23,8 +23,7 @@ namespace BC.Base
 		[ShowIf("@LoadType != eResourcesLoadType.None")]
 		[InlineButton("ClearSetupTarget", "Clear")]
 		[InlineButton("UpdateSetupTarget", "Update")]
-		private Object target { get; set; }
-
+		public Object target { get; set; }
 		[ShowInInspector, PropertyOrder(-10), LabelWidth(80)]
 		[ShowIf("@LoadType != eResourcesLoadType.None && LoadType == eResourcesLoadType.AssetBundle")]
 		[ValueDropdown("GetPathInBundle"), HideLabel]
@@ -33,7 +32,7 @@ namespace BC.Base
 		//[ShowIf("@ShowEdit")]
 		//[HorizontalGroup("Button"), PropertyOrder(-9)]
 		//[InlineButton("UpdateSetupTarget")]
-		private void UpdateSetupTarget()
+		public void UpdateSetupTarget()
 		{
 			if(UnityEditor.EditorApplication.isPlaying) return;
 			if(LoadType == eResourcesLoadType.None) return;
@@ -97,7 +96,7 @@ namespace BC.Base
 		//[ShowIf("@ShowEdit")]
 		//[HorizontalGroup("Button"), PropertyOrder(-9)]
 		//[Button("Clear")]
-		private void ClearSetupTarget()
+		public void ClearSetupTarget()
 		{
 			BundleName = "";
 			FullPath = "";
@@ -149,8 +148,7 @@ namespace BC.Base
 				}
 				AssetBundle assetBundle = null;
 				var loadedList =  AssetBundle.GetAllLoadedAssetBundles();
-				loadedList.ForEach(loaded =>
-				{
+				loadedList.ForEach(loaded => {
 					if(loaded.name == assetName)
 					{
 						assetBundle = loaded;
@@ -204,8 +202,7 @@ namespace BC.Base
 						List<string> assetsNames = new List<string>();
 
 						var loadedList =  AssetBundle.GetAllLoadedAssetBundles();
-						loadedList.ForEach(loaded =>
-						{
+						loadedList.ForEach(loaded => {
 							if(loaded.name == BundleName)
 							{
 								assetBundle = loaded;

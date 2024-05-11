@@ -60,7 +60,7 @@ namespace BC.ODCC
 
 
 		[Serializable]
-		public class ContainerNode
+		public class ContainerNode : IDisposable
 		{
 			[ReadOnly]
 			public ObjectBehaviour thisObject;
@@ -84,7 +84,19 @@ namespace BC.ODCC
 				this.thisObject = thisObject == null ? null : thisObject;
 				AllUpdate();
 			}
+			void IDisposable.Dispose()
+			{
+				thisObject = null;
+				parent = null;
+				childs = null;
+				componentList = null;
+				dataList = null;
 
+				onUpdateParent = null;
+				onUpdateChilds = null;
+				onUpdateComponents = null;
+				onUpdateDatas = null;
+			}
 			public void GetAllObjectInChild(ref List<ObjectBehaviour> allList)
 			{
 				if(thisObject != null) allList.Add(thisObject);
@@ -395,7 +407,6 @@ namespace BC.ODCC
 				AwakeOCBehaviour(component);
 			}
 		}
-
 		public static void DestroyOCBehaviour(OCBehaviour behaviour)
 		{
 			if(behaviour == null) return;
@@ -427,7 +438,6 @@ namespace BC.ODCC
 			}
 			return false;
 		}
-
 
 		private static void AwakeOCBehaviour(ObjectBehaviour behaviour)
 		{
@@ -547,10 +557,6 @@ namespace BC.ODCC
 			return false;
 		}
 
-
-
-
-
 		private static void AwakeOCBehaviour(ComponentBehaviour behaviour)
 		{
 			if(behaviour == null) return;
@@ -623,9 +629,6 @@ namespace BC.ODCC
 			}
 			return true;
 		}
-
-
-
 
 
 		private static ObjectBehaviour GetParentObjectBehaviour(ComponentBehaviour item)

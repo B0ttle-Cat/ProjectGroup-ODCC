@@ -133,9 +133,9 @@ namespace BC.ODCC
 					{
 						var component = containerNode.componentList[i];
 						if(component.isActiveAndEnabled)
-      						{
-						      Ins.OdccAwake(Ins.OdccComponentList, component);
-      						}
+						{
+							Ins.OdccAwake(Ins.OdccComponentList, component);
+						}
 					}
 				}
 				else if(ocBehaviour is ComponentBehaviour componentBehaviour)
@@ -298,7 +298,10 @@ namespace BC.ODCC
 		}
 
 		static public bool isProfilerEnabled = false;
-
+		public void Start()
+		{
+			StartCoroutine(EndOfFrame());
+		}
 		public void Update()
 		{
 #if UNITY_EDITOR
@@ -313,22 +316,19 @@ namespace BC.ODCC
 			OdccForeach.ForeachLateUpdate();
 		}
 
-		public void Start()
-		{
-			StartCoroutine(EndOfFrame());
-		}
-
 		IEnumerator EndOfFrame()
 		{
 			var waitFrame = new WaitForEndOfFrame();
-			var waitTime = new WaitForSeconds(5);
 			while(true)
 			{
-				yield return waitTime;
 				yield return waitFrame;
 				int count = OdccContainerTree.IgnoreDestroyObject.Count;
 				if(count > 0)
 				{
+					foreach(var item in OdccContainerTree.IgnoreDestroyObject)
+					{
+						item.Dispose();
+					}
 					OdccContainerTree.IgnoreDestroyObject.Clear();
 				}
 			}

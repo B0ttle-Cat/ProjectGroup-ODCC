@@ -60,7 +60,12 @@ namespace BC.ODCC
 			initList.Clear();
 			initList = null;
 		}
-		sealed public override void BaseDestroy() { FSMDestroy(); }
+		sealed public override void BaseDestroy()
+		{
+			base.BaseDestroy();
+			FSMDestroy();
+			enableStateList = null;
+		}
 		sealed public override void BaseEnable() { FSMEnable(); }
 		sealed public override void BaseDisable() { FSMDisable(); }
 		sealed public override void BaseStart() { FSMStart(); }
@@ -112,7 +117,7 @@ namespace BC.ODCC
 		}
 		/// <summary>
 		/// <code>막지는 않지만, 외부에서 이 함수를 사용하는건 좋은 생각이 아닙니다.
-		/// 대신, 사용중인 <see cref="OdccStateData"/>의 값을 변경하여 <see cref="OdccStateComponent.StateChangeBeforeUpdate"/>에서 스스로 상태를 전이 할 수 있도록 해주세요.</code>
+		/// 대신, 사용중인 <see cref="OdccStateData"/>의 값을 변경하여 <see cref="OdccStateComponent.StateChangeInHere"/>에서 스스로 상태를 전이 할 수 있도록 해주세요.</code>
 		/// </summary>
 		public void OnTransitionState<T>(int? canNewStateinThisGroup = null) where T : OdccStateComponent
 		{
@@ -127,7 +132,7 @@ namespace BC.ODCC
 		}
 		/// <summary>
 		/// <code>막지는 않지만, 외부에서 이 함수를 사용하는건 좋은 생각이 아닙니다.
-		/// 대신, 사용중인 <see cref="OdccStateData"/>의 값을 변경하여 <see cref="OdccStateComponent.StateChangeBeforeUpdate"/>에서 스스로 상태를 전이 할 수 있도록 해주세요.</code>
+		/// 대신, 사용중인 <see cref="OdccStateData"/>의 값을 변경하여 <see cref="OdccStateComponent.StateChangeInHere"/>에서 스스로 상태를 전이 할 수 있도록 해주세요.</code>
 		/// </summary>
 		public void OnTransitionState(OdccStateComponent enableState)
 		{

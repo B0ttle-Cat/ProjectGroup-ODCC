@@ -13,16 +13,14 @@ namespace BC.ODCC
 		[HideLabel, InlineProperty, SerializeField, PropertyOrder(-5)]
 		private ContainerObject _container;
 		public ContainerObject ThisContainer {
-			get
-			{
+			get {
 				if(_container is null)
 				{
 					_container = new ContainerObject(this);
 				}
 				return _container;
 			}
-			private set
-			{
+			private set {
 				_container = value;
 			}
 		}
@@ -62,8 +60,8 @@ namespace BC.ODCC
 			_container.ComponentList?.ForEach(item => item.OnValidate());
 			_container.ChildObject?.ForEach(item => item.OnValidate());
 		}
-		[ContextMenu("ContainerUpdate")]
-		private void ContainerUpdate()
+		[ContextMenu("ContainerUpdateInEditor")]
+		public void ContainerUpdateInEditor()
 		{
 			if(_container != null && _container.ContainerNode != null)
 			{
@@ -72,5 +70,10 @@ namespace BC.ODCC
 			}
 		}
 #endif
+		protected override void Dispose(bool disposing)
+		{
+			base.Dispose(disposing);
+			_container = null;
+		}
 	}
 }

@@ -42,5 +42,11 @@ namespace BC.ODCC
 			BaseValidate();
 		}
 #endif
+
+		protected override void Dispose(bool disposing)
+		{
+			base.Dispose(disposing);
+			ThisObject = null;
+		}
 	}
 }

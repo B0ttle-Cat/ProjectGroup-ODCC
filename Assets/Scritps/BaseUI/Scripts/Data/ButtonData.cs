@@ -20,5 +20,14 @@ namespace BC.BaseUI
 		public AudioTheme AudioThemeType;
 
 		public TMP_Text Text;
+
+		protected override void Dispose(bool disposing)
+		{
+			base.Dispose(disposing);
+			Button = null;
+			Image = null;
+			ButtonSound = null;
+			Text = null;
+		}
 	}
 }

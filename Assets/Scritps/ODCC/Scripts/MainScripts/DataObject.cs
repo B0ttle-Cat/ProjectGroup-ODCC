@@ -5,7 +5,7 @@ using Object = UnityEngine.Object;
 namespace BC.ODCC
 {
 	[Serializable]
-	public class DataObject : IOdccData
+	public class DataObject : IOdccData, IDisposable
 	{
 #if UNITY_EDITOR
 		bool IsMustNotNull(
@@ -159,5 +159,21 @@ namespace BC.ODCC
 				obj9 != null;
 		}
 #endif
+		private bool disposedValue;
+
+		protected virtual void Dispose(bool disposing)
+		{
+
+		}
+
+		public void Dispose()
+		{
+			if(!disposedValue)
+			{
+				Dispose(disposing: true);
+				disposedValue=true;
+			}
+			GC.SuppressFinalize(this);
+		}
 	}
 }

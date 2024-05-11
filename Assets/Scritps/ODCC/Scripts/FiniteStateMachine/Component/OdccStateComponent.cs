@@ -29,6 +29,12 @@ namespace BC.ODCC
 		{
 			ThisStateMachine = ThisContainer.GetComponent<OdccFiniteStateMachine>();
 		}
+		protected override void Dispose(bool disposing)
+		{
+			base.Dispose(disposing);
+			ThisStateMachine = null;
+			ChangeState = null;
+		}
 
 		sealed public override void BaseAwake()
 		{
@@ -46,7 +52,6 @@ namespace BC.ODCC
 				Debug.Log($"OdccState:{gameObject.name}:{GetType().Name}:StateDestroy");
 			}
 			StateDestroy();
-			ThisStateMachine = null;
 		}
 		sealed public override void BaseEnable() { }
 		sealed public override void BaseDisable() { }
@@ -80,7 +85,7 @@ namespace BC.ODCC
 		}
 		internal void MachineChangeBeforeUpdate()
 		{
-			StateChangeBeforeUpdate();
+			StateChangeInHere();
 		}
 		internal void MachineUpdate()
 		{
@@ -96,7 +101,7 @@ namespace BC.ODCC
 		protected virtual void StateStart() { }
 		protected abstract void StateEnable();
 		protected abstract void StateDisable();
-		protected abstract void StateChangeBeforeUpdate();
+		protected abstract void StateChangeInHere();
 		protected abstract void StateUpdate();
 		protected virtual void StateLateUpdate() { }
 

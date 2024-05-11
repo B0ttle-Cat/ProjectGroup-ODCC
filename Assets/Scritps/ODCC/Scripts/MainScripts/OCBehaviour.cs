@@ -1,3 +1,6 @@
+using System;
+using System.Threading;
+
 using Sirenix.OdinInspector;
 
 using UnityEngine;
@@ -5,12 +8,20 @@ using UnityEngine;
 namespace BC.ODCC
 {
 
-	public abstract class OCBehaviour : SerializedMonoBehaviour, IOdccItem
+	public abstract class OCBehaviour : SerializedMonoBehaviour, IOdccItem, IDisposable
 	{
 		private Transform _ThisTransform;
 		public Transform ThisTransform { get => _ThisTransform ??= transform; protected set => _ThisTransform = value; }
+
 		internal bool IsEnable { get; private set; } = false;
 		internal bool IsCanUpdateDisable { get; private set; } = false;
+
+		private CancellationTokenSource cancellationEnableSource;
+		private CancellationToken cancellationEnableToken;
+
+		protected CancellationToken DestroyCancelToken => destroyCancellationToken;
+		protected CancellationToken DisableCancelToken => cancellationEnableToken;
+
 #if UNITY_EDITOR
 		internal virtual void Reset()
 		{
@@ -36,14 +47,31 @@ namespace BC.ODCC
 		protected virtual void OnDestroy()
 		{
 			OdccOnDestroy();
+
+			if(cancellationEnableSource != null)
+			{
+				cancellationEnableSource.Cancel();
+				cancellationEnableSource.Dispose();
+				cancellationEnableSource = null;
+			}
 		}
 		protected virtual void OnEnable()
 		{
+			cancellationEnableSource = new CancellationTokenSource();
+			cancellationEnableToken = cancellationEnableSource.Token;
+
 			OdccOnEnable();
 		}
 		protected virtual void OnDisable()
 		{
 			OdccOnDisable();
+
+			if(cancellationEnableSource != null)
+			{
+				cancellationEnableSource.Cancel();
+				cancellationEnableSource.Dispose();
+				cancellationEnableSource = null;
+			}
 		}
 		protected virtual void Start()
 		{
@@ -133,5 +161,22 @@ namespace BC.ODCC
 		protected virtual void OnUpdateChilds(ObjectBehaviour[] update) { }
 		protected virtual void OnUpdateComponents(ComponentBehaviour[] update) { }
 		protected virtual void OnUpdateDatas(DataObject[] update) { }
+
+		private bool disposedValue;
+
+		protected virtual void Dispose(bool disposing)
+		{
+			_ThisTransform = null;
+		}
+
+		public void Dispose()
+		{
+			if(!disposedValue)
+			{
+				Dispose(disposing: true);
+				disposedValue=true;
+			}
+			GC.SuppressFinalize(this);
+		}
 	}
 }
