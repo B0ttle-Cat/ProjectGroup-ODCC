@@ -7,6 +7,11 @@ namespace BC.ODCC
 	[Serializable]
 	public class DataObject : IOdccData, IDisposable
 	{
+		public DataObject()
+		{
+			OdccTypeIndex = OdccManager.GetTypeToIndex(GetType());
+		}
+		public int OdccTypeIndex { get; private set; } = -1;
 #if UNITY_EDITOR
 		bool IsMustNotNull(
 			Object obj9)

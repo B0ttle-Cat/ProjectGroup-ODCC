@@ -15,6 +15,7 @@ namespace BC.ODCC
 
 		internal bool IsEnable { get; private set; } = false;
 		internal bool IsCanUpdateDisable { get; private set; } = false;
+		public int OdccTypeIndex { get; private set; } = -1;
 
 		private CancellationTokenSource cancellationEnableSource;
 		private CancellationToken cancellationEnableToken;
@@ -41,6 +42,7 @@ namespace BC.ODCC
 #endif
 		protected virtual void Awake()
 		{
+			OdccTypeIndex = OdccManager.GetTypeToIndex(GetType());
 			ThisTransform = transform;
 			OdccAwake();
 		}

@@ -1,11 +1,16 @@
+#undef USING_LEGACY_COLLECTOR
+
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace BC.ODCC
 {
+#if USING_LEGACY_COLLECTOR
 	public class OdccCollector : IDisposable
 	{
 		internal List<OdccLooper> odccLoopers;
@@ -224,10 +229,12 @@ namespace BC.ODCC
 		}
 
 	}
-
+#endif
 	public class OdccQueryCollector : IDisposable
 	{
 		internal QuerySystem querySystem;
+		internal List<object> lifeItems;
+		internal bool IsDontDestoryLifeItem { get; private set; }
 
 		internal IEnumerable<ObjectBehaviour> queryItems;
 		internal Dictionary<string, OdccQueryLooper> odccLoopers;
@@ -236,12 +243,66 @@ namespace BC.ODCC
 		internal OdccQueryCollector(QuerySystem querySystem)
 		{
 			this.querySystem = querySystem;
+
+			lifeItems = new List<object>();
+			IsDontDestoryLifeItem = false;
+
 			queryItems = new List<ObjectBehaviour>();
 			odccLoopers = new Dictionary<string, OdccQueryLooper>();
 			odccEventCalls = new Dictionary<string, OdccQueryLooper>();
 			changeItemList = null;
 		}
+		private void AddLifeItem(object lifeItem)
+		{
+			if(lifeItem == null || IsDontDestoryLifeItem) return;
+			if(!lifeItems.Contains(lifeItem))
+			{
+				lifeItems.Add(lifeItem);
+			}
+		}
+		internal void RemoveLifeItem(object lifeItem)
+		{
+			if(lifeItem == null || IsDontDestoryLifeItem) return;
+			lifeItems.Remove(lifeItem);
+			if(lifeItems.Count == 0)
+			{
+				DeleteQueryCollector(this);
+			}
+		}
+		internal void ClearLifeItem()
+		{
+			lifeItems.Clear();
+		}
+		public static OdccQueryCollector CreateQueryCollector(QuerySystem querySystem, Scene lifeItem)
+		{
+			var collector = _CreateQueryCollector(querySystem);
+			collector.AddLifeItem(lifeItem);
+			return collector;
+		}
+		public static OdccQueryCollector CreateQueryCollector(QuerySystem querySystem, OCBehaviour lifeItem)
+		{
+			if(lifeItem == null) throw new NullReferenceException();
+
+			var collector = _CreateQueryCollector(querySystem);
+			collector.AddLifeItem(lifeItem);
+			return collector;
+		}
+		public static OdccQueryCollector CreateQueryCollector(QuerySystem querySystem, string lifeItem)
+		{
+			if(lifeItem == null) throw new NullReferenceException();
+
+			var collector = _CreateQueryCollector(querySystem);
+			collector.AddLifeItem(lifeItem);
+			return collector;
+		}
 		public static OdccQueryCollector CreateQueryCollector(QuerySystem querySystem)
+		{
+			var collector = _CreateQueryCollector(querySystem);
+			collector.IsDontDestoryLifeItem = true;
+			collector.ClearLifeItem();
+			return collector;
+		}
+		private static OdccQueryCollector _CreateQueryCollector(QuerySystem querySystem)
 		{
 			var odccQueryCollectors =  OdccForeach.OdccQueryCollectors;
 
@@ -252,9 +313,11 @@ namespace BC.ODCC
 			else
 			{
 				OdccQueryCollector newCollector = new OdccQueryCollector(querySystem);
+#if USING_LEGACY_COLLECTOR
 				var objectList = OdccForeach.OdccObjectList.Collection;
-
-
+#else
+				var objectList = OdccForeach.OdccObjectList.GetQueryItems();
+#endif
 				foreach(var item in objectList)
 				{
 					newCollector.AddObject(item);
@@ -265,7 +328,29 @@ namespace BC.ODCC
 				return newCollector;
 			}
 		}
-		[Obsolete("수동으로 호출하지 마세요.")]
+		public static void DeleteQueryCollector(QuerySystem querySystem, string lifeItem)
+		{
+			if(querySystem != null && OdccForeach.OdccQueryCollectors.ContainsKey(querySystem))
+			{
+				OdccForeach.OdccQueryCollectors[querySystem].RemoveLifeItem(lifeItem);
+			}
+		}
+		public static void DeleteQueryCollector(QuerySystem querySystem)
+		{
+			if(querySystem != null && OdccForeach.OdccQueryCollectors.ContainsKey(querySystem))
+			{
+				DeleteQueryCollector(OdccForeach.OdccQueryCollectors[querySystem]);
+			}
+		}
+		private static void DeleteQueryCollector(OdccQueryCollector collector)
+		{
+			if(collector == null) return;
+			OdccForeach.OdccQueryCollectors?.Remove(collector.querySystem);
+#pragma warning disable CS0618
+			collector.Dispose();
+#pragma warning restore CS0618
+		}
+		[Obsolete("절데로 수동으로 호출하지 마세요.")]
 		public void Dispose()
 		{
 			querySystem = null;
@@ -283,6 +368,10 @@ namespace BC.ODCC
 			}
 			odccEventCalls.Clear();
 			odccEventCalls = null;
+
+			lifeItems.Clear();
+			lifeItems = null;
+			IsDontDestoryLifeItem = false;
 		}
 		public OdccQueryLooper CreateLooper(string key, bool prevUpdate = true)
 		{
@@ -395,9 +484,7 @@ namespace BC.ODCC
 #endif
 
 			List<int> indexs = new List<int>();
-			indexs.Add(OdccManager.GetTypeToIndex(item.GetType()));
-			indexs.AddRange(OdccManager.GetListTypeToIndex(Array.ConvertAll(item.ThisContainer.ComponentList, item => item.GetType())));
-			indexs.AddRange(OdccManager.GetListTypeToIndex(Array.ConvertAll(item.ThisContainer.DataList, item => item.GetType())));
+			indexs.AddRange(OdccManager.GetTypeToIndex(item));
 
 			return querySystem.IsAll(indexs) && querySystem.IsAny(indexs) && querySystem.IsNone(indexs);
 		}

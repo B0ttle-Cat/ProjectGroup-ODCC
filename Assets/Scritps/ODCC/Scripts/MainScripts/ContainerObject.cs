@@ -20,6 +20,7 @@ namespace BC.ODCC
 		public ObjectBehaviour[] ChildObject => ContainerNode.childs;
 		public ComponentBehaviour[] ComponentList => ContainerNode.componentList;
 		public DataObject[] DataList => ContainerNode.dataList;
+		internal int[] TypeIndex => ContainerNode.typeIndex;
 		//[SerializeReference]
 		//public DataObject[] DataObjectList;
 		private Queue<Action> callActionQueue;

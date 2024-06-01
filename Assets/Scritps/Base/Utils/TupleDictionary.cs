@@ -104,13 +104,97 @@ namespace BC.Base
 
 	public class TupleDictionary<TKey, T1> : Dictionary<TKey, Tuple<T1>>
 	{
-
+		public void Add(TKey key, T1 t1) => Add(key, new Tuple<T1>(t1));
 	}
-	public class TupleDictionary<TKey, T1, T2> : Dictionary<TKey, TupleItem<T1, T2>> { }
-	public class TupleDictionary<TKey, T1, T2, T3> : Dictionary<TKey, TupleItem<T1, T2, T3>> { }
-	public class TupleDictionary<TKey, T1, T2, T3, T4> : Dictionary<TKey, TupleItem<T1, T2, T3, T4>> { }
-	public class TupleDictionary<TKey, T1, T2, T3, T4, T5> : Dictionary<TKey, TupleItem<T1, T2, T3, T4, T5>> { }
-	public class TupleDictionary<TKey, T1, T2, T3, T4, T5, T6> : Dictionary<TKey, TupleItem<T1, T2, T3, T4, T5, T6>> { }
-	public class TupleDictionary<TKey, T1, T2, T3, T4, T5, T6, T7> : Dictionary<TKey, TupleItem<T1, T2, T3, T4, T5, T6, T7>> { }
+	public class TupleDictionary<TKey, T1, T2> : Dictionary<TKey, TupleItem<T1, T2>>
+	{
+		public void Add(TKey key,
+			T1 t1,
+			T2 t2
+			) => Add(key, new(
+				t1,
+				t2
+				));
+	}
+	public class TupleDictionary<TKey, T1, T2, T3> : Dictionary<TKey, TupleItem<T1, T2, T3>>
+	{
+		public void Add(TKey key,
+					T1 t1,
+					T2 t2,
+					T3 t3
+					) => Add(key, new(
+						t1,
+						t2,
+						t3
+						));
+	}
+	public class TupleDictionary<TKey, T1, T2, T3, T4> : Dictionary<TKey, TupleItem<T1, T2, T3, T4>>
+	{
+		public void Add(TKey key,
+				T1 t1,
+				T2 t2,
+				T3 t3,
+				T4 t4
+				) => Add(key, new(
+					t1,
+					t2,
+					t3,
+					t4
+					));
+	}
+	public class TupleDictionary<TKey, T1, T2, T3, T4, T5> : Dictionary<TKey, TupleItem<T1, T2, T3, T4, T5>>
+	{
+		public void Add(TKey key,
+				T1 t1,
+				T2 t2,
+				T3 t3,
+				T4 t4,
+				T5 t5
+				) => Add(key, new(
+					t1,
+					t2,
+					t3,
+					t4,
+					t5
+					));
+	}
+	public class TupleDictionary<TKey, T1, T2, T3, T4, T5, T6> : Dictionary<TKey, TupleItem<T1, T2, T3, T4, T5, T6>>
+	{
+		public void Add(TKey key,
+				T1 t1,
+				T2 t2,
+				T3 t3,
+				T4 t4,
+				T5 t5,
+				T6 t6
+				) => Add(key, new(
+					t1,
+					t2,
+					t3,
+					t4,
+					t5,
+					t6
+					));
+	}
+	public class TupleDictionary<TKey, T1, T2, T3, T4, T5, T6, T7> : Dictionary<TKey, TupleItem<T1, T2, T3, T4, T5, T6, T7>>
+	{
+		public void Add(TKey key,
+			T1 t1,
+			T2 t2,
+			T3 t3,
+			T4 t4,
+			T5 t5,
+			T6 t6,
+			T7 t7
+			) => Add(key, new(
+				t1,
+				t2,
+				t3,
+				t4,
+				t5,
+				t6,
+				t7
+				));
+	}
 
 }

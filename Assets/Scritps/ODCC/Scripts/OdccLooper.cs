@@ -1,12 +1,18 @@
+#undef USING_LEGACY_COLLECTOR
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-using BC.Base;
+using UnityEngine;
+
+using Debug = BC.Base.Debug;
+
 
 namespace BC.ODCC
 {
+#if USING_LEGACY_COLLECTOR
 	public class OdccLooper : IDisposable
 	{
 		public string key;
@@ -241,7 +247,7 @@ namespace BC.ODCC
 			return this;
 		}
 	}
-
+#endif
 	public sealed partial class OdccQueryLooper : IDisposable
 	{
 		internal OdccQueryCollector queryCollector;
@@ -290,13 +296,16 @@ namespace BC.ODCC
 			internal ObjectBehaviour key;
 			internal abstract void Run();
 			internal abstract IEnumerator IRun();
+			internal abstract Awaitable ARun();
 		}
 		public class AddedForeachAction : RunForeachAction
 		{
 			internal Action action;
 			internal Func<IEnumerator> iAction;
-			internal override void Run() => action?.Invoke();
+			internal Func<Awaitable> aAction;
+			internal override void Run() => action();
 			internal override IEnumerator IRun() => iAction();
+			internal override Awaitable ARun() => aAction();
 		}
 
 		internal Func<bool> onLooperBreakFunction;
@@ -334,6 +343,10 @@ namespace BC.ODCC
 			return Looper;
 		}
 
+		internal async Awaitable RunLooper_V2()
+		{
+			await Awaitable.NextFrameAsync();
+		}
 		internal IEnumerator RunLooper()
 		{
 			if(!isUsingLooper || queryCollector is null) yield break;
@@ -486,8 +499,7 @@ namespace BC.ODCC
 		public OdccQueryLooper Action(Action action)
 		{
 			var list = new List<RunForeachAction>();
-			list.Add(new AddedForeachAction()
-			{
+			list.Add(new AddedForeachAction() {
 				action = action
 			});
 			runForeachStructList.Add(new RunForeachStruct(action, list, false, null));
@@ -496,8 +508,7 @@ namespace BC.ODCC
 		public OdccQueryLooper Action(Func<IEnumerator> action)
 		{
 			var list = new List<RunForeachAction>();
-			list.Add(new AddedForeachAction()
-			{
+			list.Add(new AddedForeachAction() {
 				iAction = action
 			});
 			runForeachStructList.Add(new RunForeachStruct(action, list, true, null));
@@ -563,7 +574,7 @@ namespace BC.ODCC
 			{
 				RunForeachStruct structItem = runForeachStructList[i];
 				structItem.Add(item);
-    				runForeachStructList[i]=structItem;
+				runForeachStructList[i]=structItem;
 			}
 
 		}
@@ -575,7 +586,7 @@ namespace BC.ODCC
 			{
 				RunForeachStruct structItem = runForeachStructList[i];
 				structItem.Remove(item);
-    				runForeachStructList[i]=structItem;
+				runForeachStructList[i]=structItem;
 			}
 		}
 

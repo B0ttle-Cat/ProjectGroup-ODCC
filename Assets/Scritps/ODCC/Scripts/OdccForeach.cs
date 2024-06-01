@@ -1,12 +1,20 @@
+#define USING_AWAITABLE
+#undef USING_LEGACY_COLLECTOR
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
+
+using UnityEngine.SceneManagement;
 
 namespace BC.ODCC
 {
-	public static class OdccForeach
+	internal static class OdccForeach
 	{
+		//internal static List<ObjectBehaviour> OdccObjectList = new List<ObjectBehaviour>();
+		//internal static List<ComponentBehaviour> OdccComponentList = new List<ComponentBehaviour>();
+		//internal static List<DataObject> OdccDataList = new List<DataObject>();
+#if USING_LEGACY_COLLECTOR
 		public static OdccCollector<ObjectBehaviour> OdccObjectList;
 		public static OdccCollector<ComponentBehaviour> OdccComponentList;
 
@@ -17,32 +25,54 @@ namespace BC.ODCC
 		public static OdccLooper<ComponentBehaviour> ComponentLateLooper;
 
 		public static Dictionary<Type, OdccCollector> OdccCollectorList = new Dictionary<Type, OdccCollector>();
-		public static Dictionary<QuerySystem, OdccQueryCollector> OdccQueryCollectors = new Dictionary<QuerySystem, OdccQueryCollector>();
 
 		public static Dictionary<OdccLooper, IEnumerator> ForeachPrevUpdate  = new Dictionary<OdccLooper, IEnumerator>();
 		public static Dictionary<OdccLooper, IEnumerator> ForeachNextUpdate  = new Dictionary<OdccLooper, IEnumerator>();
+#endif
+		internal static OdccQueryCollector OdccObjectList;
+		internal static OdccQueryCollector OdccComponentList;
+		private static QuerySystem OdccObjectListQuerySystem;
+		private static QuerySystem OdccComponentListQuerySystem;
 
-		public static Dictionary<OdccQueryLooper, IEnumerator> ForeachQueryPrevUpdate  = new Dictionary<OdccQueryLooper, IEnumerator>();
-		public static Dictionary<OdccQueryLooper, IEnumerator> ForeachQueryNextUpdate  = new Dictionary<OdccQueryLooper, IEnumerator>();
+		internal static Dictionary<QuerySystem, OdccQueryCollector> OdccQueryCollectors = new Dictionary<QuerySystem, OdccQueryCollector>();
+
+		internal static Dictionary<OdccQueryLooper, IEnumerator> ForeachQueryPrevUpdate  = new Dictionary<OdccQueryLooper, IEnumerator>();
+		internal static Dictionary<OdccQueryLooper, IEnumerator> ForeachQueryNextUpdate  = new Dictionary<OdccQueryLooper, IEnumerator>();
+#if USING_AWAITABLE
+		internal static List<OdccQueryLooper> ForeachQueryPrevUpdate_V2;
+		internal static List<OdccQueryLooper> ForeachQueryNextUpdate_V2;
+#endif
 
 		private static readonly Queue<Action> foreachAction = new Queue<Action>();
-		public static void InitForeach()
+
+		internal static void InitForeach()
 		{
+
+#if USING_LEGACY_COLLECTOR
 			OdccObjectList = OdccCollector<ObjectBehaviour>.CreateCollector();
 			OdccComponentList = OdccCollector<ComponentBehaviour>.CreateCollector();
 
 			ObjectLooper = OdccObjectList.CreateLooper();
-			ObjectLooper.SetListener(nameof(BCComponentUpdate), BCComponentUpdate);
+			ObjectLooper.SetListener(nameof(OCBehaviourUpdate), OCBehaviourUpdate);
 			ComponentLooper = OdccComponentList.CreateLooper();
-			ComponentLooper.SetListener(nameof(BCComponentUpdate), BCComponentUpdate);
+			ComponentLooper.SetListener(nameof(OCBehaviourUpdate), OCBehaviourUpdate);
 
 			ObjectLateLooper = OdccObjectList.CreateLooper();
-			ObjectLateLooper.SetListener(nameof(BCComponentLateUpdate), BCComponentLateUpdate);
+			ObjectLateLooper.SetListener(nameof(OCBehaviourLateUpdate), OCBehaviourLateUpdate);
 			ComponentLateLooper = OdccComponentList.CreateLooper();
-			ComponentLateLooper.SetListener(nameof(BCComponentLateUpdate), BCComponentLateUpdate);
+			ComponentLateLooper.SetListener(nameof(OCBehaviourLateUpdate), OCBehaviourLateUpdate);
+#else
+			OdccObjectListQuerySystem = QuerySystemBuilder.CreateQuery().WithAny<ObjectBehaviour>(true).Build();
+			OdccComponentListQuerySystem = QuerySystemBuilder.CreateQuery().WithAny<ComponentBehaviour>(true).Build();
+
+			OdccObjectList = OdccQueryCollector.CreateQueryCollector(OdccObjectListQuerySystem);
+			OdccComponentList = OdccQueryCollector.CreateQueryCollector(OdccComponentListQuerySystem);
+
+#endif
 		}
-		public static void ReleaseForeach()
+		internal static void ReleaseForeach()
 		{
+#if USING_LEGACY_COLLECTOR
 			OdccCollector<ObjectBehaviour>.DeleteCollector();
 			OdccCollector<ComponentBehaviour>.DeleteCollector();
 
@@ -58,13 +88,21 @@ namespace BC.ODCC
 			OdccCollectorList.Clear();
 			ForeachPrevUpdate.Clear();
 			ForeachNextUpdate.Clear();
-
+#else
+			OdccQueryCollector.DeleteQueryCollector(OdccObjectListQuerySystem);
+			OdccQueryCollector.DeleteQueryCollector(OdccComponentListQuerySystem);
+			OdccObjectListQuerySystem = null;
+			OdccComponentListQuerySystem = null;
+			OdccObjectList = null;
+			OdccComponentList = null;
+#endif
+			OdccQueryCollectors.Clear();
 			ForeachQueryPrevUpdate.Clear();
 			ForeachQueryNextUpdate.Clear();
 
 			foreachAction.Clear();
 		}
-		private static void BCComponentUpdate(IEnumerable<OCBehaviour> behaviour)
+		private static void OCBehaviourUpdate(IEnumerable<OCBehaviour> behaviour)
 		{
 			while(foreachAction.Count > 0)
 			{
@@ -75,8 +113,7 @@ namespace BC.ODCC
 				var item = _item;
 				if(item.IsEnable || item.IsCanUpdateDisable)
 				{
-					foreachAction.Enqueue(() =>
-					{
+					foreachAction.Enqueue(() => {
 						item.BaseUpdate();
 					});
 				}
@@ -86,7 +123,7 @@ namespace BC.ODCC
 				foreachAction.Dequeue().Invoke();
 			}
 		}
-		private static void BCComponentLateUpdate(IEnumerable<OCBehaviour> behaviour)
+		private static void OCBehaviourLateUpdate(IEnumerable<OCBehaviour> behaviour)
 		{
 			while(foreachAction.Count > 0)
 			{
@@ -97,8 +134,7 @@ namespace BC.ODCC
 				var item = _item;
 				if(item.IsEnable  || item.IsCanUpdateDisable)
 				{
-					foreachAction.Enqueue(() =>
-					{
+					foreachAction.Enqueue(() => {
 						item.BaseLateUpdate();
 					});
 				}
@@ -108,13 +144,14 @@ namespace BC.ODCC
 				foreachAction.Dequeue().Invoke();
 			}
 		}
-		public static void AddOdccCollectorList(OCBehaviour behaviour)
+		internal static void AddOdccCollectorList(OCBehaviour behaviour)
 		{
 			while(foreachAction.Count > 0)
 			{
 				foreachAction.Dequeue().Invoke();
 			}
 
+#if USING_LEGACY_COLLECTOR
 			var keyList = OdccCollectorList.Keys.ToList();
 
 			int count = keyList.Count;
@@ -122,14 +159,13 @@ namespace BC.ODCC
 			{
 				OdccCollectorList[keyList[i]].AddItem(behaviour);
 			}
-
+#endif
 			if(behaviour is ObjectBehaviour objectBehaviour)
 			{
 				foreach(var _query in OdccQueryCollectors)
 				{
 					var query  = _query;
-					foreachAction.Enqueue(() =>
-					{
+					foreachAction.Enqueue(() => {
 						OdccQueryCollector queryCollector = query.Value;
 						queryCollector.AddObject(objectBehaviour);
 					});
@@ -140,8 +176,7 @@ namespace BC.ODCC
 				foreach(var _query in OdccQueryCollectors)
 				{
 					var query  = _query;
-					foreachAction.Enqueue(() =>
-					{
+					foreachAction.Enqueue(() => {
 						OdccQueryCollector queryCollector = query.Value;
 						ObjectBehaviour thisObject = componentBehaviour.ThisObject;
 						queryCollector.UpdateObjectInQuery(thisObject);
@@ -154,12 +189,13 @@ namespace BC.ODCC
 				foreachAction.Dequeue().Invoke();
 			}
 		}
-		public static void RemoveOdccCollectorList(OCBehaviour behaviour)
+		internal static void RemoveOdccCollectorList(OCBehaviour behaviour)
 		{
 			while(foreachAction.Count > 0)
 			{
 				foreachAction.Dequeue().Invoke();
 			}
+#if USING_LEGACY_COLLECTOR
 			var keyList = OdccCollectorList.Keys.ToList();
 
 			int count = keyList.Count;
@@ -167,15 +203,14 @@ namespace BC.ODCC
 			{
 				OdccCollectorList[keyList[i]].RemoveItem(behaviour);
 			}
-
+#endif
 			if(behaviour is ObjectBehaviour objectBehaviour)
 			{
 				foreach(var _query in OdccQueryCollectors)
 				{
 					var query  = _query;
-					foreachAction.Enqueue(() =>
-					{
-						OdccQueryCollector queryCollector = query.Value;
+					OdccQueryCollector queryCollector = query.Value;
+					foreachAction.Enqueue(() => {
 						queryCollector.RemoveObject(objectBehaviour);
 					});
 				}
@@ -185,10 +220,9 @@ namespace BC.ODCC
 				foreach(var _query in OdccQueryCollectors)
 				{
 					var query  = _query;
-					foreachAction.Enqueue(() =>
-					{
-						OdccQueryCollector queryCollector = query.Value;
-						ObjectBehaviour thisObject = componentBehaviour.ThisObject;
+					OdccQueryCollector queryCollector = query.Value;
+					ObjectBehaviour thisObject = componentBehaviour.ThisObject;
+					foreachAction.Enqueue(() => {
 						queryCollector.UpdateObjectInQuery(thisObject);
 					});
 				}
@@ -198,8 +232,11 @@ namespace BC.ODCC
 			{
 				foreachAction.Dequeue().Invoke();
 			}
+
+			RemoveLifeItemOdccCollectorList(behaviour);
 		}
-		public static void UpdateObjectInQuery(ObjectBehaviour updateObject)
+
+		internal static void UpdateObjectInQuery(ObjectBehaviour updateObject)
 		{
 			while(foreachAction.Count > 0)
 			{
@@ -208,8 +245,7 @@ namespace BC.ODCC
 			foreach(var _query in OdccQueryCollectors)
 			{
 				var query  = _query;
-				foreachAction.Enqueue(() =>
-				{
+				foreachAction.Enqueue(() => {
 					OdccQueryCollector queryCollector = query.Value;
 					queryCollector.UpdateObjectInQuery(updateObject);
 				});
@@ -220,9 +256,10 @@ namespace BC.ODCC
 			}
 		}
 
-		public static void ForeachUpdate()
+		internal static void ForeachUpdate()
 		{
 			Action listToNext = null;
+#if USING_LEGACY_COLLECTOR
 			foreach(var item in ForeachPrevUpdate)
 			{
 				var key= item.Key;
@@ -236,6 +273,7 @@ namespace BC.ODCC
 					}
 				}
 			}
+#endif
 			foreach(var item in ForeachQueryPrevUpdate)
 			{
 				var key= item.Key;
@@ -249,12 +287,16 @@ namespace BC.ODCC
 					}
 				}
 			}
-
+#if USING_LEGACY_COLLECTOR
 			var updateLoop = ObjectLooper?.RunAction();
 			if(updateLoop != null) while(updateLoop.MoveNext()) ;
 			updateLoop = ComponentLooper?.RunAction();
 			if(updateLoop != null) while(updateLoop.MoveNext()) ;
-
+#else
+			OCBehaviourUpdate(OdccObjectList.GetQueryItems());
+			OCBehaviourUpdate(OdccComponentList.GetQueryItems());
+#endif
+#if USING_LEGACY_COLLECTOR
 			foreach(var item in ForeachNextUpdate)
 			{
 				OdccLooper key= item.Key;
@@ -268,6 +310,7 @@ namespace BC.ODCC
 					}
 				}
 			}
+#endif
 			foreach(var item in ForeachQueryNextUpdate)
 			{
 				var key= item.Key;
@@ -285,12 +328,47 @@ namespace BC.ODCC
 
 			listToNext?.Invoke();
 		}
-		public static void ForeachLateUpdate()
+		internal static void ForeachLateUpdate()
 		{
+#if USING_LEGACY_COLLECTOR
 			var updateLoop = ObjectLateLooper?.RunAction();
 			if(updateLoop != null) while(updateLoop.MoveNext()) ;
 			updateLoop = ComponentLateLooper?.RunAction();
 			if(updateLoop != null) while(updateLoop.MoveNext()) ;
+#else
+			OCBehaviourLateUpdate(OdccObjectList.GetQueryItems());
+			OCBehaviourLateUpdate(OdccComponentList.GetQueryItems());
+#endif
+		}
+
+
+		internal static void RemoveLifeItemOdccCollectorList(OCBehaviour ocBehaviour)
+		{
+			foreach(var _query in OdccQueryCollectors)
+			{
+				OdccQueryCollector queryCollector = _query.Value;
+				foreachAction.Enqueue(() => {
+					queryCollector.RemoveLifeItem(ocBehaviour);
+				});
+			}
+			while(foreachAction.Count > 0)
+			{
+				foreachAction.Dequeue().Invoke();
+			}
+		}
+		internal static void RemoveLifeItemOdccCollectorList(Scene scene)
+		{
+			foreach(var _query in OdccQueryCollectors)
+			{
+				OdccQueryCollector queryCollector = _query.Value;
+				foreachAction.Enqueue(() => {
+					queryCollector.RemoveLifeItem(scene);
+				});
+			}
+			while(foreachAction.Count > 0)
+			{
+				foreachAction.Dequeue().Invoke();
+			}
 		}
 	}
 }

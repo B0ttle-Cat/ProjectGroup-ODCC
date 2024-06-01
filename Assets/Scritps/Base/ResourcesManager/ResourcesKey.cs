@@ -44,8 +44,7 @@ namespace BC.Base
 		public Object ObjectAsset;
 
 		public static ResourcesKey Empty => new ResourcesKey() { LoadType = eResourcesLoadType.None, FullPath = "", BundleName = "", ObjectAsset  = null };
-		public bool IsEmpty => LoadType switch
-		{
+		public bool IsEmpty => LoadType switch {
 			eResourcesLoadType.None => true,
 			eResourcesLoadType.ResourcesLoad => string.IsNullOrWhiteSpace(FullPath),
 			eResourcesLoadType.AssetBundle => string.IsNullOrWhiteSpace(FullPath) || string.IsNullOrWhiteSpace(BundleName),

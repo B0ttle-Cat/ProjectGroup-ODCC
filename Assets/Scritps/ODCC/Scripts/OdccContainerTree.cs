@@ -72,6 +72,8 @@ namespace BC.ODCC
 			public ComponentBehaviour[] componentList = new ComponentBehaviour[0];
 			[SerializeReference]
 			public DataObject[] dataList = new DataObject[0];
+			[ReadOnly, ShowInInspector]
+			internal int[] typeIndex = new int[0];
 
 			[HideInInspector] internal Action<ObjectBehaviour>        onUpdateParent;
 			[HideInInspector] internal Action<ObjectBehaviour[]>      onUpdateChilds;
@@ -91,6 +93,7 @@ namespace BC.ODCC
 				childs = null;
 				componentList = null;
 				dataList = null;
+				typeIndex = null;
 
 				onUpdateParent = null;
 				onUpdateChilds = null;
@@ -138,6 +141,7 @@ namespace BC.ODCC
 				UpdateParent();
 				UpdateChilds();
 				UpdateComponents();
+
 				CallUpdateEvent(true, true, true, true);
 			}
 			internal bool UpdateParent()
@@ -332,10 +336,33 @@ namespace BC.ODCC
 
 			public void CallUpdateEvent(bool parent, bool childs, bool componentList, bool dataList)
 			{
-				if(parent) onUpdateParent?.Invoke(this.parent);
-				if(childs) onUpdateChilds?.Invoke(this.childs);
-				if(componentList) onUpdateComponents?.Invoke(this.componentList);
-				if(dataList) onUpdateDatas?.Invoke(this.dataList);
+				if(parent || childs || componentList || dataList)
+				{
+					TypeIndexUpdate();
+					if(parent) onUpdateParent?.Invoke(this.parent);
+					if(childs) onUpdateChilds?.Invoke(this.childs);
+					if(componentList) onUpdateComponents?.Invoke(this.componentList);
+					if(dataList) onUpdateDatas?.Invoke(this.dataList);
+				}
+
+			}
+			public void TypeIndexUpdate()
+			{
+				int compCount = componentList.Length;
+				int dataCount = dataList.Length;
+				int count = 1 + compCount + dataCount;
+
+				typeIndex = new int[count];
+
+				typeIndex[0] = thisObject.OdccTypeIndex;
+				for(int i = 0 ; i < compCount ; i++)
+				{
+					typeIndex[1 + i] = componentList[i].OdccTypeIndex;
+				}
+				for(int i = 0 ; i < dataCount ; i++)
+				{
+					typeIndex[1 + compCount] = dataList[i].OdccTypeIndex;
+				}
 			}
 		}
 

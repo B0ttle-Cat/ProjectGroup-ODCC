@@ -9,18 +9,27 @@ namespace BC.ODCC
 		internal HashSet<int> Any = new HashSet<int>();
 		internal HashSet<int> None = new HashSet<int>();
 		internal HashSet<int> All = new HashSet<int>();
+		internal HashSet<int> InheritanceOfAny = new HashSet<int>();
+		internal HashSet<int> InheritanceOfNone = new HashSet<int>();
+		internal HashSet<int> InheritanceOfAll = new HashSet<int>();
 
 		private QuerySystemBuilder(QuerySystem initQuerySystem = null)
 		{
 			Any = new HashSet<int>();
 			None = new HashSet<int>();
 			All = new HashSet<int>();
-
+			InheritanceOfAny = new HashSet<int>();
+			InheritanceOfNone = new HashSet<int>();
+			InheritanceOfAll = new HashSet<int>();
 			if(initQuerySystem != null)
 			{
 				Any = initQuerySystem.Any.ToHashSet();
 				None = initQuerySystem.None.ToHashSet();
 				All = initQuerySystem.All.ToHashSet();
+
+				InheritanceOfAny = initQuerySystem.InheritanceOfAny.ToHashSet();
+				InheritanceOfNone = initQuerySystem.InheritanceOfNone.ToHashSet();
+				InheritanceOfAll = initQuerySystem.InheritanceOfAll.ToHashSet();
 			}
 		}
 		public static QuerySystemBuilder CreateQuery(QuerySystem initQuerySystem = null)
@@ -32,30 +41,57 @@ namespace BC.ODCC
 			return new QuerySystem(
 				Any.OrderBy(x => x).ToArray(),
 				None.OrderBy(x => x).ToArray(),
-				All.OrderBy(x => x).ToArray());
+				All.OrderBy(x => x).ToArray(),
+				InheritanceOfAny.OrderBy(x => x).ToArray(),
+				InheritanceOfNone.OrderBy(x => x).ToArray(),
+				InheritanceOfAll.OrderBy(x => x).ToArray());
 		}
 
-		public QuerySystemBuilder WithAny(params int[] typeIndexs)
+		public QuerySystemBuilder WithAny(bool checkInheritance, params int[] typeIndexs)
 		{
 			foreach(var item in typeIndexs)
 			{
-				if(item>=0) Any.Add(item);
+				if(item<0) continue;
+				if(checkInheritance)
+				{
+					InheritanceOfAny.Add(item);
+				}
+				else
+				{
+					Any.Add(item);
+				}
 			}
 			return this;
 		}
-		public QuerySystemBuilder WithNone(params int[] typeIndexs)
+		public QuerySystemBuilder WithNone(bool checkInheritance, params int[] typeIndexs)
 		{
 			foreach(var item in typeIndexs)
 			{
-				if(item>=0) None.Add(item);
+				if(item<0) continue;
+				if(checkInheritance)
+				{
+					InheritanceOfNone.Add(item);
+				}
+				else
+				{
+					None.Add(item);
+				}
 			}
 			return this;
 		}
-		public QuerySystemBuilder WithAll(params int[] typeIndexs)
+		public QuerySystemBuilder WithAll(bool checkInheritance, params int[] typeIndexs)
 		{
 			foreach(var item in typeIndexs)
 			{
-				if(item>=0) All.Add(item);
+				if(item<0) continue;
+				if(checkInheritance)
+				{
+					InheritanceOfAll.Add(item);
+				}
+				else
+				{
+					All.Add(item);
+				}
 			}
 			return this;
 		}
@@ -79,40 +115,47 @@ namespace BC.ODCC
 
 	public class QuerySystem : IEquatable<QuerySystem>
 	{
-		/// <summary>
-		/// Any 리스트에 있는 하나 이상의 컴포넌트 유형을 포함하는 아키타입을 포함합니다.
-		/// </summary>
 		internal readonly int[] Any = Array.Empty<int>();
-		/// <summary>
-		/// 이 컴포넌트 유형을 포함하지 않는 아키타입을 포함합니다.
-		/// </summary>
 		internal readonly int[] None = Array.Empty<int>();
-		/// <summary>
-		/// All 리스트에 있는 모든 컴포넌트 유형을 포함하는 아키타입을 포함합니다.
-		/// </summary>
 		internal readonly int[] All = Array.Empty<int>();
 
-		internal QuerySystem(int[] any, int[] none, int[] all)
+		internal readonly int[] InheritanceOfAny = Array.Empty<int>();
+		internal readonly int[] InheritanceOfNone = Array.Empty<int>();
+		internal readonly int[] InheritanceOfAll = Array.Empty<int>();
+
+
+		internal QuerySystem(int[] any, int[] none, int[] all,
+			int[] inheritanceOfAny, int[] inheritanceOfNone, int[] inheritanceOfAll
+			)
 		{
 			Any=any;
 			None=none;
 			All=all;
+			InheritanceOfAny = inheritanceOfAny;
+			InheritanceOfNone = inheritanceOfNone;
+			InheritanceOfAll = inheritanceOfAll;
 		}
 		public bool IsAny(IEnumerable<int> odccItems)
 		{
-			bool result = Any.Length == 0 || Any.Any((i) => odccItems.Contains(i));
+			bool result
+				= (Any.Length == 0 || Any.Any((i) => odccItems.Contains(i)))
+				|| (InheritanceOfAny.Length == 0 || InheritanceOfAny.Any((i) => OdccManager.CheckIsInheritanceIndex(i, odccItems)));
 			return result;
 		}
 
 		public bool IsNone(IEnumerable<int> odccItems)
 		{
-			bool result = None.Length == 0 || !None.Any((i) => odccItems.Contains(i));
+			bool result
+				= (None.Length == 0 || !None.Any((i) => odccItems.Contains(i)))
+				|| (InheritanceOfNone.Length == 0 || !InheritanceOfNone.Any((i) => OdccManager.CheckIsInheritanceIndex(i, odccItems)));
 			return result;
 		}
 
 		public bool IsAll(IEnumerable<int> odccItems)
 		{
-			bool result = All.Length == 0 || All.All((i) => odccItems.Contains(i));
+			bool result =
+				(All.Length == 0 || All.All((i) => odccItems.Contains(i)))
+				&& (InheritanceOfAll.Length == 0 || InheritanceOfAll.All((i) => OdccManager.CheckIsInheritanceIndex(i, odccItems)));
 			return result;
 		}
 
@@ -131,6 +174,12 @@ namespace BC.ODCC
 			if(!ArraysEquivalent(Any, other.Any))
 				return false;
 			if(!ArraysEquivalent(None, other.None))
+				return false;
+			if(!ArraysEquivalent(InheritanceOfAll, other.InheritanceOfAll))
+				return false;
+			if(!ArraysEquivalent(InheritanceOfAny, other.InheritanceOfAny))
+				return false;
+			if(!ArraysEquivalent(InheritanceOfNone, other.InheritanceOfNone))
 				return false;
 			return true;
 		}
@@ -151,6 +200,9 @@ namespace BC.ODCC
 			result = (result * 397) ^ (All ?? Array.Empty<int>()).GetHashCode();
 			result = (result * 397) ^ (Any ?? Array.Empty<int>()).GetHashCode();
 			result = (result * 397) ^ (None ?? Array.Empty<int>()).GetHashCode();
+			result = (result * 397) ^ (InheritanceOfAll ?? Array.Empty<int>()).GetHashCode();
+			result = (result * 397) ^ (InheritanceOfAny ?? Array.Empty<int>()).GetHashCode();
+			result = (result * 397) ^ (InheritanceOfNone ?? Array.Empty<int>()).GetHashCode();
 			return result;
 		}
 

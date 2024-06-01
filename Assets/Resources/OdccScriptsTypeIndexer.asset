@@ -1,0 +1,129 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8fcc01f59fc1354c97c307d71afd498, type: 3}
+  m_Name: OdccScriptsTypeIndexer
+  m_EditorClassIdentifier: 
+  typeIndexer:
+  - typeName: BC.BaseUI.ImageTransitions
+    index: 0
+    assignables: 1f00000022000000
+  - typeName: BC.BaseUI.SimpleUIAnimatorList
+    index: 1
+    assignables: 1f00000022000000
+  - typeName: BC.BaseUI.UIAnimatorList
+    index: 2
+    assignables: 1f00000022000000
+  - typeName: BC.BaseUI.ButtonData
+    index: 3
+    assignables: 20000000
+  - typeName: BC.BaseUI.CanvasData
+    index: 4
+    assignables: 20000000
+  - typeName: BC.BaseUI.CanvasGroupData
+    index: 5
+    assignables: 20000000
+  - typeName: BC.BaseUI.DialogueData
+    index: 6
+    assignables: 20000000
+  - typeName: BC.BaseUI.DropdownData
+    index: 7
+    assignables: 20000000
+  - typeName: BC.BaseUI.ImageData
+    index: 8
+    assignables: 20000000
+  - typeName: BC.BaseUI.SliderData
+    index: 9
+    assignables: 20000000
+  - typeName: BC.BaseUI.TapWindowData
+    index: 10
+    assignables: 20000000
+  - typeName: BC.BaseUI.TextData
+    index: 11
+    assignables: 20000000
+  - typeName: BC.BaseUI.ToggleData
+    index: 12
+    assignables: 20000000
+  - typeName: BC.BaseUI.Button
+    index: 13
+    assignables: 190000002100000022000000
+  - typeName: BC.BaseUI.Canvas
+    index: 14
+    assignables: 190000002100000022000000
+  - typeName: BC.BaseUI.CanvasGroup
+    index: 15
+    assignables: 190000002100000022000000
+  - typeName: BC.BaseUI.Dialogue
+    index: 16
+    assignables: 17000000190000002100000022000000
+  - typeName: BC.BaseUI.Dropdown
+    index: 17
+    assignables: 190000002100000022000000
+  - typeName: BC.BaseUI.DropdownList
+    index: 18
+    assignables: 1f00000022000000
+  - typeName: BC.BaseUI.Image
+    index: 19
+    assignables: 190000002100000022000000
+  - typeName: BC.BaseUI.RectUIObject
+    index: 20
+    assignables: 190000002100000022000000
+  - typeName: BC.BaseUI.Slider
+    index: 21
+    assignables: 190000002100000022000000
+  - typeName: BC.BaseUI.TapWindow
+    index: 22
+    assignables: 190000002100000022000000
+  - typeName: BC.BaseUI.Text
+    index: 23
+    assignables: 190000002100000022000000
+  - typeName: BC.BaseUI.Toggle
+    index: 24
+    assignables: 190000002100000022000000
+  - typeName: BC.BaseUI.UIObject
+    index: 25
+    assignables: 2100000022000000
+  - typeName: BC.BaseUI.UIObject`1
+    index: 26
+    assignables: 190000002100000022000000
+  - typeName: BC.BaseUI.UIPopup
+    index: 27
+    assignables: 0e000000190000002100000022000000
+  - typeName: BC.ODCC.OdccFiniteStateMachine
+    index: 28
+    assignables: 1f00000022000000
+  - typeName: BC.ODCC.OdccStateComponent
+    index: 29
+    assignables: 1f00000022000000
+  - typeName: BC.ODCC.OdccStateData
+    index: 30
+    assignables: 20000000
+  - typeName: BC.ODCC.ComponentBehaviour
+    index: 31
+    assignables: 22000000
+  - typeName: BC.ODCC.DataObject
+    index: 32
+    assignables: 
+  - typeName: BC.ODCC.ObjectBehaviour
+    index: 33
+    assignables: 22000000
+  - typeName: BC.ODCC.OCBehaviour
+    index: 34
+    assignables: 
+  - typeName: BC.ODCC.SingletonObjectBehaviour`1
+    index: 35
+    assignables: 2100000022000000
+  - typeName: BC.OdccBase.AnimatorComponent
+    index: 36
+    assignables: 1f00000022000000
+  - typeName: BC.OdccBase.AnimatorData
+    index: 37
+    assignables: 20000000

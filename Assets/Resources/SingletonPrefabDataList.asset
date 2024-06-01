@@ -12,5 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35764d0beffa5954383a3b8474d1ad88, type: 3}
   m_Name: SingletonPrefabDataList
   m_EditorClassIdentifier: 
-  PrefabList:
-  - {fileID: 4330208715666783844, guid: 26a785a76b60a0242b3cd6e4605b5f25, type: 3}
+  PrefabList: []
