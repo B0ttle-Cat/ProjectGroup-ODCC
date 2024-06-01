@@ -4,7 +4,7 @@ namespace BC.Base
 	{
 #if UNITY_EDITOR
 		public const int maxDeepCount = 20;
-		private static string GetCallingMethodName(int deepCount = 7)
+		private static string GetCallingMethodName(int deepCount)
 		{
 			System.Collections.Generic.List<string> callStack = new System.Collections.Generic.List<string>();
 			System.Diagnostics.StackTrace stackTrace = new System.Diagnostics.StackTrace();
@@ -26,59 +26,45 @@ namespace BC.Base
 		}
 #endif
 		[System.Diagnostics.Conditional("UNITY_EDITOR")]
-		public static void Log(object log = null)
+		public static void Log(object log = null, int deepCount = 7)
 		{
 #if UNITY_EDITOR
 			if(log == null)
 			{
-				UnityEngine.Debug.Log(GetCallingMethodName());
+				UnityEngine.Debug.Log(GetCallingMethodName(deepCount));
 			}
 			else
 			{
-				UnityEngine.Debug.Log($"<b>{log}</b>\n{GetCallingMethodName()}");
-			}
-#endif
-		}
-		[System.Diagnostics.Conditional("UNITY_EDITOR")]
-		public static void Log(object log, int addDeepCount)
-		{
-#if UNITY_EDITOR
-			if(log == null)
-			{
-				UnityEngine.Debug.Log(GetCallingMethodName(7 + addDeepCount));
-			}
-			else
-			{
-				UnityEngine.Debug.Log($"<b>{log}</b>\n{GetCallingMethodName(7 + addDeepCount)}");
+				UnityEngine.Debug.Log($"<b>{log}</b>\n{GetCallingMethodName(deepCount)}");
 			}
 #endif
 		}
 
 		[System.Diagnostics.Conditional("UNITY_EDITOR")]
-		public static void LogWarning(object log)
+		public static void LogWarning(object log = null, int deepCount = 7)
 		{
 #if UNITY_EDITOR
 			if(log == null)
 			{
-				UnityEngine.Debug.LogWarning(GetCallingMethodName());
+				UnityEngine.Debug.LogWarning(GetCallingMethodName(deepCount));
 			}
 			else
 			{
-				UnityEngine.Debug.LogWarning($"<b>{log}</b>\n{GetCallingMethodName()}");
+				UnityEngine.Debug.LogWarning($"<b>{log}</b>\n{GetCallingMethodName(deepCount)}");
 			}
 #endif
 		}
 		[System.Diagnostics.Conditional("UNITY_EDITOR")]
-		public static void LogError(object log)
+		public static void LogError(object log = null, int deepCount = 7)
 		{
 #if UNITY_EDITOR
 			if(log == null)
 			{
-				UnityEngine.Debug.LogError(GetCallingMethodName());
+				UnityEngine.Debug.LogError(GetCallingMethodName(deepCount));
 			}
 			else
 			{
-				UnityEngine.Debug.LogError($"<b>{log}</b>\n{GetCallingMethodName()}");
+				UnityEngine.Debug.LogError($"<b>{log}</b>\n{GetCallingMethodName(deepCount)}");
 			}
 #endif
 		}

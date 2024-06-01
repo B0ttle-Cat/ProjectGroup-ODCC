@@ -1,28 +1,33 @@
 #if UNITY_EDITOR
+#define USING_AWAITABLE_LOOP
+#undef USING_LEGACY_COLLECTOR
+
 using UnityEditor;
 
 using UnityEngine;
 
 namespace BC.ODCC
 {
-	public static class OdccUniversalDelegatesGenerater
+	public static class OdccUniversalDelegatesGenerator
 	{
 		static string generateDelegatesClass =
-			$"/// 이 코드는 <see cref=\"BC.ODCC.OdccUniversalDelegatesGenerater\"/>에서 자동완성 됩니다."
+			$"/// 이 코드는 <see cref=\"BC.ODCC.OdccUniversalDelegatesGenerator\"/>에서 자동완성 됩니다."
 			+ "\nnamespace BC.ODCC"
 			+ "\n{"
-			+ "\n	using System.Collections;"
 			+ "\n	using System.Collections.Generic;"
 			+ "\n"
-			+ "\n	using UnityEngine;"
-			+ "\n"
 			+ "\n	#region Delegate"
+			+ "\n#if USING_AWAITABLE_LOOP"
 			+ "\n	public delegate void T();"
 			+ "\n	{0-0}"
-			+ "\n	public delegate IEnumerator I();"
+			+ "\n	public delegate UnityEngine.Awaitable A();"
 			+ "\n	{0-1}"
-			+ "\n	public delegate Awaitable A();"
+			+ "\n#else"
+			+ "\n	public delegate void T();"
 			+ "\n	{0-2}"
+			+ "\n	public delegate System.Collections.IEnumerator I();"
+			+ "\n	{0-3}"
+			+ "\n#endif"
 			+ "\n	#endregion"
 			+ "\n"
 			+ "\n	#region QuerySystemBuilder"
@@ -52,24 +57,28 @@ namespace BC.ODCC
 			string generateCode = "";
 			int generateCount = 20;
 
-			generateCode = string.Join("\n\t", GenerateDelegate(generateCount));
+			generateCode = string.Join("\n\t", GenerateDelegate2(true, generateCount));
 			Debug.Log(generateCode);
 			generate = generate.Replace("{0-0}", generateCode);
 
-			generateCode = string.Join("\n\t", GenerateDelegate_IEnumerator(generateCount));
+			generateCode = string.Join("\n\t", GenerateDelegate_Awatable(true, generateCount));
 			Debug.Log(generateCode);
 			generate = generate.Replace("{0-1}", generateCode);
 
-			generateCode = string.Join("\n\t", GenerateDelegate_Awatable(generateCount));
+			generateCode = string.Join("\n\t", GenerateDelegate(false, generateCount));
 			Debug.Log(generateCode);
 			generate = generate.Replace("{0-2}", generateCode);
+
+			generateCode = string.Join("\n\t", GenerateDelegate_IEnumerator(false, generateCount));
+			Debug.Log(generateCode);
+			generate = generate.Replace("{0-3}", generateCode);
 
 
 			generateCode = string.Join("\n\t\t", GenerateQueryCode("WithAny", generateCount));
 			Debug.Log(generateCode);
 			generate = generate.Replace("{1}", generateCode);
 
-			generateCode =  string.Join("\n\t\t", GenerateQueryCode("WithNone", generateCount));
+			generateCode = string.Join("\n\t\t", GenerateQueryCode("WithNone", generateCount));
 			Debug.Log(generateCode);
 			generate = generate.Replace("{2}", generateCode);
 
@@ -86,12 +95,12 @@ namespace BC.ODCC
 			Debug.Log("클립 보드에 복사됨! OdccUniversalDelegates.cs 에 직접 붙여넣기.");
 		}
 
-		public static string[] GenerateDelegate(int count)
+		public static string[] GenerateDelegate(bool firstIsObject, int count)
 		{
 			string[] generateDelegate = new string[count];
 			for(int i = 0 ; i < count ; i++)
 			{
-				generateDelegate[i] = $"public delegate void T<{GenerateParameters(i)}>({GenerateArguments(i)}) {GenerateWhere(i)};";
+				generateDelegate[i] = $"public delegate void T<{GenerateParameters(i)}>({GenerateArguments(i)}) {GenerateWhere(firstIsObject, i)};";
 			}
 			return generateDelegate;
 
@@ -115,22 +124,29 @@ namespace BC.ODCC
 				return string.Join(", ", arguments);
 			}
 
-			static string GenerateWhere(int count)
+			static string GenerateWhere(bool firstIsObject, int count)
 			{
 				string[] parameters = new string[++count];
 				for(int i = 0 ; i < count ; i++)
 				{
-					parameters[i] = $"where T{i} : class, IOdccItem";
+					if(firstIsObject && i == 0)
+					{
+						parameters[i] = $"where T{i} : class, IOdccObject";
+					}
+					else
+					{
+						parameters[i] = $"where T{i} : class, IOdccItem";
+					}
 				}
 				return string.Join(" ", parameters);
 			}
 		}
-		public static string[] GenerateDelegate_IEnumerator(int count)
+		public static string[] GenerateDelegate_IEnumerator(bool firstIsObject, int count)
 		{
 			string[] generateDelegate = new string[count];
 			for(int i = 0 ; i < count ; i++)
 			{
-				generateDelegate[i] = $"public delegate IEnumerator I<{GenerateParameters(i)}>({GenerateArguments(i)}) {GenerateWhere(i)};";
+				generateDelegate[i] = $"public delegate System.Collections.IEnumerator I<{GenerateParameters(i)}>({GenerateArguments(i)}) {GenerateWhere(firstIsObject, i)};";
 			}
 			return generateDelegate;
 
@@ -154,22 +170,29 @@ namespace BC.ODCC
 				return string.Join(", ", arguments);
 			}
 
-			static string GenerateWhere(int count)
+			static string GenerateWhere(bool firstIsObject, int count)
 			{
 				string[] parameters = new string[++count];
 				for(int i = 0 ; i < count ; i++)
 				{
-					parameters[i] = $"where T{i} : class, IOdccItem";
+					if(firstIsObject && i == 0)
+					{
+						parameters[i] = $"where T{i} : class, IOdccObject";
+					}
+					else
+					{
+						parameters[i] = $"where T{i} : class, IOdccItem";
+					}
 				}
 				return string.Join(" ", parameters);
 			}
 		}
-		public static string[] GenerateDelegate_Awatable(int count)
+		public static string[] GenerateDelegate2(bool firstIsObject, int count)
 		{
 			string[] generateDelegate = new string[count];
 			for(int i = 0 ; i < count ; i++)
 			{
-				generateDelegate[i] = $"public delegate Awaitable A<{GenerateParameters(i)}>({GenerateArguments(i)}) {GenerateWhere(i)};";
+				generateDelegate[i] = $"public delegate void T<{GenerateParameters(i)}>(OdccQueryLooper.LoopInfo loopInfo, {GenerateArguments(i)}) {GenerateWhere(firstIsObject, i)};";
 			}
 			return generateDelegate;
 
@@ -193,12 +216,65 @@ namespace BC.ODCC
 				return string.Join(", ", arguments);
 			}
 
-			static string GenerateWhere(int count)
+			static string GenerateWhere(bool firstIsObject, int count)
 			{
 				string[] parameters = new string[++count];
 				for(int i = 0 ; i < count ; i++)
 				{
-					parameters[i] = $"where T{i} : class, IOdccItem";
+					if(firstIsObject && i == 0)
+					{
+						parameters[i] = $"where T{i} : class, IOdccObject";
+					}
+					else
+					{
+						parameters[i] = $"where T{i} : class, IOdccItem";
+					}
+				}
+				return string.Join(" ", parameters);
+			}
+		}
+		public static string[] GenerateDelegate_Awatable(bool firstIsObject, int count)
+		{
+			string[] generateDelegate = new string[count];
+			for(int i = 0 ; i < count ; i++)
+			{
+				generateDelegate[i] = $"public delegate UnityEngine.Awaitable A<{GenerateParameters(i)}>(OdccQueryLooper.LoopInfo loopInfo, {GenerateArguments(i)}) {GenerateWhere(firstIsObject, i)};";
+			}
+			return generateDelegate;
+
+			static string GenerateParameters(int count)
+			{
+				string[] parameters = new string[++count];
+				for(int i = 0 ; i < count ; i++)
+				{
+					parameters[i] = $"T{i}";
+				}
+				return string.Join(", ", parameters);
+			}
+
+			static string GenerateArguments(int count)
+			{
+				string[] arguments = new string[++count];
+				for(int i = 0 ; i < count ; i++)
+				{
+					arguments[i] = $"T{i} t{i}";
+				}
+				return string.Join(", ", arguments);
+			}
+
+			static string GenerateWhere(bool firstIsObject, int count)
+			{
+				string[] parameters = new string[++count];
+				for(int i = 0 ; i < count ; i++)
+				{
+					if(firstIsObject && i == 0)
+					{
+						parameters[i] = $"where T{i} : class, IOdccObject";
+					}
+					else
+					{
+						parameters[i] = $"where T{i} : class, IOdccItem";
+					}
 				}
 				return string.Join(" ", parameters);
 			}
@@ -241,7 +317,6 @@ namespace BC.ODCC
 				return string.Join(" ", parameters);
 			}
 		}
-
 		public static string[] GenerateForeachCode(int count)
 		{
 			string[] generateForeach = new string[count];
@@ -249,24 +324,61 @@ namespace BC.ODCC
 			{
 				string T = GenerateParameters(i);
 				string Where = GenerateWhere(i);
+				string WhereAWAITABLE = GenerateWhereAWAITABLE(i);
 				string getForeach1 = GenerateGetForeachItem(i, ", looper.");
 				string getForeach2 = GenerateGetForeachItem(i, ", ");
-				string arguments = GenerateArguments(i ,"; ");
-				string parameters = GenerateArguments(i ,", ");
-				string setValue = GenerateSetValue(i,"; ");
-				string getValue = GenerateGetValue(i,", ");
+				string arguments = GenerateArguments(i, "; ");
+				string parameters = GenerateArguments(i, ", ");
+				string setValue = GenerateSetValue(i, "; ");
+				string getValue = GenerateGetValue(i, ", ");
 
 				string RunForeachStruct = "RunForeachStruct";
 				string ForeachStructList = "runForeachStructList";
 				string className = "RunForeachAction";
 				string createFunction = "CreateRunLoopAction";
 				generateForeach[i] = ""
+				+ $"\n#if USING_AWAITABLE_LOOP"
+				+ $"\n	public class {className}<{T}> : {className} {WhereAWAITABLE}"
+				+ $"\n	{{"
+				+ $"\n		{arguments};"
+				+ $"\n		A<{T}> delegateA;"
+				+ $"\n		public {className}(A<{T}> delegateA, ObjectBehaviour key,{parameters})"
+				+ $"\n		{{"
+				+ $"\n			this.key = key;"
+				+ $"\n			this.delegateA=delegateA; {setValue};"
+				+ $"\n		}}"
+				+ $"\n		internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, {getValue});"
+				+ $"\n	}}"
+				+ $"\n	public OdccQueryLooper Foreach<{T}>(T<{T}> t = null) {WhereAWAITABLE}"
+				+ $"\n	{{"
+				+ $"\n		 return Foreach<{T}>(async (info, {getValue}) => t(info, {getValue}));"
+				+ $"\n	}}"
+				+ $"\n	public OdccQueryLooper Foreach<{T}>(A<{T}> t = null) {WhereAWAITABLE}"
+				+ $"\n	{{"
+				+ $"\n		if(t == null) return this;"
+				+ $"\n		int findIndex = {ForeachStructList}.FindIndex(list => list.targetDelegate.Target == t.Target && list.targetDelegate.Method == t.Method);"
+				+ $"\n		if(findIndex >= 0)"
+				+ $"\n		{{"
+				+ $"\n			var runForeachStruct = runForeachStructList[findIndex];"
+				+ $"\n			runForeachStruct.targetDelegate = t;"
+				+ $"\n			runForeachStructList[findIndex] = runForeachStruct;"
+				+ $"\n			return this;"
+				+ $"\n		}}"
+				+ $"\n		List<{className}> actionList = new List<{className}>();"
+				+ $"\n		foreach(var item in queryCollector.queryItems)"
+				+ $"\n		{{"
+				+ $"\n			actionList.Add({createFunction}(item));"
+				+ $"\n		}}"
+				+ $"\n		{ForeachStructList}.Add(new {RunForeachStruct}(t, actionList, true, {createFunction}));"
+				+ $"\n		return this;"
+				+ $"\n		{className} {createFunction}(ObjectBehaviour item) => new {className}<{T}>(t, item, {getForeach2});"
+				+ $"\n	}}"
+				+ $"\n#else"
 				+ $"\n	public class {className}<{T}> : {className} {Where}"
 				+ $"\n	{{"
+				+ $"\n		{arguments};"
 				+ $"\n		T<{T}> delegateT;"
 				+ $"\n		I<{T}> delegateI;"
-				+ $"\n		A<{T}> delegateA;"
-				+ $"\n		{arguments};"
 				+ $"\n		public {className}(T<{T}> delegateT, ObjectBehaviour key,{parameters})"
 				+ $"\n		{{"
 				+ $"\n			this.key = key;"
@@ -277,14 +389,8 @@ namespace BC.ODCC
 				+ $"\n			this.key = key;"
 				+ $"\n			this.delegateI=delegateI; {setValue};"
 				+ $"\n		}}"
-				+ $"\n		public {className}(A<{T}> delegateA, ObjectBehaviour key,{parameters})"
-				+ $"\n		{{"
-				+ $"\n			this.key = key;"
-				+ $"\n			this.delegateA=delegateA; {setValue};"
-				+ $"\n		}}"
 				+ $"\n		internal override void Run() => delegateT.Invoke({getValue});"
-				+ $"\n		internal override IEnumerator IRun() => delegateI.Invoke({getValue});"
-				+ $"\n		internal override Awaitable ARun() => delegateA.Invoke({getValue});"
+				+ $"\n		internal override System.Collections.IEnumerator IRun() => delegateI.Invoke({getValue});"
 				+ $"\n	}}"
 				+ $"\n	public OdccQueryLooper Foreach<{T}>(T<{T}> t = null) {Where}"
 				+ $"\n	{{"
@@ -326,26 +432,7 @@ namespace BC.ODCC
 				+ $"\n		return this;"
 				+ $"\n		{className} {createFunction}(ObjectBehaviour item) => new {className}<{T}>(t, item, {getForeach2});"
 				+ $"\n	}}"
-				+ $"\n	public OdccQueryLooper Foreach<{T}>(A<{T}> t = null) {Where}"
-				+ $"\n	{{"
-				+ $"\n		if(t == null) return this;"
-				+ $"\n		int findIndex = {ForeachStructList}.FindIndex(list => list.targetDelegate.Target == t.Target && list.targetDelegate.Method == t.Method);"
-				+ $"\n		if(findIndex >= 0)"
-				+ $"\n		{{"
-				+ $"\n			var runForeachStruct = runForeachStructList[findIndex];"
-				+ $"\n			runForeachStruct.targetDelegate = t;"
-				+ $"\n			runForeachStructList[findIndex] = runForeachStruct;"
-				+ $"\n			return this;"
-				+ $"\n		}}"
-				+ $"\n		List<{className}> actionList = new List<{className}>();"
-				+ $"\n		foreach(var item in queryCollector.queryItems)"
-				+ $"\n		{{"
-				+ $"\n			actionList.Add({createFunction}(item));"
-				+ $"\n		}}"
-				+ $"\n		{ForeachStructList}.Add(new {RunForeachStruct}(t, actionList, true, {createFunction}));"
-				+ $"\n		return this;"
-				+ $"\n		{className} {createFunction}(ObjectBehaviour item) => new {className}<{T}>(t, item, {getForeach2});"
-				+ $"\n	}}"
+				+ $"\n#endif"
 				;
 			}
 			return generateForeach;
@@ -365,6 +452,22 @@ namespace BC.ODCC
 				for(int i = 0 ; i < count ; i++)
 				{
 					parameters[i] = $"where T{i} : class, IOdccItem";
+				}
+				return string.Join(" ", parameters);
+			}
+			static string GenerateWhereAWAITABLE(int count)
+			{
+				string[] parameters = new string[++count];
+				for(int i = 0 ; i < count ; i++)
+				{
+					if(i == 0)
+					{
+						parameters[i] = $"where T{i} : class, IOdccObject";
+					}
+					else
+					{
+						parameters[i] = $"where T{i} : class, IOdccItem";
+					}
 				}
 				return string.Join(" ", parameters);
 			}

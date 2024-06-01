@@ -1,7 +1,4 @@
-#undef USING_LEGACY_COLLECTOR
-
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -9,249 +6,12 @@ using UnityEngine;
 
 using Debug = BC.Base.Debug;
 
-
 namespace BC.ODCC
 {
-#if USING_LEGACY_COLLECTOR
-	public class OdccLooper : IDisposable
-	{
-		public string key;
-		public OdccLooper(string key)
-		{
-			this.key=key;
-		}
-
-		public virtual void Dispose()
-		{
-			this.key="";
-		}
-
-		public virtual IEnumerator RunAction()
-		{
-			yield return null;
-		}
-	}
-	public class OdccLooper<T> : OdccLooper where T : class
-	{
-		internal class LooperDelegate
-		{
-			internal string key;
-			internal Func<int> splitCount;
-		}
-		internal class LooperFunction : LooperDelegate
-		{
-			internal Func<IEnumerable<T>, IEnumerator> listener;
-			public LooperFunction(string key, Func<IEnumerable<T>, IEnumerator> listener, Func<int> splitCount)
-			{
-				this.key = key;
-				this.listener = listener;
-				this.splitCount = splitCount;
-			}
-		}
-		internal class LooperAction : LooperDelegate
-		{
-			internal Action<IEnumerable<T>>  listener;
-
-			public LooperAction(string key, Action<IEnumerable<T>> listener, Func<int> splitCount)
-			{
-				this.key = key;
-				this.listener = listener;
-				this.splitCount = splitCount;
-			}
-		}
-
-		public OdccCollector<T> Collector { get; private set; }
-		public Func<T, bool> Condition { get; private set; }
-
-		private List<LooperDelegate> looperDelegate;
-
-		public OdccLooper(OdccCollector<T> collector, string key) : base(key)
-		{
-			this.Collector = collector;
-			this.Condition = null;
-			this.looperDelegate = new List<LooperDelegate>();
-		}
-		public OdccLooper(OdccCollector<T> collector, string key, bool prevUpdate, Func<T, bool> condition = null) : base(key)
-		{
-			this.Collector = collector;
-			this.Condition = condition;
-			this.looperDelegate = new List<LooperDelegate>();
-
-			if(prevUpdate)
-			{
-				OdccForeach.ForeachPrevUpdate.Add(this, RunAction());
-			}
-			else
-			{
-				OdccForeach.ForeachNextUpdate.Add(this, RunAction());
-			}
-		}
-
-		public override void Dispose()
-		{
-			base.Dispose();
-			Collector = null;
-
-			OdccForeach.ForeachPrevUpdate.Remove(this);
-			OdccForeach.ForeachNextUpdate.Remove(this);
-		}
-		public override IEnumerator RunAction()
-		{
-			if(Collector is null) yield break;
-
-			IEnumerable<T> toList = Collector.Collection;
-
-			if(Condition != null)
-			{
-				toList = toList.Where(where => Condition(where));
-			}
-
-			int looperActionListCount = looperDelegate.Count;
-			for(int i = 0 ; i < looperActionListCount ; i++)
-			{
-				LooperDelegate looperAction = looperDelegate[i];
-				int splitCount = looperAction.splitCount?.Invoke() ?? 1;
-				if(splitCount == 0)
-				{
-					while(splitCount <= 0)
-					{
-						yield return null;
-
-						splitCount = looperAction.splitCount.Invoke();
-					}
-				}
-				if(looperAction is LooperAction action)
-				{
-					if(splitCount == 0)
-					{
-						CallActionListener(action, toList);
-					}
-					else if(splitCount == 1)
-					{
-						//yield return null;
-						CallActionListener(action, toList);
-					}
-					else if(splitCount >= 2)
-					{
-						yield return null;
-						int listCount = toList.Count();
-						int stap = listCount / splitCount;
-						int addStap = listCount % splitCount;
-
-						for(int index = 0 ; index < listCount ;)
-						{
-							int stapCount = stap + addStap-- == 0 ? 0 : stap + 1;
-
-							CallActionListener(action, toList.Skip(index).Take(stapCount));
-							yield return null;
-							index += stapCount;
-						}
-					}
-				}
-				else if(looperAction is LooperFunction function)
-				{
-					if(splitCount == 0)
-					{
-						IEnumerator callListener = CallFuncListener(function, toList);
-						while(callListener.MoveNext()) { yield return null; }
-					}
-					else if(splitCount == 1)
-					{
-						yield return null;
-						IEnumerator callListener = CallFuncListener(function, toList);
-						while(callListener.MoveNext()) { yield return null; }
-					}
-					else if(splitCount >= 2)
-					{
-						yield return null;
-						int listCount = toList.Count();
-						int stap = listCount / splitCount;
-						int addStap = listCount % splitCount;
-
-						for(int index = 0 ; index < listCount ;)
-						{
-							int stapCount = stap + addStap-- == 0 ? 0 : stap + 1;
-
-							IEnumerator callListener =  CallFuncListener(function, toList.Skip(index).Take(stapCount));
-							while(callListener.MoveNext()) { yield return null; }
-							yield return null;
-							index += stapCount;
-						}
-					}
-				}
-			}
-
-			void CallActionListener(LooperAction looperAction, IEnumerable<T> callList)
-			{
-				try
-				{
-					looperAction.listener.Invoke(callList);
-				}
-				catch(Exception ex)
-				{
-					Debug.LogException(ex);
-				}
-			}
-			IEnumerator CallFuncListener(LooperFunction looperAction, IEnumerable<T> callList)
-			{
-				IEnumerator funcListener = null;
-				try
-				{
-					funcListener = looperAction.listener.Invoke(callList);
-					if(funcListener ==null) yield break;
-				}
-				catch(Exception ex)
-				{
-					Debug.LogException(ex);
-				}
-
-				while(funcListener.MoveNext()) { yield return null; }
-				yield break;
-			}
-		}
-		public OdccLooper<T> SetListener(string key, Func<IEnumerable<T>, IEnumerator> listener, Func<int> splitCount = null)
-		{
-			looperDelegate.Clear();
-			looperDelegate.Add(new LooperFunction(key, listener, splitCount));
-
-			return this;
-		}
-		public OdccLooper<T> AddListener(string key, Func<IEnumerable<T>, IEnumerator> listener, Func<int> splitCount = null)
-		{
-			var find = looperDelegate.Find(item => item.key == key);
-			if(find != null) looperDelegate.Remove(find);
-			looperDelegate.Add(new LooperFunction(key, listener, splitCount));
-
-			return this;
-		}
-		public OdccLooper<T> SetListener(string key, Action<IEnumerable<T>> listener, Func<int> splitCount = null)
-		{
-			looperDelegate.Clear();
-			looperDelegate.Add(new LooperAction(key, listener, splitCount));
-
-			return this;
-		}
-		public OdccLooper<T> AddListener(string key, Action<IEnumerable<T>> listener, Func<int> splitCount = null)
-		{
-			var find = looperDelegate.Find(item => item.key == key);
-			if(find != null) looperDelegate.Remove(find);
-			looperDelegate.Add(new LooperAction(key, listener, splitCount));
-
-			return this;
-		}
-		public OdccLooper<T> RemoveListener(string key)
-		{
-			var find = looperDelegate.Find(item => item.key == key);
-			if(find != null) looperDelegate.Remove(find);
-
-			return this;
-		}
-	}
-#endif
 	public sealed partial class OdccQueryLooper : IDisposable
 	{
 		internal OdccQueryCollector queryCollector;
-
+		internal string looperKey;
 		/// Foreach 로 만든 액션의 개수만큼 들어있다.
 		internal List<RunForeachStruct> runForeachStructList;
 		public struct RunForeachStruct
@@ -261,15 +21,15 @@ namespace BC.ODCC
 			// Foreach 에서 Enumerator 를 사용하는지?
 			public bool isEnumerator;
 			// queryCollector 를 만족하는 오브젝트 들 만큼 있음;
-			public IEnumerable<RunForeachAction> runForeachActionList;
+			public RunForeachAction[] runForeachActionList;
 			// queryCollector 를 만족하는 오브젝트가 새로 추가 되면 Foreach에 맞는 Delegate 로 변경함.
 			public Func<ObjectBehaviour, RunForeachAction> createAction;
 
 			public Func<int> updateFrame;
 			public RunForeachStruct(Delegate targetDelegate, List<RunForeachAction> runLoopActionList, bool isEnumerator, Func<ObjectBehaviour, RunForeachAction> createAction)
 			{
-				this.targetDelegate=targetDelegate;
-				this.runForeachActionList = runLoopActionList;
+				this.targetDelegate = targetDelegate;
+				this.runForeachActionList = runLoopActionList.ToArray();
 				this.isEnumerator = isEnumerator;
 				this.createAction = createAction;
 				updateFrame = null;
@@ -294,34 +54,60 @@ namespace BC.ODCC
 		public abstract class RunForeachAction
 		{
 			internal ObjectBehaviour key;
+#if !USING_AWAITABLE_LOOP
 			internal abstract void Run();
-			internal abstract IEnumerator IRun();
-			internal abstract Awaitable ARun();
+			internal abstract System.Collections.IEnumerator IRun();
+#else
+			internal abstract UnityEngine.Awaitable ARun(LoopInfo loopingInfo);
+#endif
 		}
 		public class AddedForeachAction : RunForeachAction
 		{
+#if !USING_AWAITABLE_LOOP
 			internal Action action;
-			internal Func<IEnumerator> iAction;
-			internal Func<Awaitable> aAction;
 			internal override void Run() => action();
-			internal override IEnumerator IRun() => iAction();
-			internal override Awaitable ARun() => aAction();
+			internal Func<System.Collections.IEnumerator> iAction;
+			internal override System.Collections.IEnumerator IRun() => iAction();
+#else
+			internal Func<UnityEngine.Awaitable> aAction;
+			internal override UnityEngine.Awaitable ARun(LoopInfo loopingInfo) => aAction();
+#endif
 		}
 
 		internal Func<bool> onLooperBreakFunction;
 
 		internal bool prevUpdate;
+#if !USING_AWAITABLE_LOOP
 		internal bool isUsingLooper;
+#endif
+		internal bool onShowCallLog;
+		internal int onShowCallLogDepth;
+		public struct LoopInfo
+		{
+			public Func<bool> isLooperBreak;
+			public double loopStartTime;
 
-		internal static OdccQueryLooper CreateLooper(OdccQueryCollector queryCollector, bool prevUpdate)
+			public double actionStartTime;
+			public int actionIndex;
+			public int actionTotalCount;
+
+			public double itemStartTime;
+			public int itemIndex;
+			public int itemTotalCount;
+		}
+		internal static OdccQueryLooper CreateLooperEvent(OdccQueryCollector queryCollector, string key, bool prevUpdate)
 		{
 			OdccQueryLooper Looper = new OdccQueryLooper();
+			Looper.looperKey = key;
 			Looper.queryCollector = queryCollector;
 			Looper.prevUpdate = prevUpdate;
 			Looper.runForeachStructList = new List<RunForeachStruct>();
+#if !USING_AWAITABLE_LOOP
 			Looper.isUsingLooper = true;
+#endif
+			Looper.onShowCallLog = false;
+			Looper.onShowCallLogDepth = 5;
 			Looper.IsBreakFunction(null);
-
 			if(prevUpdate)
 			{
 				OdccForeach.ForeachQueryPrevUpdate.Add(Looper, Looper.RunLooper());
@@ -332,28 +118,126 @@ namespace BC.ODCC
 			}
 			return Looper;
 		}
-		internal static OdccQueryLooper CreateCallEvent(OdccQueryCollector queryCollector)
+
+		internal static OdccQueryLooper CreateActionEvent(OdccQueryCollector queryCollector, string key)
 		{
 			OdccQueryLooper Looper = new OdccQueryLooper();
+			Looper.looperKey = key;
 			Looper.queryCollector = queryCollector;
 			Looper.prevUpdate = false;
 			Looper.runForeachStructList = new List<RunForeachStruct>();
+#if !USING_AWAITABLE_LOOP
 			Looper.isUsingLooper = false;
+#endif
+			Looper.onShowCallLog = false;
+			Looper.onShowCallLogDepth = 5;
 			Looper.IsBreakFunction(null);
 			return Looper;
 		}
 
-		internal async Awaitable RunLooper_V2()
+#if USING_AWAITABLE_LOOP
+		internal async UnityEngine.Awaitable RunLooper()
 		{
-			await Awaitable.NextFrameAsync();
+			if(queryCollector is null) return;
+			if(onLooperBreakFunction != null && onLooperBreakFunction.Invoke())
+			{
+				return;
+			}
+
+			LoopInfo loopingInfo = new LoopInfo()
+			{
+				isLooperBreak = () => onLooperBreakFunction != null && onLooperBreakFunction.Invoke(),
+				loopStartTime = Time.timeAsDouble,
+
+				actionStartTime = 0,
+				actionIndex = 0,
+				actionTotalCount = 0,
+
+				itemStartTime = 0,
+				itemIndex = 0,
+				itemTotalCount = 0,
+			};
+
+			int actionTotalCount = runForeachStructList.Count;
+			loopingInfo.actionTotalCount = actionTotalCount;
+			for(loopingInfo.actionIndex = 0 ; loopingInfo.actionIndex < actionTotalCount ; loopingInfo.actionIndex++)
+			{
+				if(loopingInfo.isLooperBreak()) return;
+
+				loopingInfo.actionStartTime = Time.timeAsDouble;
+				RunForeachStruct action = runForeachStructList[loopingInfo.actionIndex];
+				RunForeachAction[] itemList = action.runForeachActionList;
+				int itemTotalCount = itemList.Length;
+
+				loopingInfo.itemTotalCount = itemTotalCount;
+				for(loopingInfo.itemIndex = 0 ; loopingInfo.itemIndex < itemTotalCount ; loopingInfo.itemIndex++)
+				{
+					if(loopingInfo.isLooperBreak()) return;
+
+					loopingInfo.itemStartTime = Time.timeAsDouble;
+					RunForeachAction item = itemList[loopingInfo.itemIndex];
+					if(onShowCallLog)
+					{
+						Debug.Log($"Start: RunLooper {looperKey} : {loopingInfo.actionIndex+1}/{actionTotalCount} : {loopingInfo.itemIndex+1}/{itemTotalCount}", onShowCallLogDepth);
+					}
+					try
+					{
+						await item.ARun(loopingInfo);
+					}
+					catch(Exception ex)
+					{
+						Debug.LogException(ex);
+					}
+					if(onShowCallLog)
+					{
+						Debug.Log($"Ended: RunLooper {looperKey}");
+					}
+
+				}
+			}
 		}
-		internal IEnumerator RunLooper()
+		public async void RunAction(Action completed = null)
+		{
+			if(onShowCallLog)
+			{
+				Debug.Log($"Start: RunCallEvent : {looperKey}", onShowCallLogDepth);
+			}
+			await RunLooper();
+			if(onShowCallLog)
+			{
+				Debug.Log($"Ended: RunCallEvent : {looperKey}");
+			}
+			try
+			{
+				completed?.Invoke();
+			}
+			catch(Exception ex)
+			{
+				Debug.LogException(ex);
+			}
+		}
+#else
+		internal System.Collections.IEnumerator RunLooper()
 		{
 			if(!isUsingLooper || queryCollector is null) yield break;
 			if(onLooperBreakFunction != null && onLooperBreakFunction.Invoke())
 			{
 				yield break;
 			}
+
+			LoopInfo loopingInfo = new LoopInfo()
+			{
+				isLooperBreak = () => onLooperBreakFunction != null && onLooperBreakFunction.Invoke(),
+				loopStartTime = Time.timeAsDouble,
+
+				actionStartTime = 0,
+				actionIndex = 0,
+				actionTotalCount = 0,
+
+				itemStartTime = 0,
+				itemIndex = 0,
+				itemTotalCount = 0,
+			};
 
 			var enumerator = IRunLooper();
 			while(true)
@@ -375,7 +259,8 @@ namespace BC.ODCC
 				yield return null;
 			}
 		}
-		private IEnumerator IRunLooper()
+
+		private System.Collections.IEnumerator IRunLooper()
 		{
 			foreach(var item in runForeachStructList)
 			{
@@ -407,7 +292,7 @@ namespace BC.ODCC
 						int skip = count;
 						int take = remainder > i ? quotient + 1 : quotient;
 						count += take;
-						return actionList.Skip(skip).Take(take).Where(act=> act.key == null || act.key.isActiveAndEnabled);
+						return actionList.Skip(skip).Take(take).Where(act => act.key == null || act.key.isActiveAndEnabled);
 					}).ToArray();
 				bool isSplt = ListInList.Count() > 1;
 				foreach(var inList in ListInList)
@@ -417,7 +302,7 @@ namespace BC.ODCC
 
 						if(item.isEnumerator)
 						{
-							IEnumerator enumerator = action.IRun();
+							System.Collections.IEnumerator enumerator = action.IRun();
 							while(true)
 							{
 								try
@@ -464,7 +349,7 @@ namespace BC.ODCC
 				}
 			}
 		}
-		public void RunCallEvent()
+		public void RunAction()
 		{
 			if(isUsingLooper || queryCollector is null) return;
 			if(onLooperBreakFunction != null && onLooperBreakFunction.Invoke())
@@ -491,12 +376,36 @@ namespace BC.ODCC
 				}
 			}
 		}
-
+#endif
+		/// <summary>
+		/// Foreach 매개변수 규칙 상 존재하는 함수이며, 아무런 동작 하지 않음.
+		/// </summary>
 		public OdccQueryLooper Foreach()
 		{
 			return this;
 		}
-		public OdccQueryLooper Action(Action action)
+
+		//==============================================
+#if USING_AWAITABLE_LOOP
+		public OdccQueryLooper CallNext(Action action)
+		{
+			return CallNext(async () => Call());
+			void Call()
+			{
+				action?.Invoke();
+			}
+		}
+		public OdccQueryLooper CallNext(Func<UnityEngine.Awaitable> action)
+		{
+			var list = new List<RunForeachAction>();
+			list.Add(new AddedForeachAction() {
+				aAction = action
+			});
+			runForeachStructList.Add(new RunForeachStruct(action, list, true, null));
+			return this;
+		}
+#else
+		public OdccQueryLooper CallNext(Action action)
 		{
 			var list = new List<RunForeachAction>();
 			list.Add(new AddedForeachAction() {
@@ -505,7 +414,7 @@ namespace BC.ODCC
 			runForeachStructList.Add(new RunForeachStruct(action, list, false, null));
 			return this;
 		}
-		public OdccQueryLooper Action(Func<IEnumerator> action)
+		public OdccQueryLooper CallNext(Func<System.Collections.IEnumerator> action)
 		{
 			var list = new List<RunForeachAction>();
 			list.Add(new AddedForeachAction() {
@@ -514,6 +423,8 @@ namespace BC.ODCC
 			runForeachStructList.Add(new RunForeachStruct(action, list, true, null));
 			return this;
 		}
+#endif
+
 		public OdccQueryLooper SetFrameCount(Func<int> func)
 		{
 			if(runForeachStructList.Count > 0)
@@ -566,6 +477,16 @@ namespace BC.ODCC
 			}
 			return null;
 		}
+		public OdccQueryLooper ShowCallLog(bool showLog, int depth = 7)
+		{
+#if !UNITY_EDITOR
+			showLog = false;
+#endif
+			onShowCallLog = showLog;
+			onShowCallLogDepth = depth;
+			if(onShowCallLogDepth<0) onShowCallLogDepth = 0;
+			return this;
+		}
 
 		internal void Add(ObjectBehaviour item)
 		{
@@ -574,11 +495,10 @@ namespace BC.ODCC
 			{
 				RunForeachStruct structItem = runForeachStructList[i];
 				structItem.Add(item);
-				runForeachStructList[i]=structItem;
+				runForeachStructList[i] = structItem;
 			}
 
 		}
-
 		internal void Remove(ObjectBehaviour item)
 		{
 			int count = runForeachStructList.Count;
@@ -586,7 +506,7 @@ namespace BC.ODCC
 			{
 				RunForeachStruct structItem = runForeachStructList[i];
 				structItem.Remove(item);
-				runForeachStructList[i]=structItem;
+				runForeachStructList[i] = structItem;
 			}
 		}
 
@@ -619,6 +539,42 @@ namespace BC.ODCC
 			OdccForeach.ForeachQueryPrevUpdate.Remove(this);
 			OdccForeach.ForeachQueryNextUpdate.Remove(this);
 		}
+
+
+
+
+		/////////////////////////// Obsolete //////////////////////////
+
+
+		[Obsolete("CallNext 사용 할 것 - 오래된 이름 규칙", true)]
+		public OdccQueryLooper Action(Action action)
+		{
+			return CallNext(action);
+		}
+
+#if USING_AWAITABLE_LOOP
+		[Obsolete("CallNext 사용 할 것 - 오래된 이름 규칙", true)]
+		public OdccQueryLooper Action(Func<UnityEngine.Awaitable> action)
+		{
+			return CallNext(action);
+		}
+		[Obsolete("RunAction 사용 할 것 - 오래된 이름 규칙", true)]
+		public void RunCallEvent(Action completed = null)
+		{
+			RunAction(completed);
+		}
+#else
+		[Obsolete("CallNext 사용 할 것 - 오래된 이름 규칙", true)]
+		public OdccQueryLooper Action(Func<System.Collections.IEnumerator> action)
+		{
+			return CallNext(action);
+		}
+		[Obsolete("RunAction 사용 할 것 - 오래된 이름 규칙", true)]
+		public void RunCallEvent()
+		{
+			RunAction();
+		}
+#endif
 	}
 
 }
