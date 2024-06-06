@@ -26,7 +26,7 @@ namespace BC.ODCC
 		}
 
 #if UNITY_EDITOR
-		[Obsolete("'ThisContainer'¸¦ ´ë½Å »ç¿ëÇÏ¼¼¿ä.", true)]
+		[Obsolete("'ThisContainer'ë¥¼ ëŒ€ì‹  ì‚¬ìš©í•˜ì„¸ìš”.", true)]
 		public ContainerObject Container => ThisContainer;
 		internal override void Reset()
 		{
@@ -36,7 +36,7 @@ namespace BC.ODCC
 			if(ThisTransform == null) return;
 
 			_container = new ContainerObject(this);
-			_container.ContainerNode.AllUpdate();
+			_container.ContainerNode.AllRefresh();
 
 			BaseReset();
 			BaseValidate();
@@ -53,7 +53,7 @@ namespace BC.ODCC
 			if(ThisTransform == null) return;
 
 			if(_container == null || _container.ContainerNode == null) _container = new ContainerObject(this);
-			_container.ContainerNode.AllUpdate();
+			_container.ContainerNode.AllRefresh();
 
 			BaseValidate();
 
@@ -66,7 +66,7 @@ namespace BC.ODCC
 			if(_container != null && _container.ContainerNode != null)
 			{
 				_container.ContainerNode.thisObject = this;
-				_container.ContainerNode.AllUpdate();
+				_container.ContainerNode.AllRefresh();
 			}
 		}
 #endif

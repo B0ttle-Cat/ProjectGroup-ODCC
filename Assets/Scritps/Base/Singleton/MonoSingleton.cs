@@ -4,9 +4,11 @@ using Sirenix.OdinInspector;
 
 using UnityEngine;
 
+using Object = UnityEngine.Object;
+
 namespace BC.Base
 {
-	public abstract class MonoSingleton<T> : SerializedMonoBehaviour where T : MonoSingleton<T>
+	public abstract class MonoSingleton<T> : MonoBehaviour where T : MonoSingleton<T>
 	{
 		public static bool didInit { get; private set; } = false;
 		public static bool didDestroy { get; private set; } = false;
@@ -34,9 +36,11 @@ namespace BC.Base
 		public static bool Instance<R>(out R value, Func<T, R> result)
 		{
 			value = default;
+			if(!Application.isPlaying) return false;
+			if(Application.exitCancellationToken.IsCancellationRequested) return false;
 			if(didDestroy)
 			{
-				//	Debug.LogError("MonoSingleton Is Destroy");
+				//Debug.LogError("MonoSingleton Is Destroy");
 				return false;
 			}
 
@@ -47,6 +51,19 @@ namespace BC.Base
 				{
 					instance = SingletonPrefabDataList.This.FindTypePrefab<T>();
 					if(instance is null)
+					{
+						instance = Resources.Load<T>(typeof(T).Name);
+						if(instance != null)
+						{
+							instance = Resources.Load<T>($"[{typeof(T).Name}]");
+						}
+					}
+
+					if(instance != null)
+					{
+						instance = GameObject.Instantiate<T>(instance);
+					}
+					else
 					{
 						GameObject newObj = new GameObject();
 						instance = newObj.AddComponent<T>();
@@ -66,8 +83,7 @@ namespace BC.Base
 						if(Application.isPlaying)
 						{
 							instance.name = $"[{typeof(T).Name}] Bace";
-							DontDestroyOnLoad(instance);
-
+							Object.DontDestroyOnLoad(instance.gameObject);
 						}
 						else
 						{
@@ -108,10 +124,14 @@ namespace BC.Base
 		}
 		private void OnDestroy()
 		{
-			DestroySingleton();
-			didInit = true;
-			didDestroy = true;
-			instance = null;
+			if(Application.isPlaying)
+			{
+				Debug.Log($"Singleton OnDestroy {gameObject.name}");
+				DestroySingleton();
+				didInit = true;
+				didDestroy = true;
+				instance = null;
+			}
 		}
 	}
 

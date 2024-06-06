@@ -8,14 +8,21 @@ using UnityEngine;
 namespace BC.ODCC
 {
 
-	public abstract class OCBehaviour : SerializedMonoBehaviour, IOdccItem, IDisposable
+	public abstract class OCBehaviour : MonoBehaviour, IOdccItem, IDisposable
 	{
 		private Transform _ThisTransform;
 		public Transform ThisTransform { get => _ThisTransform ??= transform; protected set => _ThisTransform = value; }
 
 		internal bool IsEnable { get; private set; } = false;
 		internal bool IsCanUpdateDisable { get; private set; } = false;
-		public int OdccTypeIndex { get; private set; } = -1;
+
+		private int odccTypeIndex = -1;
+		public int OdccTypeIndex {
+			get {
+				if(odccTypeIndex == -1) odccTypeIndex = OdccManager.GetTypeToIndex(GetType());
+				return odccTypeIndex;
+			}
+		}
 
 		private CancellationTokenSource cancellationEnableSource;
 		private CancellationToken cancellationEnableToken;
@@ -42,8 +49,8 @@ namespace BC.ODCC
 #endif
 		protected virtual void Awake()
 		{
-			OdccTypeIndex = OdccManager.GetTypeToIndex(GetType());
 			ThisTransform = transform;
+			if(odccTypeIndex == -1) odccTypeIndex = OdccManager.GetTypeToIndex(GetType());
 			OdccAwake();
 		}
 		protected virtual void OnDestroy()
@@ -155,14 +162,14 @@ namespace BC.ODCC
 		public virtual void BaseTransformParentChanged() { }
 
 
-		internal void OdccUpdateParent(ObjectBehaviour update) { if(isActiveAndEnabled) OnUpdateParent(update); }
-		internal void OdccUpdateChilds(ObjectBehaviour[] update) { if(isActiveAndEnabled) OnUpdateChilds(update); }
-		internal void OdccUpdateComponents(ComponentBehaviour[] update) { if(isActiveAndEnabled) OnUpdateComponents(update); }
-		internal void OdccUpdateDatas(DataObject[] update) { if(isActiveAndEnabled) OnUpdateDatas(update); }
-		protected virtual void OnUpdateParent(ObjectBehaviour update) { }
-		protected virtual void OnUpdateChilds(ObjectBehaviour[] update) { }
-		protected virtual void OnUpdateComponents(ComponentBehaviour[] update) { }
-		protected virtual void OnUpdateDatas(DataObject[] update) { }
+		//internal void OdccUpdateParent(ObjectBehaviour update) {  try {if(isActiveAndEnabled) OnUpdateParent(update); } catch(Exception ex) { Debug.LogException(ex); } }
+		//internal void OdccUpdateChilds(ObjectBehaviour[] update) {  try {if(isActiveAndEnabled) OnUpdateChilds(update); } catch(Exception ex) { Debug.LogException(ex); } }
+		//internal void OdccUpdateComponents(ComponentBehaviour[] update) { try { if(isActiveAndEnabled) OnUpdateComponents(update); } catch(Exception ex) { Debug.LogException(ex); } }
+		//internal void OdccUpdateDatas(DataObject[] update) {  try {if(isActiveAndEnabled) OnUpdateDatas(update); } catch(Exception ex) { Debug.LogException(ex); } }
+		//protected virtual void OnUpdateParent(ObjectBehaviour update) { }
+		//protected virtual void OnUpdateChilds(ObjectBehaviour[] update) { }
+		//protected virtual void OnUpdateComponents(ComponentBehaviour[] update) { }
+		//protected virtual void OnUpdateDatas(DataObject[] update) { }
 
 		private bool disposedValue;
 

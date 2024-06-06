@@ -136,13 +136,13 @@ namespace BC.OdccBase
 			}
 		}
 
-		protected override void OnUpdateComponents(ComponentBehaviour[] update)
+		protected /*override*/ void OnUpdateComponents(ComponentBehaviour[] update)
 		{
 			int length = update.Length;
-
+		
 			if(StateChangeListeners == null)
 				StateChangeListeners = new List<IAnimatorStateChangeListener>();
-
+		
 			var newList = new List<IAnimatorStateChangeListener>();
 			for(int i = 0 ; i < length ; i++)
 			{
@@ -156,7 +156,7 @@ namespace BC.OdccBase
 					newList.Add(changeListener);
 				}
 			}
-
+		
 			StateChangeListeners = newList;
 		}
 

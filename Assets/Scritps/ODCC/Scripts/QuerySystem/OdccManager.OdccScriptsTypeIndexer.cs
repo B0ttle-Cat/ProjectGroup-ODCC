@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+using Sirenix.OdinInspector;
+
 using UnityEngine;
 
 using Debug = UnityEngine.Debug;
@@ -10,8 +12,11 @@ namespace BC.ODCC
 {
 	public sealed partial class OdccManager//.OdccScriptsTypeIndexer : ScriptableObject
 	{
+		[ShowInInspector, ReadOnly]
 		private static Dictionary<Type, int> typeToIntTable;
+		[ShowInInspector, ReadOnly]
 		private static Dictionary<int, Type> intToTypeTable;
+		[ShowInInspector, ReadOnly]
 		private static Dictionary<int, int[]> inheritanceTable;
 		private static bool IsEmpty => typeToIntTable is null || intToTypeTable is null || inheritanceTable is null;
 
@@ -65,6 +70,7 @@ namespace BC.ODCC
 				intToTypeTable.Add(i, type);
 				inheritanceTable.Add(i, array);
 			}
+
 
 			OdccManager.typeToIntTable = typeToIntTable;
 			OdccManager.intToTypeTable = intToTypeTable;
@@ -146,7 +152,7 @@ namespace BC.ODCC
 		{
 			if(type >= 0 && check >= 0 && InheritanceTable.TryGetValue(type, out int[] inheritanceArray))
 			{
-				// inheritanceArray Áß ÀÏÄ¡ÇÏ´Â Ç×¸ñÀÌ ÀÖ´ÂÁö È®ÀÎ
+				// inheritanceArray ì¤‘ ì¼ì¹˜í•˜ëŠ” í•­ëª©ì´ ìˆëŠ”ì§€ í™•ì¸
 				int Length = inheritanceArray.Length;
 				for(int i = 0 ; i < Length ; i++)
 				{
@@ -172,9 +178,15 @@ namespace BC.ODCC
 		}
 		public static bool CheckIsInheritanceIndex(int type, IEnumerable<int> checkList)
 		{
-			if(type >= 0 && InheritanceTable.TryGetValue(type, out int[] inheritanceArray))
+			if(type < 0) return false;
+			if(checkList.Contains(type))
 			{
-				// inheritanceArray¿Í checkListÀÇ Áßº¹ Ç×¸ñÀÌ ÀÖ´ÂÁö È®ÀÎ
+				return true;
+			}
+			if(InheritanceTable.TryGetValue(type, out int[] inheritanceArray))
+			{
+
+				// inheritanceArrayì™€ checkListì˜ ì¤‘ë³µ í•­ëª©ì´ ìˆëŠ”ì§€ í™•ì¸
 				int Length = inheritanceArray.Length;
 				for(int i = 0 ; i < Length ; i++)
 				{

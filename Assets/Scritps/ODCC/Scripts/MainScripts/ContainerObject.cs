@@ -16,7 +16,7 @@ namespace BC.ODCC
 		public OdccContainerTree.ContainerNode ContainerNode;
 		public ObjectBehaviour ThisObject => ContainerNode.thisObject;
 		public ObjectBehaviour ParentObject => ContainerNode.parent;
-		public ContainerObject ParentContainer => ParentObject.ThisContainer;
+		public ObjectBehaviour[] ParentToRoot => ContainerNode.parentToRoot;
 		public ObjectBehaviour[] ChildObject => ContainerNode.childs;
 		public ComponentBehaviour[] ComponentList => ContainerNode.componentList;
 		public DataObject[] DataList => ContainerNode.dataList;
@@ -25,37 +25,6 @@ namespace BC.ODCC
 		//public DataObject[] DataObjectList;
 		private Queue<Action> callActionQueue;
 
-		public class Awaiter<T> where T : class
-		{
-			public bool IsWaiting { get; private set; }
-			private bool isCompleted;
-			public bool IsCompleted { get => isCompleted && GetResult is not null; private set => isCompleted = value; }
-			public bool IsFail => !IsCompleted;
-			public T GetResult { get; private set; }
-			internal void Wait()
-			{
-				IsWaiting = true;
-				IsCompleted = false;
-				GetResult = null;
-			}
-			internal void Fail()
-			{
-				IsWaiting = true;
-				IsCompleted = false;
-				GetResult = null;
-			}
-			internal void Complet(T t)
-			{
-				IsWaiting = true;
-				IsCompleted = true;
-				GetResult = t;
-			}
-			public bool TryGet(out T t)
-			{
-				t = GetResult;
-				return IsCompleted;
-			}
-		}
 
 		public ContainerObject(ObjectBehaviour objectBehaviour)
 		{
@@ -207,6 +176,7 @@ namespace BC.ODCC
 			GetAllComponentInChild<T>(out t, condition);
 			return t is not null && t.Count > 0;
 		}
+#if USING_AWAITABLE_LOOP
 		public async Awaitable<T> AwaitGetComponent<T>(CancellationToken cancelToken, Func<T, bool> condition = null) where T : class, IOdccComponent
 		{
 			T t = null;
@@ -247,7 +217,7 @@ namespace BC.ODCC
 			while(!cancelToken.IsCancellationRequested && !TryGetAllComponentInChild(out t, condition));
 			return t;
 		}
-
+#endif
 		public T GetData<T>(Func<T, bool> condition = null) where T : class, IOdccData
 		{
 			T t = DataList.GetData<T, DataObject>(condition);
@@ -268,6 +238,7 @@ namespace BC.ODCC
 			t = GetAllData<T>(condition);
 			return t is not null && t.Length > 0;
 		}
+#if USING_AWAITABLE_LOOP
 		public async Awaitable<T> AwaitGetData<T>(CancellationToken cancelToken, Func<T, bool> condition = null) where T : class, IOdccData
 		{
 			T t = null;
@@ -289,6 +260,7 @@ namespace BC.ODCC
 			return t;
 		}
 
+#endif
 		public void CallActionObject<T>(Action<T> tAction, Func<T, bool> condition = null) where T : class, IOdccObject
 		{
 			if(tAction is null) return;

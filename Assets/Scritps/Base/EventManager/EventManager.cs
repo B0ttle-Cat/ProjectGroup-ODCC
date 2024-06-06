@@ -6,13 +6,17 @@ using UnityEngine;
 
 namespace BC.Base
 {
-	[DefaultExecutionOrder(ConstInt.FirstExecutionOrder)]
+	/// <summary>
+	/// <see href="https://secretpms.atlassian.net/wiki/spaces/SU/pages/22741387"/>
+	/// </summary>
+	//[DefaultExecutionOrder(ConstInt.ODCC_MAIN_UPDATE)]
 	public class EventManager : MonoSingleton<EventManager>
 	{
-		public bool showLog;
+		public bool showLog = false;
+		public bool showCallLog = false;
 		private List<Component> listenerList;
 		private Dictionary<Type, IEnumerable<object>> cashListenerList = new Dictionary<Type, IEnumerable<object>>();
-		public List<Component> Managedlist {
+		public List<Component> ManagedList {
 			get
 			{
 				return listenerList;
@@ -58,28 +62,30 @@ namespace BC.Base
 			if(actor == null || actor == this || Contains(actor)) return;
 
 			ShowLog($"AddListener {actor.GetType().Name}");
-			Managedlist.Add(actor);
+			ManagedList.Add(actor);
 
 			var keys = cashListenerList.Keys;
 			Action modify = null;
 			foreach(var key in keys)
 			{
-				Type modifyKey = key;
-				if(modifyKey.IsAssignableFrom(actor.GetType()))
+				if(key.IsAssignableFrom(actor.GetType()))
 				{
-					if(cashListenerList.TryGetValue(modifyKey, out IEnumerable<object> actorsOfType))
+					if(cashListenerList.TryGetValue(key, out IEnumerable<object> actorsOfType))
 					{
 						var list = actorsOfType.ToList();
 						list.Add(actor);
+						var modifyKey = key;
 						modify += () => cashListenerList[modifyKey] = list;
 					}
 					else
 					{
 						actorsOfType = new List<object> { actor };
+						var modifyKey = key;
 						modify += () => cashListenerList[modifyKey] = actorsOfType;
 					}
 				}
 			}
+			modify?.Invoke();
 		}
 		private void _RemoveEventActor(Component actor)
 		{
@@ -88,7 +94,7 @@ namespace BC.Base
 			if(Contains(actor, out int findIndex))
 			{
 				ShowLog($"RemoveListener {actor.GetType().Name}");
-				Managedlist.RemoveAt(findIndex);
+				ManagedList.RemoveAt(findIndex);
 
 				Action modify = null;
 				foreach(var item in cashListenerList)
@@ -104,6 +110,11 @@ namespace BC.Base
 		}
 		private void _CallActionEvent<T>(Func<T, bool> condition, Action<T> action) where T : class
 		{
+			if(showCallLog)
+			{
+				Debug.Log($"Call<{typeof(T)}>", 5);
+			}
+
 			List<T> getList = _GetAllEventActor<T>();
 			List<T> resultList = new List<T>();
 			bool passCondition = condition == null;
@@ -124,7 +135,10 @@ namespace BC.Base
 		}
 		private void _CallActionEvent<T, TR>(IEnumerable<T> enumerable, Action<TR> action) where T : class where TR : class
 		{
-
+			if(showCallLog)
+			{
+				Debug.Log($"Call<IEnumerable {typeof(T)}, {typeof(TR)}>", 5);
+			}
 			List<TR> resultList = new List<TR>();
 			foreach(var tValue in enumerable)
 			{
@@ -155,7 +169,7 @@ namespace BC.Base
 			int count = listenerList.Count;
 			for(int i = 0 ; i < count ; i++)
 			{
-				if(listenerList[i].TryGetComponent<T>(out var find))
+				if(listenerList[i] is T find)
 				{
 					if(cashListenerList.TryGetValue(type, out var newCache))
 					{
@@ -193,10 +207,9 @@ namespace BC.Base
 			int count = listenerList.Count;
 			for(int i = 0 ; i < count ; i++)
 			{
-				if(listenerList[i].TryGetComponent<T>(out var find))
+				if(listenerList[i] is T find)
 				{
-					if(!resultList.Contains(find))
-						resultList.Add(find);
+					resultList.Add(find);
 				}
 			}
 			cashListenerList[type] = resultList.Cast<object>();
@@ -205,6 +218,11 @@ namespace BC.Base
 
 		private bool _CallActionEvent<T, TR>(Func<T, bool> condition, Func<T, TR> action, out TR _result) where T : class
 		{
+			if(showCallLog)
+			{
+				Debug.Log($"Call<{typeof(T)}, {typeof(TR)}>", 5);
+			}
+
 			_result = default;
 			List<T> resultList = _GetAllEventActor<T>();
 			int count = resultList.Count;
@@ -226,16 +244,16 @@ namespace BC.Base
 		}
 		private bool _Contains(Component actor, out int findIndex)
 		{
-			findIndex = (actor == null) ? -1 : Managedlist.FindIndex(item => item == actor);
+			findIndex = (actor == null) ? -1 : ManagedList.FindIndex(item => item == actor);
 			return findIndex >= 0;
 		}
 		private bool _Contains<T>() where T : class
 		{
-			return Managedlist.Exists(item => item is T);
+			return ManagedList.Exists(item => item is T);
 		}
 		private bool _Contains<T>(out int findIndex) where T : class
 		{
-			findIndex = Managedlist.FindIndex(item => item is T);
+			findIndex = ManagedList.FindIndex(item => item is T);
 			return findIndex >= 0;
 		}
 
@@ -290,18 +308,24 @@ namespace BC.Base
 		public static void AddListener(GameObject actor)
 		{
 			Component[] list = actor.GetComponents<Component>();
-			for(int i = 0 ; i < list.Length ; i++)
+			Instance(Instance =>
 			{
-				Instance(Instance => Instance._AddEventActor(list[i]));
-			}
+				for(int i = 0 ; i < list.Length ; i++)
+				{
+					Instance._AddEventActor(list[i]);
+				}
+			});
 		}
 		public static void RemoveListener(GameObject actor)
 		{
 			Component[] list = actor.GetComponents<Component>();
-			for(int i = 0 ; i < list.Length ; i++)
+			Instance(Instance =>
 			{
-				Instance(Instance => Instance._RemoveEventActor(list[i]));
-			}
+				for(int i = 0 ; i < list.Length ; i++)
+				{
+					Instance._RemoveEventActor(list[i]);
+				}
+			});
 		}
 		public static void AddListener(Component actor)
 		{

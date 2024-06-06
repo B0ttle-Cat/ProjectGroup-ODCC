@@ -9,9 +9,14 @@ namespace BC.ODCC
 	{
 		public DataObject()
 		{
-			OdccTypeIndex = OdccManager.GetTypeToIndex(GetType());
 		}
-		public int OdccTypeIndex { get; private set; } = -1;
+		private int odccTypeIndex = -1;
+		public int OdccTypeIndex {
+			get {
+				if(odccTypeIndex == -1) odccTypeIndex = OdccManager.GetTypeToIndex(GetType());
+				return odccTypeIndex;
+			}
+		}
 #if UNITY_EDITOR
 		bool IsMustNotNull(
 			Object obj9)

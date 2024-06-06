@@ -2,10 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+using UnityEngine.SceneManagement;
+
 namespace BC.ODCC
 {
 	public sealed partial class QuerySystemBuilder
 	{
+		internal Scene TargetScene;
+		internal int TargetInstanceID;
+		internal QuerySystem.RangeType Range;
+
 		internal HashSet<int> Any = new HashSet<int>();
 		internal HashSet<int> None = new HashSet<int>();
 		internal HashSet<int> All = new HashSet<int>();
@@ -36,9 +42,40 @@ namespace BC.ODCC
 		{
 			return new QuerySystemBuilder(initQuerySystem);
 		}
+		public QuerySystem Build(Scene scene)
+		{
+			TargetScene = scene;
+			TargetInstanceID = 0;
+			Range = QuerySystem.RangeType.Scene;
+			return _Build();
+		}
+		public QuerySystem Build(ObjectBehaviour target, QuerySystem.RangeType range)
+		{
+			TargetScene = default;
+			TargetInstanceID = 0;
+
+			range &= ~QuerySystem.RangeType.Scene;
+			if(range != QuerySystem.RangeType.World && target != null)
+			{
+				TargetInstanceID = target.GetInstanceID();
+			}
+			else
+			{
+				Range = QuerySystem.RangeType.World;
+			}
+			Range = range;
+			return _Build();
+		}
 		public QuerySystem Build()
 		{
-			return new QuerySystem(
+			TargetScene = default;
+			TargetInstanceID = 0;
+			Range = QuerySystem.RangeType.World;
+			return _Build();
+		}
+		private QuerySystem _Build()
+		{
+			return new QuerySystem(TargetScene, TargetInstanceID, Range,
 				Any.OrderBy(x => x).ToArray(),
 				None.OrderBy(x => x).ToArray(),
 				All.OrderBy(x => x).ToArray(),
@@ -46,7 +83,6 @@ namespace BC.ODCC
 				InheritanceOfNone.OrderBy(x => x).ToArray(),
 				InheritanceOfAll.OrderBy(x => x).ToArray());
 		}
-
 		public QuerySystemBuilder WithAny(bool checkInheritance, params int[] typeIndexs)
 		{
 			foreach(var item in typeIndexs)
@@ -115,6 +151,20 @@ namespace BC.ODCC
 
 	public class QuerySystem : IEquatable<QuerySystem>
 	{
+		internal Scene TargetScene;
+		internal int TargetInstanceID;
+		internal RangeType Range;
+		[Flags]
+		public enum RangeType : int
+		{
+			World  = 0,
+			Scene  = 0b_0001,
+			Object = 0b_0010,
+			Parent = 0b_0100,
+			Child  = 0b_1000,
+		}
+
+
 		internal readonly int[] Any = Array.Empty<int>();
 		internal readonly int[] None = Array.Empty<int>();
 		internal readonly int[] All = Array.Empty<int>();
@@ -124,16 +174,66 @@ namespace BC.ODCC
 		internal readonly int[] InheritanceOfAll = Array.Empty<int>();
 
 
-		internal QuerySystem(int[] any, int[] none, int[] all,
-			int[] inheritanceOfAny, int[] inheritanceOfNone, int[] inheritanceOfAll
-			)
+		internal QuerySystem(Scene targetScene, int targetInstanceID, RangeType range,
+			int[] any, int[] none, int[] all,
+			int[] inheritanceOfAny, int[] inheritanceOfNone, int[] inheritanceOfAll)
 		{
+			TargetScene = targetScene;
+			TargetInstanceID = targetInstanceID;
+			Range = range;
+
 			Any=any;
 			None=none;
 			All=all;
 			InheritanceOfAny = inheritanceOfAny;
 			InheritanceOfNone = inheritanceOfNone;
 			InheritanceOfAll = inheritanceOfAll;
+		}
+		public bool IsRange(ObjectBehaviour item)
+		{
+			if(Range == RangeType.World) return true;
+			if(Range == RangeType.Scene) return item.gameObject.scene == TargetScene;
+
+			if(Range.HasFlag(RangeType.Object | RangeType.Parent | RangeType.Child) && item is not null)
+			{
+				if(Range.HasFlag(RangeType.Object))
+				{
+					int instanceID = item.GetInstanceID();
+					return TargetInstanceID == instanceID;
+				}
+				if(Range.HasFlag(RangeType.Parent))
+				{
+					var list = item.ThisContainer.ParentToRoot;
+					if(list != null)
+					{
+						int length = list.Length;
+						for(int i = 0 ; i < length ; i++)
+						{
+							if(TargetInstanceID == list[i].GetInstanceID())
+							{
+								return true;
+							}
+						}
+					}
+				}
+				if(Range.HasFlag(RangeType.Child))
+				{
+					var list = item.ThisContainer.ChildObject;
+					if(list != null)
+					{
+						int length = list.Length;
+						for(int i = 0 ; i < length ; i++)
+						{
+							if(TargetInstanceID == list[i].GetInstanceID())
+							{
+								return true;
+							}
+						}
+					}
+				}
+			}
+
+			return false;
 		}
 		public bool IsAny(IEnumerable<int> odccItems)
 		{
@@ -153,8 +253,8 @@ namespace BC.ODCC
 
 		public bool IsAll(IEnumerable<int> odccItems)
 		{
-			bool result =
-				(All.Length == 0 || All.All((i) => odccItems.Contains(i)))
+			bool result
+				= (All.Length == 0 || All.All((i) => odccItems.Contains(i)))
 				&& (InheritanceOfAll.Length == 0 || InheritanceOfAll.All((i) => OdccManager.CheckIsInheritanceIndex(i, odccItems)));
 			return result;
 		}
@@ -169,6 +269,15 @@ namespace BC.ODCC
 				return true;
 			if(ReferenceEquals(null, other))
 				return false;
+			if(Range == other.Range)
+			{
+				if(TargetScene.name != other.TargetScene.name) return false;
+				if(TargetInstanceID != other.TargetInstanceID) return false;
+			}
+			else
+			{
+				return false;
+			}
 			if(!ArraysEquivalent(All, other.All))
 				return false;
 			if(!ArraysEquivalent(Any, other.Any))
@@ -196,14 +305,18 @@ namespace BC.ODCC
 		}
 		public override int GetHashCode()
 		{
-			int result = 17;
-			result = (result * 397) ^ (All ?? Array.Empty<int>()).GetHashCode();
-			result = (result * 397) ^ (Any ?? Array.Empty<int>()).GetHashCode();
-			result = (result * 397) ^ (None ?? Array.Empty<int>()).GetHashCode();
-			result = (result * 397) ^ (InheritanceOfAll ?? Array.Empty<int>()).GetHashCode();
-			result = (result * 397) ^ (InheritanceOfAny ?? Array.Empty<int>()).GetHashCode();
-			result = (result * 397) ^ (InheritanceOfNone ?? Array.Empty<int>()).GetHashCode();
-			return result;
+			int Length = All.Length + Any.Length + None.Length + InheritanceOfAll.Length + InheritanceOfAny.Length + InheritanceOfNone.Length;
+			int added = 0;
+			for(int i = 0 ; i < All.Length ; i++) added += All[i];
+			for(int i = 0 ; i < Any.Length ; i++) added += Any[i];
+			for(int i = 0 ; i < None.Length ; i++) added += None[i];
+			for(int i = 0 ; i < InheritanceOfAll.Length ; i++) added += InheritanceOfAll[i];
+			for(int i = 0 ; i < InheritanceOfAny.Length ; i++) added += InheritanceOfAny[i];
+			for(int i = 0 ; i < InheritanceOfNone.Length ; i++) added += InheritanceOfNone[i];
+
+			int intRange = (int)Range;
+
+			return Length + added + intRange;
 		}
 
 		static bool ArraysEquivalent(int[] a1, int[] a2)
