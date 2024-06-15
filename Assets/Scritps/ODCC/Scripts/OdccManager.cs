@@ -1,10 +1,11 @@
-using System.Collections;
 using System.Collections.Generic;
 
 using BC.Base;
 
 using UnityEngine;
 using UnityEngine.SceneManagement;
+
+using Debug = UnityEngine.Debug;
 
 namespace BC.ODCC
 {
@@ -22,7 +23,7 @@ namespace BC.ODCC
 		{
 			// ODCC 매니저 인스턴스를 초기화하고 로그를 출력합니다.
 			OdccManager.Instance(ins => {
-                UnityEngine.Debug.Log($"OdccManager Is {(ins == null ? "Null" : "Init")}");
+				UnityEngine.Debug.Log($"OdccManager Is {(ins == null ? "Null" : "Init")}");
 			});
 		}
 
@@ -77,33 +78,45 @@ namespace BC.ODCC
 			// ODCC 매니저 인스턴스를 통해 작업을 수행합니다.
 			Instance(Ins => {
 				// OCBehaviour를 ODCC 컨테이너 트리에 추가하고, Foreach 시스템에 등록하며 이벤트 리스너를 추가합니다.
-				OdccContainerTree.AwakeOCBehaviour(ocBehaviour);
-				OdccForeach.AddOdccCollectorList(ocBehaviour);
-				EventManager.AddListener(ocBehaviour);
-
-				// OCBehaviour의 BaseAwake 메서드를 호출합니다.
-				ocBehaviour.BaseAwake();
-
-				// OCBehaviour가 ObjectBehaviour인 경우 추가 작업을 수행합니다.
-				if(ocBehaviour is ObjectBehaviour objectBehaviour)
+				if(OdccContainerTree.AwakeOCBehaviour(ocBehaviour))
 				{
-					OdccContainerTree.ContainerNode containerNode = OdccContainerTree.GetContainerNode(objectBehaviour);
+					OdccForeach.AddOdccCollectorList(ocBehaviour);
+					EventManager.AddListener(ocBehaviour);
 
-					int Length = containerNode.componentList.Length;
+					// OCBehaviour의 BaseAwake 메서드를 호출합니다.
+					ocBehaviour.BaseAwake();
 
-					// 각 컴포넌트를 순회하며 활성화된 경우 처리를 수행합니다.
-					for(int i = 0 ; i < Length ; i++)
+					// OCBehaviour가 ObjectBehaviour인 경우 추가 작업을 수행합니다.
+					if(ocBehaviour is ObjectBehaviour objectBehaviour)
 					{
-						var component = containerNode.componentList[i];
-						if(component.isActiveAndEnabled)
-						{
-							OdccContainerTree.AwakeOCBehaviour(component);
-							OdccForeach.AddOdccCollectorList(component);
-							EventManager.AddListener(component);
+						OdccContainerTree.ContainerNode containerNode = OdccContainerTree.GetContainerNode(objectBehaviour);
 
-							component.BaseAwake();
+						int Length = containerNode.componentList.Length;
+
+						// 각 컴포넌트를 순회하며 활성화된 경우 처리를 수행합니다.
+						for(int i = 0 ; i < Length ; i++)
+						{
+							var component = containerNode.componentList[i];
+							if(component.isActiveAndEnabled)
+							{
+								if(OdccContainerTree.AwakeOCBehaviour(component))
+								{
+									OdccForeach.AddOdccCollectorList(component);
+									EventManager.AddListener(component);
+
+									component.BaseAwake();
+								}
+								else
+								{
+									Destroy(component);
+								}
+							}
 						}
 					}
+				}
+				else
+				{
+					Destroy(ocBehaviour);
 				}
 			});
 		}
@@ -225,8 +238,12 @@ namespace BC.ODCC
 		/// </summary>
 		public void Start()
 		{
-			// EndOfFrame 코루틴을 시작합니다.
-			StartCoroutine(EndOfFrame());
+			// EndOfFrameDispose 루프를 시작합니다.
+#if USING_AWAITABLE_LOOP
+			EndOfFrameDispose();
+#else
+			StartCoroutine(EndOfFrameDispose());
+#endif
 		}
 
 		/// <summary>
@@ -254,11 +271,47 @@ namespace BC.ODCC
 			OdccForeach.ForeachLateUpdate();
 		}
 
+#if USING_AWAITABLE_LOOP
+		/// <summary>
+		/// 프레임의 끝에서 실행되는 Awaitable 입니다.
+		/// </summary>
+		/// 
+		async void EndOfFrameDispose()
+		{
+			while(true)
+			{
+				// awaitReservationDestroyObject 를 기다립니다.
+
+				while(OdccContainerTree.awaitReservationDestroyObject)
+				{
+					await Awaitable.NextFrameAsync();
+				}
+				OdccContainerTree.awaitReservationDestroyObject = true;
+
+				// 예약된 파괴 오브젝트 집합을 초기화합니다.
+				var list = OdccContainerTree.reservationDestroyObject;
+				OdccContainerTree.reservationDestroyObject.Clear();
+
+				// 예약된 파괴 오브젝트를 순회하며 Dispose를 호출합니다.
+				foreach(var item in list)
+				{
+					try
+					{
+						item.Dispose();
+					}
+					catch(System.Exception ex)
+					{
+						Debug.LogException(ex);
+					}
+				}
+			}
+		}
+#else
 		/// <summary>
 		/// 프레임의 끝에서 실행되는 코루틴입니다.
 		/// </summary>
 		/// <returns>IEnumerator</returns>
-		IEnumerator EndOfFrame()
+		IEnumerator EndOfFrameDispose()
 		{
 			// 프레임 끝에서 대기하는 WaitForEndOfFrame 객체입니다.
 			var waitFrame = new WaitForEndOfFrame();
@@ -283,5 +336,7 @@ namespace BC.ODCC
 				}
 			}
 		}
+#endif
 	}
 }
+

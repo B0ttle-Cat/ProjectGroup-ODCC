@@ -29,9 +29,9 @@ namespace BC.ODCC
 		{
 			ThisStateMachine = ThisContainer.GetComponent<OdccFiniteStateMachine>();
 		}
-		protected override void Dispose(bool disposing)
+		protected override void Disposing()
 		{
-			base.Dispose(disposing);
+			base.Disposing();
 			ThisStateMachine = null;
 			ChangeState = null;
 		}

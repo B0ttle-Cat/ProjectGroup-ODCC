@@ -8,6 +8,7 @@ using UnityEngine;
 
 namespace BC.ODCC
 {
+	/// 이 코드는 <see cref="BC.ODCC.OdccUniversalDelegates"/>에 코드를 작성합니다."
 	public static class OdccUniversalDelegatesGenerator
 	{
 		static string generateDelegatesClass =
@@ -15,6 +16,10 @@ namespace BC.ODCC
 			+ "\nnamespace BC.ODCC"
 			+ "\n{"
 			+ "\n	using System.Collections.Generic;"
+			+ "\n"
+			+ "\n#if UNITY_EDITOR"
+			+ "\n	public class OdccUniversalDelegates { }"
+			+ "\n#endif"
 			+ "\n"
 			+ "\n	#region Delegate"
 			+ "\n#if USING_AWAITABLE_LOOP"
@@ -57,11 +62,11 @@ namespace BC.ODCC
 			string generateCode = "";
 			int generateCount = 20;
 
-			generateCode = string.Join("\n\t", GenerateDelegate2(true, generateCount));
+			generateCode = string.Join("\n\t", GenerateDelegate2(false, generateCount));
 			Debug.Log(generateCode);
 			generate = generate.Replace("{0-0}", generateCode);
 
-			generateCode = string.Join("\n\t", GenerateDelegate_Awatable(true, generateCount));
+			generateCode = string.Join("\n\t", GenerateDelegate_Awatable(false, generateCount));
 			Debug.Log(generateCode);
 			generate = generate.Replace("{0-1}", generateCode);
 
@@ -324,7 +329,7 @@ namespace BC.ODCC
 			{
 				string T = GenerateParameters(i);
 				string Where = GenerateWhere(i);
-				string WhereAWAITABLE = GenerateWhereAWAITABLE(i);
+				//string WhereAWAITABLE = GenerateWhereAWAITABLE(i);
 				string getForeach1 = GenerateGetForeachItem(i, ", looper.");
 				string getForeach2 = GenerateGetForeachItem(i, ", ");
 				string arguments = GenerateArguments(i, "; ");
@@ -338,7 +343,7 @@ namespace BC.ODCC
 				string createFunction = "CreateRunLoopAction";
 				generateForeach[i] = ""
 				+ $"\n#if USING_AWAITABLE_LOOP"
-				+ $"\n	public class {className}<{T}> : {className} {WhereAWAITABLE}"
+				+ $"\n	public class {className}<{T}> : {className} {Where}"
 				+ $"\n	{{"
 				+ $"\n		{arguments};"
 				+ $"\n		A<{T}> delegateA;"
@@ -349,11 +354,11 @@ namespace BC.ODCC
 				+ $"\n		}}"
 				+ $"\n		internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, {getValue});"
 				+ $"\n	}}"
-				+ $"\n	public OdccQueryLooper Foreach<{T}>(T<{T}> t = null) {WhereAWAITABLE}"
+				+ $"\n	public OdccQueryLooper Foreach<{T}>(T<{T}> t = null) {Where}"
 				+ $"\n	{{"
 				+ $"\n		 return Foreach<{T}>(async (info, {getValue}) => t(info, {getValue}));"
 				+ $"\n	}}"
-				+ $"\n	public OdccQueryLooper Foreach<{T}>(A<{T}> t = null) {WhereAWAITABLE}"
+				+ $"\n	public OdccQueryLooper Foreach<{T}>(A<{T}> t = null) {Where}"
 				+ $"\n	{{"
 				+ $"\n		if(t == null) return this;"
 				+ $"\n		int findIndex = {ForeachStructList}.FindIndex(list => list.targetDelegate.Target == t.Target && list.targetDelegate.Method == t.Method);"

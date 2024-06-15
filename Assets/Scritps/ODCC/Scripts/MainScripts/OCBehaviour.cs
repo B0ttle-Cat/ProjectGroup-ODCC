@@ -1,8 +1,6 @@
 using System;
 using System.Threading;
 
-using Sirenix.OdinInspector;
-
 using UnityEngine;
 
 namespace BC.ODCC
@@ -27,8 +25,8 @@ namespace BC.ODCC
 		private CancellationTokenSource cancellationEnableSource;
 		private CancellationToken cancellationEnableToken;
 
-		protected CancellationToken DestroyCancelToken => destroyCancellationToken;
-		protected CancellationToken DisableCancelToken => cancellationEnableToken;
+		public CancellationToken DestroyCancelToken => destroyCancellationToken;
+		public CancellationToken DisableCancelToken => cancellationEnableToken;
 
 #if UNITY_EDITOR
 		internal virtual void Reset()
@@ -140,14 +138,14 @@ namespace BC.ODCC
 #if UNITY_EDITOR
 			if(Application.isPlaying)
 #endif
-				OdccManager.OdccStart(this);
+			OdccManager.OdccStart(this);
 		}
 		internal virtual void OdccOnTransformParentChanged()
 		{
 #if UNITY_EDITOR
 			if(Application.isPlaying)
 #endif
-				OdccManager.OdccChangeParent(this);
+			OdccManager.OdccChangeParent(this);
 		}
 
 		public virtual void BaseReset() { }
@@ -173,7 +171,7 @@ namespace BC.ODCC
 
 		private bool disposedValue;
 
-		protected virtual void Dispose(bool disposing)
+		protected virtual void Disposing()
 		{
 			_ThisTransform = null;
 		}
@@ -182,7 +180,7 @@ namespace BC.ODCC
 		{
 			if(!disposedValue)
 			{
-				Dispose(disposing: true);
+				Disposing();
 				disposedValue=true;
 			}
 			GC.SuppressFinalize(this);

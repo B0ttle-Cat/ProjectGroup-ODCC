@@ -171,7 +171,7 @@ namespace BC.ODCC
 #endif
 		private bool disposedValue;
 
-		protected virtual void Dispose(bool disposing)
+		protected virtual void Disposing()
 		{
 
 		}
@@ -180,7 +180,7 @@ namespace BC.ODCC
 		{
 			if(!disposedValue)
 			{
-				Dispose(disposing: true);
+				Disposing();
 				disposedValue=true;
 			}
 			GC.SuppressFinalize(this);

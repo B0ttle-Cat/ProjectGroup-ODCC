@@ -16,13 +16,12 @@ namespace BC.ODCC
 		public OdccContainerTree.ContainerNode ContainerNode;
 		public ObjectBehaviour ThisObject => ContainerNode.thisObject;
 		public ObjectBehaviour ParentObject => ContainerNode.parent;
-		public ObjectBehaviour[] ParentToRoot => ContainerNode.parentToRoot;
+		public ContainerObject ParentContainer => ParentObject?.ThisContainer;
 		public ObjectBehaviour[] ChildObject => ContainerNode.childs;
 		public ComponentBehaviour[] ComponentList => ContainerNode.componentList;
 		public DataObject[] DataList => ContainerNode.dataList;
 		internal int[] TypeIndex => ContainerNode.typeIndex;
-		//[SerializeReference]
-		//public DataObject[] DataObjectList;
+
 		private Queue<Action> callActionQueue;
 
 
@@ -177,45 +176,109 @@ namespace BC.ODCC
 			return t is not null && t.Count > 0;
 		}
 #if USING_AWAITABLE_LOOP
-		public async Awaitable<T> AwaitGetComponent<T>(CancellationToken cancelToken, Func<T, bool> condition = null) where T : class, IOdccComponent
+		public async Awaitable<T> AwaitGetComponent<T>(Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccComponent
 		{
 			T t = null;
-			do
+			cancelToken ??= ThisObject.DestroyCancelToken;
+			while(!cancelToken.Value.IsCancellationRequested && !TryGetComponent(out t, condition))
 			{
-				await Awaitable.NextFrameAsync(cancelToken);
+				try
+				{
+					await Awaitable.NextFrameAsync(cancelToken.Value);
+				}
+				catch
+				{
+					t= null;
+					break;
+				}
 			}
-			while(!cancelToken.IsCancellationRequested && !TryGetComponent(out t, condition));
 			return t;
 		}
-		public async Awaitable<T> AwaitGetComponentInChild<T>(CancellationToken cancelToken, Func<T, bool> condition = null) where T : class, IOdccComponent
+		public async Awaitable<T> AwaitGetComponentInChild<T>(Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccComponent
 		{
 			T t = null;
-			do
+			cancelToken ??= ThisObject.DestroyCancelToken;
+			while(!cancelToken.Value.IsCancellationRequested && !TryGetComponentInChild(out t, condition))
 			{
-				await Awaitable.NextFrameAsync(cancelToken);
+				try
+				{
+					await Awaitable.NextFrameAsync(cancelToken.Value);
+				}
+				catch
+				{
+					t= null;
+					break;
+				}
 			}
-			while(!cancelToken.IsCancellationRequested && !TryGetComponentInChild(out t, condition));
 			return t;
 		}
-		public async Awaitable<T[]> AwaitGetComponentList<T>(CancellationToken cancelToken, Func<T, bool> condition = null) where T : class, IOdccComponent
+		public async Awaitable<T[]> AwaitGetComponentList<T>(Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccComponent
 		{
 			T[] t = null;
-			do
+			cancelToken ??= ThisObject.DestroyCancelToken;
+			while(!cancelToken.Value.IsCancellationRequested && !TryGetComponentList(out t, condition))
 			{
-				await Awaitable.NextFrameAsync(cancelToken);
+				try
+				{
+					await Awaitable.NextFrameAsync(cancelToken.Value);
+				}
+				catch
+				{
+					t= null;
+					break;
+				}
 			}
-			while(!cancelToken.IsCancellationRequested && !TryGetComponentList(out t, condition));
 			return t;
 		}
-		public async Awaitable<List<T>> AwaitGetAllComponentList<T>(CancellationToken cancelToken, Func<T, bool> condition = null) where T : class, IOdccComponent
+		public async Awaitable<List<T>> AwaitGetAllComponentList<T>(Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccComponent
 		{
 			List<T> t = null;
-			do
+			cancelToken ??= ThisObject.DestroyCancelToken;
+			while(!cancelToken.Value.IsCancellationRequested && !TryGetAllComponentInChild(out t, condition))
 			{
-				await Awaitable.NextFrameAsync(cancelToken);
+				try
+				{
+					await Awaitable.NextFrameAsync(cancelToken.Value);
+				}
+				catch
+				{
+					t= null;
+					break;
+				}
 			}
-			while(!cancelToken.IsCancellationRequested && !TryGetAllComponentInChild(out t, condition));
 			return t;
+		}
+		public async void AwaitGetComponent<T>(Action<T> callback, Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccComponent
+		{
+			if(callback is null) return;
+
+			var t = await AwaitGetComponent<T>(condition, cancelToken);
+			if(t is null) return;
+			callback.Invoke(t);
+		}
+		public async void AwaitGetComponentInChild<T>(Action<T> callback, Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccComponent
+		{
+			if(callback is null) return;
+
+			var t = await AwaitGetComponentInChild<T>(condition, cancelToken);
+			if(t is null) return;
+			callback.Invoke(t);
+		}
+		public async void AwaitGetComponentList<T>(Action<T[]> callback, Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccComponent
+		{
+			if(callback is null) return;
+
+			var t = await AwaitGetComponentList<T>(condition, cancelToken);
+			if(t is null) return;
+			callback.Invoke(t);
+		}
+		public async void AwaitGetAllComponentList<T>(Action<List<T>> callback, Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccComponent
+		{
+			if(callback is null) return;
+
+			var t = await AwaitGetAllComponentList<T>(condition, cancelToken);
+			if(t is null) return;
+			callback.Invoke(t);
 		}
 #endif
 		public T GetData<T>(Func<T, bool> condition = null) where T : class, IOdccData
@@ -239,27 +302,58 @@ namespace BC.ODCC
 			return t is not null && t.Length > 0;
 		}
 #if USING_AWAITABLE_LOOP
-		public async Awaitable<T> AwaitGetData<T>(CancellationToken cancelToken, Func<T, bool> condition = null) where T : class, IOdccData
+		public async Awaitable<T> AwaitGetData<T>(Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccData
 		{
 			T t = null;
-			do
+			cancelToken ??= ThisObject.DestroyCancelToken;
+			while(!cancelToken.Value.IsCancellationRequested && !TryGetData(out t, condition))
 			{
-				await Awaitable.NextFrameAsync(cancelToken);
+				try
+				{
+					await Awaitable.NextFrameAsync(cancelToken.Value);
+				}
+				catch
+				{
+					t= null;
+					break;
+				}
 			}
-			while(!cancelToken.IsCancellationRequested && !TryGetData(out t, condition));
 			return t;
 		}
-		public async Awaitable<T[]> AwaitGetDataList<T>(CancellationToken cancelToken, Func<T, bool> condition = null) where T : class, IOdccData
+		public async Awaitable<T[]> AwaitGetDataList<T>(Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccData
 		{
 			T[] t = null;
-			do
+			cancelToken ??= ThisObject.DestroyCancelToken;
+			while(!cancelToken.Value.IsCancellationRequested && !TryGetDataList(out t, condition))
 			{
-				await Awaitable.NextFrameAsync(cancelToken);
+				try
+				{
+					await Awaitable.NextFrameAsync(cancelToken.Value);
+				}
+				catch
+				{
+					t= null;
+					break;
+				}
 			}
-			while(!cancelToken.IsCancellationRequested && !TryGetDataList(out t, condition));
 			return t;
 		}
+		public async void AwaitGetData<T>(Action<T> callback, Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccData
+		{
+			if(callback is null) return;
 
+			var t = await AwaitGetData<T>(condition, cancelToken);
+			if(t is null) return;
+			callback.Invoke(t);
+		}
+		public async void AwaitGetDataList<T>(Action<T[]> callback, Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccData
+		{
+			if(callback is null) return;
+
+			var t = await AwaitGetDataList<T>(condition, cancelToken);
+			if(t is null) return;
+			callback.Invoke(t);
+		}
 #endif
 		public void CallActionObject<T>(Action<T> tAction, Func<T, bool> condition = null) where T : class, IOdccObject
 		{
@@ -394,7 +488,6 @@ namespace BC.ODCC
 		{
 			return ComponentList.Get<T, ComponentBehaviour>(condition);
 		}
-
 		internal bool _TryGetData<T>(out T t, Func<T, bool> condition = null) where T : class, IOdccItem
 		{
 			t = _GetData<T>(condition);
@@ -404,6 +497,24 @@ namespace BC.ODCC
 		{
 			T t = DataList.GetData<T, DataObject>(condition);
 			return t;
+		}
+		internal bool _TryGetComponents<T>(out T[] t, Func<T, bool> condition = null) where T : class, IOdccItem
+		{
+			t = _GetComponents<T>(condition);
+			return t is not null && t.Length >0;
+		}
+		internal T[] _GetComponents<T>(Func<T, bool> condition = null) where T : class, IOdccItem
+		{
+			return ComponentList.GetAll<T, ComponentBehaviour>(condition);
+		}
+		internal bool _TryGetDatas<T>(out T[] t, Func<T, bool> condition = null) where T : class, IOdccItem
+		{
+			t = _GetDatas<T>(condition);
+			return t is not null && t.Length >0; ;
+		}
+		internal T[] _GetDatas<T>(Func<T, bool> condition = null) where T : class, IOdccItem
+		{
+			return DataList.GetAllData<T, DataObject>(condition);
 		}
 		#endregion
 	}

@@ -92,11 +92,13 @@ namespace BC.ODCC
 		{
 			// 관련된 ObjectBehaviour 키입니다.
 			internal ObjectBehaviour key;
+			internal bool callFirstOnly = false;
+			internal bool isCallFirst = false;
 #if !USING_AWAITABLE_LOOP
 			internal abstract void Run();
 			internal abstract System.Collections.IEnumerator IRun();
 #else
-            internal abstract UnityEngine.Awaitable ARun(LoopInfo loopingInfo);
+			internal abstract UnityEngine.Awaitable ARun(LoopInfo loopingInfo);
 #endif
 		}
 
@@ -111,8 +113,8 @@ namespace BC.ODCC
 			internal Func<System.Collections.IEnumerator> iAction;
 			internal override System.Collections.IEnumerator IRun() => iAction();
 #else
-            internal Func<UnityEngine.Awaitable> aAction;
-            internal override UnityEngine.Awaitable ARun(LoopInfo loopingInfo) => aAction();
+			internal Func<UnityEngine.Awaitable> aAction;
+			internal override UnityEngine.Awaitable ARun(LoopInfo loopingInfo) => aAction();
 #endif
 		}
 
@@ -171,7 +173,7 @@ namespace BC.ODCC
                 onShowCallLog = false,
 				onShowCallLogDepth = 5
 			};
-			looper.IsBreakFunction(null);
+			looper.SetBreakFunction(null);
 			if(prevUpdate)
 			{
 				OdccForeach.ForeachQueryPrevUpdate.Add(looper, looper.RunLooper());
@@ -203,124 +205,129 @@ namespace BC.ODCC
                 onShowCallLog = false,
 				onShowCallLogDepth = 5
 			};
-			looper.IsBreakFunction(null);
+			looper.SetBreakFunction(null);
 			return looper;
 		}
 
 #if USING_AWAITABLE_LOOP
-/// <summary>
-/// 루퍼를 실행하는 비동기 메서드입니다.
-/// </summary>
-/// <returns>UnityEngine.Awaitable 객체</returns>
-internal async UnityEngine.Awaitable RunLooper()
-{
-    // 쿼리 콜렉터가 null인 경우 중단합니다.
-    if (queryCollector is null) return;
+		/// <summary>
+		/// 루퍼를 실행하는 비동기 메서드입니다.
+		/// </summary>
+		/// <returns>UnityEngine.Awaitable 객체</returns>
+		internal async UnityEngine.Awaitable RunLooper()
+		{
+			// 쿼리 콜렉터가 null인 경우 중단합니다.
+			if(queryCollector is null) return;
 
-    // 중단 함수가 true를 반환하면 중단합니다.
-    if (onLooperBreakFunction != null && onLooperBreakFunction.Invoke())
-    {
-        return;
-    }
+			// 중단 함수가 true를 반환하면 중단합니다.
+			if(onLooperBreakFunction != null && onLooperBreakFunction.Invoke())
+			{
+				return;
+			}
 
-    // 루프 작업에 대한 정보를 초기화합니다.
-    LoopInfo loopingInfo = new LoopInfo()
-    {
-        isLooperBreak = () => onLooperBreakFunction != null && onLooperBreakFunction.Invoke(), // 중단 여부를 확인하는 함수입니다.
-        loopStartTime = Time.timeAsDouble, // 루프 시작 시간을 현재 시간으로 설정합니다.
+			// 루프 작업에 대한 정보를 초기화합니다.
+			LoopInfo loopingInfo = new LoopInfo()
+	{
+				isLooperBreak = () => queryCollector is null && onLooperBreakFunction != null && onLooperBreakFunction.Invoke(), // 중단 여부를 확인하는 함수입니다.
+				loopStartTime = Time.timeAsDouble, // 루프 시작 시간을 현재 시간으로 설정합니다.
 
-        actionStartTime = 0, // 액션 시작 시간을 0으로 초기화합니다.
-        actionIndex = 0, // 액션 인덱스를 0으로 초기화합니다.
-        actionTotalCount = 0, // 총 액션 개수를 0으로 초기화합니다.
+				actionStartTime = 0, // 액션 시작 시간을 0으로 초기화합니다.
+				actionIndex = 0, // 액션 인덱스를 0으로 초기화합니다.
+				actionTotalCount = 0, // 총 액션 개수를 0으로 초기화합니다.
 
-        itemStartTime = 0, // 항목 시작 시간을 0으로 초기화합니다.
-        itemIndex = 0, // 항목 인덱스를 0으로 초기화합니다.
-        itemTotalCount = 0, // 총 항목 개수를 0으로 초기화합니다.
-    };
+				itemStartTime = 0, // 항목 시작 시간을 0으로 초기화합니다.
+				itemIndex = 0, // 항목 인덱스를 0으로 초기화합니다.
+				itemTotalCount = 0, // 총 항목 개수를 0으로 초기화합니다.
+			};
 
-    // 루퍼에 등록된 Foreach 구조체의 총 개수를 설정합니다.
-    int actionTotalCount = runForeachStructList.Count;
-    loopingInfo.actionTotalCount = actionTotalCount;
+			// 루퍼에 등록된 Foreach 구조체의 총 개수를 설정합니다.
+			int actionTotalCount = runForeachStructList.Count;
+			loopingInfo.actionTotalCount = actionTotalCount;
 
-    // 각 Foreach 구조체에 대해 루프를 실행합니다.
-    for (loopingInfo.actionIndex = 0; loopingInfo.actionIndex < actionTotalCount; loopingInfo.actionIndex++)
-    {
-        // 중단 함수가 true를 반환하면 루프를 중단합니다.
-        if (loopingInfo.isLooperBreak()) return;
+			// 각 Foreach 구조체에 대해 루프를 실행합니다.
+			for(loopingInfo.actionIndex = 0 ; loopingInfo.actionIndex < actionTotalCount ; loopingInfo.actionIndex++)
+			{
+				// 중단 함수가 true를 반환하면 루프를 중단합니다.
+				if(loopingInfo.isLooperBreak()) return;
 
-        // 각 Foreach 구조체의 실행 시작 시간을 설정합니다.
-        loopingInfo.actionStartTime = Time.timeAsDouble;
-        RunForeachStruct action = runForeachStructList[loopingInfo.actionIndex]; // 현재 실행할 Foreach 구조체입니다.
-        RunForeachAction[] itemList = action.runForeachActionList; // 현재 Foreach 구조체의 액션 리스트입니다.
-        int itemTotalCount = itemList.Length; // 액션 리스트의 총 개수를 설정합니다.
+				// 각 Foreach 구조체의 실행 시작 시간을 설정합니다.
+				loopingInfo.actionStartTime = Time.timeAsDouble;
+				RunForeachStruct action = runForeachStructList[loopingInfo.actionIndex]; // 현재 실행할 Foreach 구조체입니다.
+				RunForeachAction[] itemList = action.runForeachActionList; // 현재 Foreach 구조체의 액션 리스트입니다.
+				int itemTotalCount = itemList.Length; // 액션 리스트의 총 개수를 설정합니다.
 
-        // 각 Foreach 액션에 대해 루프를 실행합니다.
-        loopingInfo.itemTotalCount = itemTotalCount;
-        for (loopingInfo.itemIndex = 0; loopingInfo.itemIndex < itemTotalCount; loopingInfo.itemIndex++)
-        {
-            // 중단 함수가 true를 반환하면 루프를 중단합니다.
-            if (loopingInfo.isLooperBreak()) return;
+				// 각 Foreach 액션에 대해 루프를 실행합니다.
+				loopingInfo.itemTotalCount = itemTotalCount;
+				for(loopingInfo.itemIndex = 0 ; loopingInfo.itemIndex < itemTotalCount ; loopingInfo.itemIndex++)
+				{
+					// 중단 함수가 true를 반환하면 루프를 중단합니다.
+					if(loopingInfo.isLooperBreak()) return;
 
-            // 각 액션의 실행 시작 시간을 설정합니다.
-            loopingInfo.itemStartTime = Time.timeAsDouble;
-            RunForeachAction item = itemList[loopingInfo.itemIndex]; // 현재 실행할 Foreach 액션입니다.
+					// 각 액션의 실행 시작 시간을 설정합니다.
+					loopingInfo.itemStartTime = Time.timeAsDouble;
+					RunForeachAction item = itemList[loopingInfo.itemIndex]; // 현재 실행할 Foreach 액션입니다.
+					if(item.callFirstOnly && item.isCallFirst)
+					{
+						continue;
+					}
+					item.isCallFirst = true;
 
-            // 로그를 표시하는 경우 시작 로그를 출력합니다.
-            if (onShowCallLog)
-            {
-                Debug.Log($"Start: RunLooper {looperKey} : {loopingInfo.actionIndex + 1}/{actionTotalCount} : {loopingInfo.itemIndex + 1}/{itemTotalCount}", onShowCallLogDepth);
-            }
+					// 로그를 표시하는 경우 시작 로그를 출력합니다.
+					if(onShowCallLog)
+					{
+						Debug.Log($"Start: RunLooper {looperKey} : {loopingInfo.actionIndex + 1}/{actionTotalCount} : {loopingInfo.itemIndex + 1}/{itemTotalCount}", onShowCallLogDepth);
+					}
 
-            // 각 액션을 비동기적으로 실행합니다.
-            try
-            {
-                await item.ARun(loopingInfo);
-            }
-            catch (Exception ex)
-            {
-                Debug.LogException(ex);
-            }
+					// 각 액션을 비동기적으로 실행합니다.
+					try
+					{
+						await item.ARun(loopingInfo);
+					}
+					catch(Exception ex)
+					{
+						Debug.LogException(ex);
+					}
 
-            // 로그를 표시하는 경우 종료 로그를 출력합니다.
-            if (onShowCallLog)
-            {
-                Debug.Log($"Ended: RunLooper {looperKey}");
-            }
-        }
-    }
-}
+					// 로그를 표시하는 경우 종료 로그를 출력합니다.
+					if(onShowCallLog)
+					{
+						Debug.Log($"Ended: RunLooper {looperKey}");
+					}
+				}
+			}
+		}
 
-        /// <summary>
-        /// 액션을 실행하는 비동기 메서드입니다.
-        /// </summary>
-        /// <param name="completed">완료 후 호출될 액션</param>
-        public async void RunAction(Action completed = null)
-        {
-            // 로그를 표시하는 경우 시작 로그를 출력합니다.
-            if (onShowCallLog)
-            {
-                Debug.Log($"Start: RunCallEvent : {looperKey}", onShowCallLogDepth);
-            }
+		/// <summary>
+		/// 액션을 실행하는 비동기 메서드입니다.
+		/// </summary>
+		/// <param name="completed">완료 후 호출될 액션</param>
+		public async void RunAction(Action completed = null)
+		{
+			// 로그를 표시하는 경우 시작 로그를 출력합니다.
+			if(onShowCallLog)
+			{
+				Debug.Log($"Start: RunCallEvent : {looperKey}", onShowCallLogDepth);
+			}
 
-            // 루퍼를 실행합니다.
-            await RunLooper();
+			// 루퍼를 실행합니다.
+			await RunLooper();
 
-            // 로그를 표시하는 경우 종료 로그를 출력합니다.
-            if (onShowCallLog)
-            {
-                Debug.Log($"Ended: RunCallEvent : {looperKey}");
-            }
+			// 로그를 표시하는 경우 종료 로그를 출력합니다.
+			if(onShowCallLog)
+			{
+				Debug.Log($"Ended: RunCallEvent : {looperKey}");
+			}
 
-            // 완료 후 호출될 액션을 실행합니다.
-            try
-            {
-                completed?.Invoke();
-            }
-            catch (Exception ex)
-            {
-                Debug.LogException(ex);
-            }
-        }
+			// 완료 후 호출될 액션을 실행합니다.
+			try
+			{
+				completed?.Invoke();
+			}
+			catch(Exception ex)
+			{
+				Debug.LogException(ex);
+			}
+		}
 #else
 		/// <summary>
 		/// 루퍼를 실행하는 IEnumerator 메서드입니다.
@@ -538,35 +545,70 @@ internal async UnityEngine.Awaitable RunLooper()
 
 		//==============================================
 #if USING_AWAITABLE_LOOP
-        /// <summary>
-        /// 다음 액션을 호출하는 메서드입니다.
-        /// </summary>
-        /// <param name="action">호출할 액션</param>
-        /// <returns>OdccQueryLooper 객체</returns>
-        public OdccQueryLooper CallNext(Action action)
-        {
-            return CallNext(async () => Call());
-            void Call()
-            {
-                action?.Invoke();
-            }
-        }
+		/// <summary>
+		/// 다음 액션을 호출하는 메서드입니다.
+		/// </summary>
+		/// <param name="action">호출할 액션</param>
+		/// <param name="callFirstOnly"> 루프 안에서 한번만 호출될지 결정</param>
+		/// <returns>OdccQueryLooper 객체</returns>
+		public OdccQueryLooper CallNext(Action action)
+		{
+			return CallNext(async () => Call());
+			void Call()
+			{
+				action?.Invoke();
+			}
+		}
 
-        /// <summary>
-        /// 다음 액션을 호출하는 비동기 메서드입니다.
-        /// </summary>
-        /// <param name="action">호출할 비동기 액션</param>
-        /// <returns>OdccQueryLooper 객체</returns>
-        public OdccQueryLooper CallNext(Func<UnityEngine.Awaitable> action)
-        {
-            var list = new List<RunForeachAction>();
-            list.Add(new AddedForeachAction()
-            {
-                aAction = action
-            });
-            runForeachStructList.Add(new RunForeachStruct(action, list, true, null));
-            return this;
-        }
+		/// <summary>
+		/// 다음 액션을 호출하는 비동기 메서드입니다.
+		/// </summary>
+		/// <param name="action">호출할 비동기 액션</param>
+		/// /// <param name="callFirstOnly"> 루프 안에서 한번만 호출될지 결정</param>
+		/// <returns>OdccQueryLooper 객체</returns>
+		public OdccQueryLooper CallNext(Func<UnityEngine.Awaitable> action)
+		{
+			var list = new List<RunForeachAction>();
+			list.Add(new AddedForeachAction() {
+				aAction = action,
+				callFirstOnly = false,
+				isCallFirst = false,
+			});
+			runForeachStructList.Add(new RunForeachStruct(action, list, true, null));
+			return this;
+		}
+		/// <summary>
+		/// 다음 액션을 호출하는 메서드입니다.
+		/// </summary>
+		/// <param name="action">호출할 액션</param>
+		/// <param name="callFirstOnly"> 루프 안에서 한번만 호출될지 결정</param>
+		/// <returns>OdccQueryLooper 객체</returns>
+		public OdccQueryLooper CallInit(Action action)
+		{
+			return CallInit(async () => Call());
+			void Call()
+			{
+				action?.Invoke();
+			}
+		}
+
+		/// <summary>
+		/// 다음 액션을 호출하는 비동기 메서드입니다.
+		/// </summary>
+		/// <param name="action">호출할 비동기 액션</param>
+		/// /// <param name="callFirstOnly"> 루프 안에서 한번만 호출될지 결정</param>
+		/// <returns>OdccQueryLooper 객체</returns>
+		public OdccQueryLooper CallInit(Func<UnityEngine.Awaitable> action)
+		{
+			var list = new List<RunForeachAction>();
+			list.Add(new AddedForeachAction() {
+				aAction = action,
+				callFirstOnly = true,
+				isCallFirst = false,
+			});
+			runForeachStructList.Add(new RunForeachStruct(action, list, true, null));
+			return this;
+		}
 #else
 		/// <summary>
 		/// 다음 액션을 호출하는 메서드입니다.
@@ -642,19 +684,13 @@ internal async UnityEngine.Awaitable RunLooper()
 		/// <returns>설정된 항목</returns>
 		internal T SetForeachItem<T>(ObjectBehaviour item) where T : class, IOdccItem
 		{
-			if(typeof(T).IsSubclassOf(typeof(ComponentBehaviour)))
+			if(typeof(T).IsSubclassOf(typeof(ComponentBehaviour)) && item.ThisContainer._TryGetComponent<T>(out T t))
 			{
-				if(item.ThisContainer._TryGetComponent<T>(out T t))
-				{
-					return t;
-				}
+				return t;
 			}
-			else if(typeof(T).IsSubclassOf(typeof(DataObject)))
+			else if(typeof(T).IsSubclassOf(typeof(DataObject)) && item.ThisContainer._TryGetData<T>(out T tt))
 			{
-				if(item.ThisContainer._TryGetData<T>(out T t))
-				{
-					return t;
-				}
+				return tt;
 			}
 			else if(typeof(T).IsSubclassOf(typeof(ObjectBehaviour)))
 			{
@@ -668,11 +704,38 @@ internal async UnityEngine.Awaitable RunLooper()
 			{
 				return data;
 			}
-			else if(item.TryGetComponent<T>(out T tObject) && tObject is ObjectBehaviour)
+			else
 			{
-				return tObject;
+				return item.GetComponent<T>();
 			}
-			return null;
+		}
+
+		internal T[] SetForeachItems<T>(ObjectBehaviour item) where T : class, IOdccItem
+		{
+			if(typeof(T).IsSubclassOf(typeof(ComponentBehaviour)) && item.ThisContainer._TryGetComponents<T>(out T[] t))
+			{
+				return t;
+			}
+			else if(typeof(T).IsSubclassOf(typeof(DataObject)) && item.ThisContainer._TryGetDatas<T>(out T[] tt))
+			{
+				return tt;
+			}
+			else if(typeof(T).IsSubclassOf(typeof(ObjectBehaviour)))
+			{
+				return new T[1] { item as T };
+			}
+			else if(item.ThisContainer._TryGetComponents<T>(out T[] component))
+			{
+				return component;
+			}
+			else if(item.ThisContainer._TryGetDatas<T>(out T[] data))
+			{
+				return data;
+			}
+			else
+			{
+				return item.GetComponents<T>();
+			}
 		}
 
 		/// <summary>
@@ -727,7 +790,7 @@ internal async UnityEngine.Awaitable RunLooper()
 		/// </summary>
 		/// <param name="breakEvent">중단 함수</param>
 		/// <returns>OdccQueryLooper 객체</returns>
-		public OdccQueryLooper IsBreakFunction(Func<bool> breakEvent)
+		public OdccQueryLooper SetBreakFunction(Func<bool> breakEvent)
 		{
 			onLooperBreakFunction = breakEvent != null ? Action : Pass;
 
@@ -772,17 +835,17 @@ internal async UnityEngine.Awaitable RunLooper()
 		}
 
 #if USING_AWAITABLE_LOOP
-        [Obsolete("CallNext 사용 할 것 - 오래된 이름 규칙", true)]
-        public OdccQueryLooper Action(Func<UnityEngine.Awaitable> action)
-        {
-            return CallNext(action);
-        }
+		[Obsolete("CallNext 사용 할 것 - 오래된 이름 규칙", true)]
+		public OdccQueryLooper Action(Func<UnityEngine.Awaitable> action)
+		{
+			return CallNext(action);
+		}
 
-        [Obsolete("RunAction 사용 할 것 - 오래된 이름 규칙", true)]
-        public void RunCallEvent(Action completed = null)
-        {
-            RunAction(completed);
-        }
+		[Obsolete("RunAction 사용 할 것 - 오래된 이름 규칙", true)]
+		public void RunCallEvent(Action completed = null)
+		{
+			RunAction(completed);
+		}
 #else
 		[Obsolete("CallNext 사용 할 것 - 오래된 이름 규칙", true)]
 		public OdccQueryLooper Action(Func<System.Collections.IEnumerator> action)

@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+using Sirenix.OdinInspector;
+
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -14,6 +16,12 @@ namespace BC.ODCC
 	[Serializable]
 	public class OdccQueryCollector : IDisposable
 	{
+#if UNITY_EDITOR
+		[ShowInInspector, ReadOnly, InlineProperty, HideLabel]
+		private QuerySystem onShowQuerySystem;
+		[ShowInInspector, ReadOnly]
+		private List<ObjectBehaviour> onShowQueryItems;
+#endif
 		// QuerySystem 객체입니다.
 		internal QuerySystem querySystem;
 
@@ -41,8 +49,11 @@ namespace BC.ODCC
 		/// <param name="querySystem">QuerySystem 객체</param>
 		internal OdccQueryCollector(QuerySystem querySystem)
 		{
+#if UNITY_EDITOR
+			onShowQuerySystem = querySystem;
+			onShowQueryItems = new List<ObjectBehaviour>();
+#endif
 			this.querySystem = querySystem;
-
 			lifeItems = new List<object>();
 			IsDontDestoryLifeItem = false;
 
@@ -217,6 +228,10 @@ namespace BC.ODCC
 		[Obsolete("절대 수동으로 호출하지 마세요.")]
 		public void Dispose()
 		{
+#if UNITY_EDITOR
+			onShowQuerySystem = null;
+			onShowQueryItems = null;
+#endif
 			querySystem = null;
 			queryItems = null;
 
@@ -287,7 +302,7 @@ namespace BC.ODCC
 		/// <returns>OdccQueryCollector 객체</returns>
 		public OdccQueryCollector DeleteLooperEvent(string key)
 		{
-			if(odccLoopers.ContainsKey(key))
+			if(odccLoopers is not null && odccLoopers.ContainsKey(key))
 			{
 				odccLoopers[key].Dispose();
 				odccLoopers.Remove(key);
@@ -302,7 +317,7 @@ namespace BC.ODCC
 		/// <returns>OdccQueryCollector 객체</returns>
 		public OdccQueryCollector DeleteActionEvent(string key)
 		{
-			if(odccActions.ContainsKey(key))
+			if(odccActions is not null && odccActions.ContainsKey(key))
 			{
 				odccActions[key].Dispose();
 				odccActions.Remove(key);
@@ -354,6 +369,10 @@ namespace BC.ODCC
 				var list = queryItems.ToList();
 				list.Add(item);
 				queryItems = list;
+#if UNITY_EDITOR
+				onShowQueryItems = new List<ObjectBehaviour>();
+				onShowQueryItems.AddRange(list);
+#endif
 				changeItemList?.Invoke(item, true);
 
 				foreach(var looper in odccLoopers)
@@ -380,6 +399,10 @@ namespace BC.ODCC
 			if(list.Remove(item))
 			{
 				queryItems = list;
+#if UNITY_EDITOR
+				onShowQueryItems = new List<ObjectBehaviour>();
+				onShowQueryItems.AddRange(list);
+#endif
 				changeItemList?.Invoke(item, false);
 
 				foreach(var looper in odccLoopers)

@@ -11,8 +11,7 @@ namespace BC.ODCC
 		[PropertyOrder(-5)]
 		public ObjectBehaviour ThisObject { get; internal set; }
 		public ContainerObject ThisContainer {
-			get
-			{
+			get {
 #if UNITY_EDITOR
 				if(ThisObject == null) Reset();
 #endif
@@ -43,9 +42,9 @@ namespace BC.ODCC
 		}
 #endif
 
-		protected override void Dispose(bool disposing)
+		protected override void Disposing()
 		{
-			base.Dispose(disposing);
+			base.Disposing();
 			ThisObject = null;
 		}
 	}

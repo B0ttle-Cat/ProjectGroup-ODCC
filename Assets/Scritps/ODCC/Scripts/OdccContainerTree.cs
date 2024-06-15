@@ -24,6 +24,7 @@ namespace BC.ODCC
 
 		// 파괴가 예약된 오브젝트 집합
 		public static HashSet<OCBehaviour> reservationDestroyObject = new HashSet<OCBehaviour>();
+		public static bool awaitReservationDestroyObject;
 
 		/// <summary>
 		/// 특정 오브젝트에 대한 컨테이너 노드를 가져오는 메서드
@@ -114,29 +115,45 @@ namespace BC.ODCC
 		[Serializable]
 		public class ContainerNode : IDisposable
 		{
+#if UNITY_EDITOR
+			[Flags]
+			private enum ShowInspector
+			{
+				HideAll     = 0,
+				ShowComponentAndData = ShowComponent|ShowData,
+				ShowObject      = 0b_0001,
+				ShowComponent   = 0b_0010,
+				ShowData        = 0b_0100,
+				ShowType        = 0b_1000,
+				ShowAll     = -1,
+			}
+			[SerializeField,HideLabel]
+			private ShowInspector showInspector = ShowInspector.ShowComponent|ShowInspector.ShowData;
+			bool ShowObject => (showInspector.HasFlag(ShowInspector.ShowObject));
+			bool ShowComponent => (showInspector.HasFlag(ShowInspector.ShowComponent));
+			bool ShowData => (showInspector.HasFlag(ShowInspector.ShowData));
+			bool ShowType => (showInspector.HasFlag(ShowInspector.ShowType));
+#endif
 			// 현재 오브젝트
-			[ReadOnly]
+			[ReadOnly, ShowIf("@ShowObject")]
 			public ObjectBehaviour thisObject;
-
 			// 부모 오브젝트
-			[ReadOnly]
+			[ReadOnly, ShowIf("@ShowObject")]
 			public ObjectBehaviour parent;
-			[ReadOnly]
-			public ObjectBehaviour[] parentToRoot = new ObjectBehaviour[0];
 			// 자식 오브젝트 배열
-			[ReadOnly, SerializeReference]
+			[ReadOnly, SerializeReference, ShowIf("@ShowObject")]
 			public ObjectBehaviour[] childs = new ObjectBehaviour[0];
 
 			// 컴포넌트 리스트 배열
-			[ReadOnly, SerializeReference]
+			[ReadOnly, SerializeReference, ShowIf("@ShowComponent")]
 			public ComponentBehaviour[] componentList = new ComponentBehaviour[0];
 
 			// 데이터 리스트 배열
-			[SerializeReference]
+			[SerializeReference, ShowIf("@ShowData")]
 			public DataObject[] dataList = new DataObject[0];
 
 			// 타입 인덱스 배열
-			[ReadOnly, ShowInInspector]
+			[ReadOnly, ShowInInspector, ShowIf("@ShowType")]
 			internal int[] typeIndex = new int[0];
 
 			/// <summary>
@@ -156,7 +173,6 @@ namespace BC.ODCC
 			{
 				thisObject = null;
 				parent = null;
-				parentToRoot = null;
 				childs = null;
 				componentList = null;
 				dataList = null;
@@ -211,11 +227,10 @@ namespace BC.ODCC
 			public void AllRefresh()
 			{
 				// 오브젝트가 null인 경우 에러 메시지 출력
-				if(thisObject != null) Debug.LogError("ContainerNode ThisObject Is Null!");
+				if(thisObject == null) Debug.LogError("ContainerNode ThisObject Is Null!");
 
 				// 속성 초기화
 				if(parent == null) parent = null;
-				if(parent == null) parentToRoot = new ObjectBehaviour[0];
 				if(childs == null) childs = new ObjectBehaviour[0];
 				if(componentList == null) componentList = new ComponentBehaviour[0];
 				if(dataList == null) dataList = new DataObject[0];
@@ -239,12 +254,6 @@ namespace BC.ODCC
 				// 새로운 부모 오브젝트를 가져옴
 				var newParent = GetParentObjectBehaviour(thisObject);
 				parent = newParent;
-
-				var newParentToRoot = thisObject.GetComponentsInParent<ObjectBehaviour>(true)
-					.Where(item => !reservationDestroyObject.Contains(item))
-					.Where(item => item != thisObject);// && GetParentObjectBehaviour(item) == thisObject);
-
-				parentToRoot = newParentToRoot.ToArray();
 			}
 
 			/// <summary>
@@ -417,6 +426,36 @@ namespace BC.ODCC
 			}
 
 			/// <summary>
+			/// 부모 노드에서 해당 자식 제거
+			/// </summary>
+			/// <param name="node">자식 노드</param>
+			internal void RemoveFromChildObject(ObjectBehaviour childObj)
+			{
+				int length = childs.Length;
+				if(length == 0) return;
+
+
+				bool remove = childs[^1] == childObj;
+				if(!remove)
+				{
+					for(int i = 0 ; i < length - 1 ; i++)
+					{
+						if(!remove && childs[i] == childObj)
+						{
+							remove = true;
+						}
+						if(remove)
+						{
+							childs[i] = childs[i+1];
+						}
+					}
+				}
+				if(remove)
+				{
+					Array.Resize(ref childs, length - 1);
+				}
+			}
+			/// <summary>
 			/// 자식 노드에서 부모 노드로 데이터를 추가하는 메서드
 			/// </summary>
 			/// <param name="node">자식 노드</param>
@@ -573,6 +612,7 @@ namespace BC.ODCC
 			ContainerTreeClear();
 
 			// 파괴를 무시할 오브젝트 집합을 초기화
+			awaitReservationDestroyObject = true;
 			reservationDestroyObject.Clear();
 
 			// 빈 오브젝트가 null이 아닌 경우 파괴
@@ -587,25 +627,36 @@ namespace BC.ODCC
 		/// OCBehaviour를 깨우는 메서드
 		/// </summary>
 		/// <param name="behaviour">OCBehaviour</param>
-		public static void AwakeOCBehaviour(OCBehaviour behaviour)
+		public static bool AwakeOCBehaviour(OCBehaviour behaviour)
 		{
 			// behaviour가 null인 경우 반환
-			if(behaviour == null) return;
+			if(behaviour == null)
+			{
+				Debug.LogError("AwakeOCBehaviour: behaviour Is Null");
+				return false;
+			}
 
 			// 파괴를 무시할 오브젝트 집합에 포함된 경우 반환
-			if(reservationDestroyObject.Contains(behaviour)) return;
+			if(reservationDestroyObject.Contains(behaviour))
+			{
+				Debug.LogError("AwakeOCBehaviour: behaviour Is reservationDestroyObject");
+				return false;
+			}
 
 			// behaviour가 ObjectBehaviour인 경우 처리
 			if(behaviour is ObjectBehaviour @object)
 			{
-				AwakeOCBehaviour(@object);
+				return AwakeOCBehaviour(@object);
 			}
 
 			// behaviour가 ComponentBehaviour인 경우 처리
 			if(behaviour is ComponentBehaviour component)
 			{
-				AwakeOCBehaviour(component);
+				return AwakeOCBehaviour(component);
 			}
+
+			Debug.LogError("AwakeOCBehaviour: behaviour Is Not OCBehaviour");
+			return false;
 		}
 
 		/// <summary>
@@ -618,6 +669,7 @@ namespace BC.ODCC
 			if(behaviour == null) return;
 
 			// 파괴를 예약할 오브젝트 집합에 추가
+			awaitReservationDestroyObject = false;
 			reservationDestroyObject.Add(behaviour);
 
 			// behaviour가 ObjectBehaviour인 경우 처리
@@ -666,7 +718,7 @@ namespace BC.ODCC
 		/// ObjectBehaviour를 깨우는 메서드
 		/// </summary>
 		/// <param name="behaviour">ObjectBehaviour</param>
-		private static void AwakeOCBehaviour(ObjectBehaviour behaviour)
+		private static bool AwakeOCBehaviour(ObjectBehaviour behaviour)
 		{
 			// behaviour가 null이 아닌 경우
 			if(behaviour != null && !ContainerNodeListContainsKey(behaviour) && !reservationDestroyObject.Contains(behaviour))
@@ -725,6 +777,7 @@ namespace BC.ODCC
 					}
 				}
 			}
+			return true;
 		}
 
 		/// <summary>
@@ -745,6 +798,7 @@ namespace BC.ODCC
 				// 부모 노드가 null이 아닌 경우 자식 노드를 부모 노드로 추가
 				if(parentNode != null)
 				{
+					parentNode.RemoveFromChildObject(behaviour);
 					parentNode.AddFromChildToParent(node);
 				}
 				else
@@ -817,10 +871,10 @@ namespace BC.ODCC
 		/// ComponentBehaviour를 깨우는 메서드
 		/// </summary>
 		/// <param name="behaviour">ComponentBehaviour</param>
-		private static void AwakeOCBehaviour(ComponentBehaviour behaviour)
+		private static bool AwakeOCBehaviour(ComponentBehaviour behaviour)
 		{
 			// behaviour가 null인 경우 반환
-			if(behaviour == null) return;
+			if(behaviour == null) return false;
 
 			// 부모 오브젝트를 가져옴
 			ObjectBehaviour objectBehaviour = GetParentObjectBehaviour(behaviour);
@@ -829,6 +883,11 @@ namespace BC.ODCC
 			if(!ContainerNodeListContainsKey(objectBehaviour))
 			{
 				AwakeOCBehaviour(objectBehaviour);
+			}
+			bool isValidation = objectBehaviour.OnAddValidation(behaviour);
+			if(isValidation)
+			{
+				return true;
 			}
 
 			// 부모 오브젝트의 컨테이너 노드를 가져옴
@@ -847,6 +906,8 @@ namespace BC.ODCC
 				// 타입 인덱스 갱신
 				node.RefreshTypeIndexs();
 			}
+
+			return true;
 		}
 
 		/// <summary>

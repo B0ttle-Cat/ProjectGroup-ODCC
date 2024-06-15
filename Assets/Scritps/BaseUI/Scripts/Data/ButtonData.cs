@@ -21,9 +21,9 @@ namespace BC.BaseUI
 
 		public TMP_Text Text;
 
-		protected override void Dispose(bool disposing)
+		protected override void Disposing()
 		{
-			base.Dispose(disposing);
+			base.Disposing();
 			Button = null;
 			Image = null;
 			ButtonSound = null;

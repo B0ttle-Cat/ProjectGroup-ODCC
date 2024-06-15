@@ -115,6 +115,7 @@ namespace BC.ODCC
 			}
 			return null;
 		}
+
 		/// <summary>
 		/// <code>막지는 않지만, 외부에서 이 함수를 사용하는건 좋은 생각이 아닙니다.
 		/// 대신, 사용중인 <see cref="OdccStateData"/>의 값을 변경하여 <see cref="OdccStateComponent.StateChangeInHere"/>에서 스스로 상태를 전이 할 수 있도록 해주세요.</code>

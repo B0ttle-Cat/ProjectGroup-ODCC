@@ -98,7 +98,7 @@ namespace BC.ODCC
 		}
 		public static Type GetIndexToType(int type)
 		{
-			return type <= 0 ? IntTypeTable[type] : null; ;
+			return type >= 0 ? IntTypeTable[type] : null;
 		}
 		public static int[] GetTypeToIndex(params Type[] types)
 		{

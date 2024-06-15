@@ -2,7 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+using Sirenix.OdinInspector;
+
+using UnityEngine;
 using UnityEngine.SceneManagement;
+
+using Object = UnityEngine.Object;
 
 namespace BC.ODCC
 {
@@ -149,6 +154,7 @@ namespace BC.ODCC
 		}
 	}
 
+	[Serializable]
 	public class QuerySystem : IEquatable<QuerySystem>
 	{
 		internal Scene TargetScene;
@@ -162,6 +168,11 @@ namespace BC.ODCC
 			Object = 0b_0010,
 			Parent = 0b_0100,
 			Child  = 0b_1000,
+
+			AllObjectRoot = 0b_0001_0000,
+
+			ObjectAndChild = Object | Child,
+			ObjectAndParent = Object | Parent,
 		}
 
 
@@ -173,6 +184,11 @@ namespace BC.ODCC
 		internal readonly int[] InheritanceOfNone = Array.Empty<int>();
 		internal readonly int[] InheritanceOfAll = Array.Empty<int>();
 
+
+#if UNITY_EDITOR
+		[ShowInInspector, ReadOnly, TextArea(0, 50), HideLabel]
+		string onShowQuerySystem;
+#endif
 
 		internal QuerySystem(Scene targetScene, int targetInstanceID, RangeType range,
 			int[] any, int[] none, int[] all,
@@ -188,7 +204,35 @@ namespace BC.ODCC
 			InheritanceOfAny = inheritanceOfAny;
 			InheritanceOfNone = inheritanceOfNone;
 			InheritanceOfAll = inheritanceOfAll;
+
+#if UNITY_EDITOR
+			SetEditorQueryInfo();
+			void SetEditorQueryInfo()
+			{
+				onShowQuerySystem = "QuerySystem Info";
+				Object targetObject = TargetInstanceID == 0 ? null : UnityEditor.EditorUtility.InstanceIDToObject(TargetInstanceID);
+
+				string rangeString = Enum.GetValues(typeof(QuerySystem.RangeType))
+					.Cast<QuerySystem.RangeType>()
+					.Where(r => Range.HasFlag(r))
+					.Select(r => r.ToString())
+					.Aggregate((current, next) => current + " | " + next);
+				onShowQuerySystem += $"\nTargetRange : {rangeString}";
+				onShowQuerySystem += $"\nTargetScene : {TargetScene.name}";
+				if(!Range.HasFlag(RangeType.World) && Range.HasFlag(RangeType.Scene) && TargetScene != default)
+					onShowQuerySystem += $"\nTargetScene : {TargetScene.name}";
+				if(!Range.HasFlag(RangeType.World) && Range.HasFlag(RangeType.Object | RangeType.Child | RangeType.Parent) &&  targetObject != null)
+					onShowQuerySystem += $"\nTargetObject : {targetObject.name}";
+				onShowQuerySystem += $"\nAny : {string.Join(" | ", Any.Select(index => $"{index}:{OdccManager.GetIndexToType(index)?.Name}"))}";
+				onShowQuerySystem += $"\nNone : {string.Join(" | ", None.Select(index => $"{index}:{OdccManager.GetIndexToType(index)?.Name}"))}";
+				onShowQuerySystem += $"\nAll : {string.Join(" | ", All.Select(index => $"{index}:{OdccManager.GetIndexToType(index)?.Name}"))}";
+				onShowQuerySystem += $"\nInheritanceOfAny : {string.Join(" | ", InheritanceOfAny.Select(index => $"{index}:{OdccManager.GetIndexToType(index)?.Name}"))}";
+				onShowQuerySystem += $"\nInheritanceOfNone : {string.Join(" | ", InheritanceOfNone.Select(index => $"{index}:{OdccManager.GetIndexToType(index)?.Name}"))}";
+				onShowQuerySystem += $"\nInheritanceOfAll : {string.Join(" | ", InheritanceOfAll.Select(index => $"{index}:{OdccManager.GetIndexToType(index)?.Name}"))}";
+			}
+#endif
 		}
+
 		public bool IsRange(ObjectBehaviour item)
 		{
 			if(Range == RangeType.World) return true;
@@ -203,32 +247,62 @@ namespace BC.ODCC
 				}
 				if(Range.HasFlag(RangeType.Parent))
 				{
-					var list = item.ThisContainer.ParentToRoot;
-					if(list != null)
+					if(Range.HasFlag(RangeType.AllObjectRoot))
 					{
-						int length = list.Length;
-						for(int i = 0 ; i < length ; i++)
+						var list = item.GetComponentsInParent<ObjectBehaviour>(true);
+						if(list != null)
 						{
-							if(TargetInstanceID == list[i].GetInstanceID())
+							int length = list.Length;
+							for(int i = 1 ; i < length ; i++)
 							{
-								return true;
+								if(TargetInstanceID == list[i].GetInstanceID())
+								{
+									return true;
+								}
 							}
+						}
+					}
+					else
+					{
+						var parent = item.ThisContainer.ParentObject;
+						if(parent != null && TargetInstanceID == parent.GetInstanceID())
+						{
+							return true;
 						}
 					}
 				}
 				if(Range.HasFlag(RangeType.Child))
 				{
-					var list = item.ThisContainer.ChildObject;
-					if(list != null)
+					if(Range.HasFlag(RangeType.AllObjectRoot))
 					{
-						int length = list.Length;
-						for(int i = 0 ; i < length ; i++)
+						var list = item.GetComponentsInChildren<ObjectBehaviour>(true);
+						if(list != null)
 						{
-							if(TargetInstanceID == list[i].GetInstanceID())
+							int length = list.Length;
+							for(int i = 1 ; i < length ; i++)
 							{
-								return true;
+								if(TargetInstanceID == list[i].GetInstanceID())
+								{
+									return true;
+								}
 							}
 						}
+					}
+					else
+					{
+						var list = item.ThisContainer.ChildObject;
+						if(list != null)
+						{
+							int length = list.Length;
+							for(int i = 0 ; i < length ; i++)
+							{
+								if(TargetInstanceID == list[i].GetInstanceID())
+								{
+									return true;
+								}
+							}
+						}
+
 					}
 				}
 			}
@@ -242,7 +316,6 @@ namespace BC.ODCC
 				|| (InheritanceOfAny.Length == 0 || InheritanceOfAny.Any((i) => OdccManager.CheckIsInheritanceIndex(i, odccItems)));
 			return result;
 		}
-
 		public bool IsNone(IEnumerable<int> odccItems)
 		{
 			bool result
@@ -250,7 +323,6 @@ namespace BC.ODCC
 				|| (InheritanceOfNone.Length == 0 || !InheritanceOfNone.Any((i) => OdccManager.CheckIsInheritanceIndex(i, odccItems)));
 			return result;
 		}
-
 		public bool IsAll(IEnumerable<int> odccItems)
 		{
 			bool result

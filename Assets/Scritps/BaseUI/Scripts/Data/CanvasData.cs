@@ -13,9 +13,9 @@ namespace BC.BaseUI
 		[ReadOnly] public GraphicRaycaster GraphicRaycaster;
 		[ReadOnly] public UnityEngine.CanvasGroup CanvasGroup;
 
-		protected override void Dispose(bool disposing)
+		protected override void Disposing()
 		{
-			base.Dispose(disposing);
+			base.Disposing();
 			Canvas = null;
 			CanvasScaler = null;
 			GraphicRaycaster = null;

@@ -52,7 +52,8 @@ namespace BC.ODCC
 			ThisTransform = transform;
 			if(ThisTransform == null) return;
 
-			if(_container == null || _container.ContainerNode == null) _container = new ContainerObject(this);
+			if(_container == null || _container.ContainerNode == null || _container.ThisObject == null) _container = new ContainerObject(this);
+
 			_container.ContainerNode.AllRefresh();
 
 			BaseValidate();
@@ -70,10 +71,28 @@ namespace BC.ODCC
 			}
 		}
 #endif
-		protected override void Dispose(bool disposing)
+		protected override void Disposing()
 		{
-			base.Dispose(disposing);
+			base.Disposing();
 			_container = null;
+		}
+
+		internal bool OnAddValidation(ComponentBehaviour behaviour)
+		{
+			return BaseAddValidation(behaviour);
+		}
+		internal bool OnAddValidation(DataObject data)
+		{
+			return BaseAddValidation(data);
+		}
+
+		protected virtual bool BaseAddValidation(ComponentBehaviour behaviour)
+		{
+			return true;
+		}
+		protected virtual bool BaseAddValidation(DataObject data)
+		{
+			return true;
 		}
 	}
 }
