@@ -26,10 +26,18 @@ namespace BC.ODCC
 		internal static List<ComponentBehaviour> componentBehaviourList = new List<ComponentBehaviour>();
 
 #if USING_AWAITABLE_LOOP
-        internal static Dictionary<OdccQueryLooper, UnityEngine.Awaitable> ForeachQueryPrevUpdate = new ();
-        internal static Dictionary<OdccQueryLooper, UnityEngine.Awaitable> ForeachQueryNextUpdate = new ();
+		internal static SortedDictionary<int, Dictionary<OdccQueryLooper, UnityEngine.Awaitable>> ForeachQueryUpdate = new ();
+
+		[Obsolete("Using ForeachQueryUpdate", true)]
+		internal static Dictionary<OdccQueryLooper, UnityEngine.Awaitable> ForeachQueryPrevUpdate = new ();
+		[Obsolete("Using ForeachQueryUpdate", true)]
+		internal static Dictionary<OdccQueryLooper, UnityEngine.Awaitable> ForeachQueryNextUpdate = new ();
 #else
+		internal static SortedDictionary<int, Dictionary<OdccQueryLooper, UnityEngine.Awaitable>> ForeachQueryUpdate = new ();
+		[Obsolete("Using ForeachQueryUpdate", true)]
+
 		internal static Dictionary<OdccQueryLooper, System.Collections.IEnumerator> ForeachQueryPrevUpdate  = new ();
+		[Obsolete("Using ForeachQueryUpdate", true)]
 		internal static Dictionary<OdccQueryLooper, System.Collections.IEnumerator> ForeachQueryNextUpdate  = new ();
 #endif
 
@@ -61,8 +69,7 @@ namespace BC.ODCC
 
 			// 컬렉터와 업데이트 목록을 초기화합니다.
 			OdccQueryCollectors.Clear();
-			ForeachQueryPrevUpdate.Clear();
-			ForeachQueryNextUpdate.Clear();
+			ForeachQueryUpdate.Clear();
 
 			// 액션 큐를 초기화합니다.
 			foreachAction.Clear();
@@ -275,47 +282,43 @@ namespace BC.ODCC
 		internal static void ForeachUpdate()
 		{
 			Action listToNext = null;
-
+			bool waitMainUpdate = true;
 			// 이전 업데이트 리스트를 처리합니다.
-			foreach(var item in ForeachQueryPrevUpdate)
+			foreach(var orderKey in ForeachQueryUpdate)
 			{
-				var key = item.Key;
-				var value = item.Value;
+				var order = orderKey.Key;
+				var dictionary = orderKey.Value;
 
-				if(key is not null)
+				if(order>0 && waitMainUpdate)
 				{
-#if USING_AWAITABLE_LOOP
-                    if (value is null || value.IsCompleted)
-#else
-					if(!value.MoveNext())
-#endif
+					waitMainUpdate = false;
+					// ObjectBehaviour 리스트를 업데이트합니다.
+					OCBehaviourUpdate(objectBehaviourList);
+					OCBehaviourUpdate(componentBehaviourList);
+				}
+				foreach(var item in dictionary)
+				{
+					var key = item.Key;
+					var value = item.Value;
+					if(key is not null)
 					{
-						listToNext += () => ForeachQueryPrevUpdate[key] = key.RunLooper();
+#if USING_AWAITABLE_LOOP
+						if(value is null || value.IsCompleted)
+#else
+						if(!value.MoveNext())
+#endif
+						{
+							listToNext += () => dictionary[key] = key.RunLooper();
+						}
 					}
 				}
 			}
 
-			// ObjectBehaviour 리스트를 업데이트합니다.
-			OCBehaviourUpdate(objectBehaviourList);
-			OCBehaviourUpdate(componentBehaviourList);
-
-			// 다음 업데이트 리스트를 처리합니다.
-			foreach(var item in ForeachQueryNextUpdate)
+			if(waitMainUpdate)
 			{
-				var key = item.Key;
-				var value = item.Value;
-
-				if(key is not null)
-				{
-#if USING_AWAITABLE_LOOP
-                    if (value is null || value.IsCompleted)
-#else
-					if(!value.MoveNext())
-#endif
-					{
-						listToNext += () => ForeachQueryNextUpdate[key] = key.RunLooper();
-					}
-				}
+				// ObjectBehaviour 리스트를 업데이트합니다.
+				OCBehaviourUpdate(objectBehaviourList);
+				OCBehaviourUpdate(componentBehaviourList);
 			}
 
 			// 리스트를 다음으로 넘깁니다.

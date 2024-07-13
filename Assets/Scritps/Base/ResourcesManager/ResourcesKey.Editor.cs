@@ -174,6 +174,7 @@ namespace BC.Base
 
 
 		private const string Fail_CheckResourcesKey = "지정된 에셋을 찾을 수 없습니다!";
+		private const string Success_CheckResourcesKey = "지정된 에셋을 사용 가능합니다.";
 		private bool ShowErrorCheckResourcesKey()
 		{
 			Object load = null;
@@ -227,6 +228,10 @@ namespace BC.Base
 			}
 
 			return load == null;
+		}
+		private bool ShowSuccessCheckResourcesKey()
+		{
+			return !ShowErrorCheckResourcesKey();
 		}
 	}
 }

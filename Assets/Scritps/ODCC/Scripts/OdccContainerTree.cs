@@ -14,7 +14,7 @@ namespace BC.ODCC
 	/// OdccContainerTree 클래스는 오브젝트 컨테이너 트리를 관리하는 정적 클래스입니다.
 	/// 이 클래스는 오브젝트 컨테이너 노드를 생성, 초기화, 갱신, 제거하는 기능을 제공합니다.
 	/// </summary>
-	public static class OdccContainerTree
+	public static partial class OdccContainerTree
 	{
 		// 빈 오브젝트를 저장할 변수
 		private static ObjectBehaviour EmptyObject;
@@ -33,13 +33,7 @@ namespace BC.ODCC
 		/// <returns>해당 오브젝트의 컨테이너 노드</returns>
 		internal static ContainerNode GetContainerNode(ObjectBehaviour key)
 		{
-			// 오브젝트 키가 null인 경우 EmptyObject의 컨테이너 노드를 가져옴
-			var node = key == null
-				? ContainerNodeList.ContainsKey(EmptyObject) ? ContainerNodeList[EmptyObject] : null
-				: ContainerNodeList.ContainsKey(key) ? ContainerNodeList[key] : null;
-
-			// 노드 반환
-			return node;
+			return ContainerNodeList.TryGetValue(key??EmptyObject, out var keyNode) ? keyNode : null;
 		}
 
 		/// <summary>
@@ -240,6 +234,7 @@ namespace BC.ODCC
 				RefreshParent();
 				RefreshChilds();
 				RefreshComponents();
+				RefreshDatas();
 				RefreshTypeIndexs();
 			}
 
@@ -305,66 +300,21 @@ namespace BC.ODCC
 			/// </summary>
 			/// <param name="behaviour">확인할 오브젝트</param>
 			/// <returns>자식 오브젝트이면 true, 아니면 false</returns>
-			public bool IsChildObject(ObjectBehaviour behaviour)
-			{
-				// 자식 오브젝트 배열의 길이를 가져옴
-				int count = childs.Length;
-
-				// 자식 오브젝트 배열을 순회하며 확인
-				for(int i = 0 ; i < count ; i++)
-				{
-					var child = childs[i];
-					if(child == behaviour)
-					{
-						return true;
-					}
-				}
-				return false;
-			}
+			public bool IsChildObject(ObjectBehaviour behaviour) => childs != null && Array.IndexOf(childs, behaviour) >= 0;
 
 			/// <summary>
 			/// 자식 컴포넌트인지 확인하는 메서드
 			/// </summary>
 			/// <param name="behaviour">확인할 컴포넌트</param>
 			/// <returns>자식 컴포넌트이면 true, 아니면 false</returns>
-			public bool IsChildComponent(ComponentBehaviour behaviour)
-			{
-				// 컴포넌트 리스트 배열의 길이를 가져옴
-				int count = componentList.Length;
-
-				// 컴포넌트 리스트 배열을 순회하며 확인
-				for(int i = 0 ; i < count ; i++)
-				{
-					var child = componentList[i];
-					if(child == behaviour)
-					{
-						return true;
-					}
-				}
-				return false;
-			}
+			public bool IsChildComponent(ComponentBehaviour behaviour) => componentList != null && Array.IndexOf(componentList, behaviour) >= 0;
 
 			/// <summary>
 			/// 자식 데이터인지 확인하는 메서드
 			/// </summary>
 			/// <param name="dataObject">확인할 데이터</param>
 			/// <returns>자식 데이터이면 true, 아니면 false</returns>
-			public bool IsChildData(DataObject dataObject)
-			{
-				// 데이터 리스트 배열의 길이를 가져옴
-				int count = dataList.Length;
-
-				// 데이터 리스트 배열을 순회하며 확인
-				for(int i = 0 ; i < count ; i++)
-				{
-					var child = dataList[i];
-					if(child == dataObject)
-					{
-						return true;
-					}
-				}
-				return false;
-			}
+			public bool IsChildData(DataObject dataObject) => dataList != null && Array.IndexOf(dataList, dataObject) >= 0;
 
 			/// <summary>
 			/// 데이터 리스트에 아이템을 추가하는 메서드
@@ -514,6 +464,10 @@ namespace BC.ODCC
 				}
 			}
 
+			public void RefreshDatas()
+			{
+				dataList = dataList.Where(item => item != null).ToArray();
+			}
 			/// <summary>
 			/// 타입 인덱스를 갱신하는 메서드
 			/// </summary>

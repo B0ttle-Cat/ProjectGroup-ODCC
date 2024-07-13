@@ -117,12 +117,24 @@ namespace BC.ODCC
 			internal override UnityEngine.Awaitable ARun(LoopInfo loopingInfo) => aAction();
 #endif
 		}
+		public class JoinForeachAction : RunForeachAction
+		{
+#if !USING_AWAITABLE_LOOP
+			internal Action action;
+			internal override void Run() => action();
+			internal Func<System.Collections.IEnumerator> iAction;
+			internal override System.Collections.IEnumerator IRun() => iAction();
+#else
+			internal Func<UnityEngine.Awaitable> aAction;
+			internal override UnityEngine.Awaitable ARun(LoopInfo loopingInfo) => aAction();
+#endif
+		}
 
 		// 루퍼 중단 함수입니다.
 		internal Func<bool> onLooperBreakFunction;
 
 		// 이전 업데이트 여부입니다.
-		internal bool prevUpdate;
+		internal int loopOrder;
 
 #if !USING_AWAITABLE_LOOP
 		// 루퍼 사용 여부입니다.
@@ -157,15 +169,15 @@ namespace BC.ODCC
 		/// </summary>
 		/// <param name="queryCollector">관련된 OdccQueryCollector 객체</param>
 		/// <param name="key">루퍼 키</param>
-		/// <param name="prevUpdate">이전 업데이트 여부</param>
+		/// <param name="loopOrder">업데이트 순서. 0 ~ 1 사이에 메인업데이트가 이루어짐</param>
 		/// <returns>OdccQueryLooper 객체</returns>
-		internal static OdccQueryLooper CreateLooperEvent(OdccQueryCollector queryCollector, string key, bool prevUpdate)
+		internal static OdccQueryLooper CreateLooperEvent(OdccQueryCollector queryCollector, string key, int loopOrder = 0)
 		{
 			OdccQueryLooper looper = new OdccQueryLooper
 			{
 				looperKey = key,
 				queryCollector = queryCollector,
-				prevUpdate = prevUpdate,
+				loopOrder = loopOrder,
 				runForeachStructList = new List<RunForeachStruct>(),
 #if !USING_AWAITABLE_LOOP
                 isUsingLooper = true,
@@ -174,14 +186,12 @@ namespace BC.ODCC
 				onShowCallLogDepth = 5
 			};
 			looper.SetBreakFunction(null);
-			if(prevUpdate)
+			if(!OdccForeach.ForeachQueryUpdate.TryGetValue(loopOrder, out var loopDictionary))
 			{
-				OdccForeach.ForeachQueryPrevUpdate.Add(looper, looper.RunLooper());
+				loopDictionary = new Dictionary<OdccQueryLooper, Awaitable>();
+				OdccForeach.ForeachQueryUpdate.Add(loopOrder, loopDictionary);
 			}
-			else
-			{
-				OdccForeach.ForeachQueryNextUpdate.Add(looper, looper.RunLooper());
-			}
+			loopDictionary.Add(looper, looper.RunLooper());
 			return looper;
 		}
 
@@ -197,7 +207,7 @@ namespace BC.ODCC
 			{
 				looperKey = key,
 				queryCollector = queryCollector,
-				prevUpdate = false,
+				loopOrder = 0,
 				runForeachStructList = new List<RunForeachStruct>(),
 #if !USING_AWAITABLE_LOOP
                 isUsingLooper = false,
@@ -214,7 +224,7 @@ namespace BC.ODCC
 		/// 루퍼를 실행하는 비동기 메서드입니다.
 		/// </summary>
 		/// <returns>UnityEngine.Awaitable 객체</returns>
-		internal async UnityEngine.Awaitable RunLooper()
+		public async Awaitable RunLooper()
 		{
 			// 쿼리 콜렉터가 null인 경우 중단합니다.
 			if(queryCollector is null) return;
@@ -298,7 +308,9 @@ namespace BC.ODCC
 		}
 
 		/// <summary>
-		/// 액션을 실행하는 비동기 메서드입니다.
+		/// <code>액션을 수동으로 실행하는 비동기 메서드입니다.
+		/// 이 함수는 <see cref="CreateActionEvent"/>로 생성된 <see cref="OdccQueryLooper"/>를 실행시킬때 사용하세요.
+		/// </code>
 		/// </summary>
 		/// <param name="completed">완료 후 호출될 액션</param>
 		public async void RunAction(Action completed = null)
@@ -536,6 +548,7 @@ namespace BC.ODCC
 
 		/// <summary>
 		/// Foreach 매개변수 규칙 상 존재하는 함수이며, 아무런 동작 하지 않음.
+		/// Foreach<T...> 를 사용할 것.
 		/// </summary>
 		/// <returns>OdccQueryLooper 객체</returns>
 		public OdccQueryLooper Foreach()
@@ -564,7 +577,6 @@ namespace BC.ODCC
 		/// 다음 액션을 호출하는 비동기 메서드입니다.
 		/// </summary>
 		/// <param name="action">호출할 비동기 액션</param>
-		/// /// <param name="callFirstOnly"> 루프 안에서 한번만 호출될지 결정</param>
 		/// <returns>OdccQueryLooper 객체</returns>
 		public OdccQueryLooper CallNext(Func<UnityEngine.Awaitable> action)
 		{
@@ -581,7 +593,6 @@ namespace BC.ODCC
 		/// 다음 액션을 호출하는 메서드입니다.
 		/// </summary>
 		/// <param name="action">호출할 액션</param>
-		/// <param name="callFirstOnly"> 루프 안에서 한번만 호출될지 결정</param>
 		/// <returns>OdccQueryLooper 객체</returns>
 		public OdccQueryLooper CallInit(Action action)
 		{
@@ -596,7 +607,6 @@ namespace BC.ODCC
 		/// 다음 액션을 호출하는 비동기 메서드입니다.
 		/// </summary>
 		/// <param name="action">호출할 비동기 액션</param>
-		/// /// <param name="callFirstOnly"> 루프 안에서 한번만 호출될지 결정</param>
 		/// <returns>OdccQueryLooper 객체</returns>
 		public OdccQueryLooper CallInit(Func<UnityEngine.Awaitable> action)
 		{
@@ -604,6 +614,32 @@ namespace BC.ODCC
 			list.Add(new AddedForeachAction() {
 				aAction = action,
 				callFirstOnly = true,
+				isCallFirst = false,
+			});
+			runForeachStructList.Add(new RunForeachStruct(action, list, true, null));
+			return this;
+		}
+		/// <summary>
+		/// 다른 Looper 를 실행 할 수 있는 메서드입니다.
+		/// </summary>
+		/// <param name="join">호출할 Looper</param>
+		/// <returns>OdccQueryLooper 객체</returns>
+		public OdccQueryLooper JoinNext(OdccQueryLooper join)
+		{
+			if(join == null) return this;
+
+			Func<Awaitable> action = async () =>
+			{
+				if(join.queryCollector != null)
+				{
+					await join.RunLooper();
+				}
+			};
+
+			var list = new List<RunForeachAction>();
+			list.Add(new JoinForeachAction() {
+				aAction = action,
+				callFirstOnly = false,
 				isCallFirst = false,
 			});
 			runForeachStructList.Add(new RunForeachStruct(action, list, true, null));
@@ -822,39 +858,45 @@ namespace BC.ODCC
 		{
 			queryCollector = null;
 			runForeachStructList.Clear();
-			OdccForeach.ForeachQueryPrevUpdate.Remove(this);
-			OdccForeach.ForeachQueryNextUpdate.Remove(this);
+			if(OdccForeach.ForeachQueryUpdate.TryGetValue(loopOrder, out var dic))
+			{
+				dic.Remove(this);
+				if(dic.Count == 0)
+				{
+					OdccForeach.ForeachQueryUpdate.Remove(loopOrder);
+				}
+			}
 		}
 
 		/////////////////////////// Obsolete //////////////////////////
 
 		[Obsolete("CallNext 사용 할 것 - 오래된 이름 규칙", true)]
-		public OdccQueryLooper Action(Action action)
+		private OdccQueryLooper Action(Action action)
 		{
 			return CallNext(action);
 		}
 
 #if USING_AWAITABLE_LOOP
 		[Obsolete("CallNext 사용 할 것 - 오래된 이름 규칙", true)]
-		public OdccQueryLooper Action(Func<UnityEngine.Awaitable> action)
+		private OdccQueryLooper Action(Func<UnityEngine.Awaitable> action)
 		{
 			return CallNext(action);
 		}
 
-		[Obsolete("RunAction 사용 할 것 - 오래된 이름 규칙", true)]
-		public void RunCallEvent(Action completed = null)
+		[Obsolete("RunLooper 사용 할 것 - 오래된 이름 규칙", true)]
+		private void RunCallEvent(Action completed = null)
 		{
 			RunAction(completed);
 		}
 #else
 		[Obsolete("CallNext 사용 할 것 - 오래된 이름 규칙", true)]
-		public OdccQueryLooper Action(Func<System.Collections.IEnumerator> action)
+		private OdccQueryLooper Action(Func<System.Collections.IEnumerator> action)
 		{
 			return CallNext(action);
 		}
 
 		[Obsolete("RunAction 사용 할 것 - 오래된 이름 규칙", true)]
-		public void RunCallEvent()
+		private void RunCallEvent()
 		{
 			RunAction();
 		}

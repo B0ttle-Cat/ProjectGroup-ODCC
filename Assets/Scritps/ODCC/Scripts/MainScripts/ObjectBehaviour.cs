@@ -30,36 +30,51 @@ namespace BC.ODCC
 		public ContainerObject Container => ThisContainer;
 		internal override void Reset()
 		{
-			if(UnityEditor.EditorApplication.isPlaying) return;
-			if(!gameObject.scene.isLoaded) return;
-			ThisTransform = transform;
-			if(ThisTransform == null) return;
+			try
+			{
+				if(UnityEditor.EditorApplication.isPlaying) return;
+				if(!gameObject.scene.isLoaded) return;
+				ThisTransform = transform;
+				if(ThisTransform == null) return;
 
-			_container = new ContainerObject(this);
-			_container.ContainerNode.AllRefresh();
+				_container = new ContainerObject(this);
+				_container.ContainerNode.AllRefresh();
 
-			BaseReset();
-			BaseValidate();
+				BaseReset();
+				BaseValidate();
 
 
-			_container.ComponentList?.ForEach(item => item.Reset());
-			_container.ChildObject?.ForEach(item => item.Reset());
+				_container.ComponentList?.ForEach(item => item.Reset());
+				_container.ChildObject?.ForEach(item => item.Reset());
+			}
+			catch(Exception ex)
+			{
+				Debug.LogError("Exception Reset : " + gameObject.name);
+				Debug.LogException(ex);
+			}
 		}
 		internal override void OnValidate()
 		{
-			if(UnityEditor.EditorApplication.isPlaying) return;
-			if(!gameObject.scene.isLoaded) return;
-			ThisTransform = transform;
-			if(ThisTransform == null) return;
+			try
+			{
+				if(UnityEditor.EditorApplication.isPlaying) return;
+				if(!gameObject.scene.isLoaded) return;
+				ThisTransform = transform;
+				if(ThisTransform == null) return;
 
-			if(_container == null || _container.ContainerNode == null || _container.ThisObject == null) _container = new ContainerObject(this);
+				if(_container == null || _container.ContainerNode == null || _container.ThisObject == null) _container = new ContainerObject(this);
+				_container.ContainerNode.AllRefresh();
 
-			_container.ContainerNode.AllRefresh();
+				BaseValidate();
 
-			BaseValidate();
-
-			_container.ComponentList?.ForEach(item => item.OnValidate());
-			_container.ChildObject?.ForEach(item => item.OnValidate());
+				_container.ComponentList?.ForEach(item => item.OnValidate());
+				_container.ChildObject?.ForEach(item => item.OnValidate());
+			}
+			catch(Exception ex)
+			{
+				Debug.LogError("Exception OnValidate : " + gameObject.name);
+				Debug.LogException(ex);
+			}
 		}
 		[ContextMenu("ContainerUpdateInEditor")]
 		public void ContainerUpdateInEditor()

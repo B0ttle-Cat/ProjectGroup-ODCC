@@ -163,11 +163,11 @@ namespace BC.ODCC
 		[Flags]
 		public enum RangeType : int
 		{
-			World  = 0,
-			Scene  = 0b_0001,
-			Object = 0b_0010,
-			Parent = 0b_0100,
-			Child  = 0b_1000,
+			World  = 0,         // 전역 범위 검색
+			Scene  = 0b_0001,   // 이 씬에서만 검색
+			Object = 0b_0010,   // 이 오브젝트에서 검색
+			Parent = 0b_0100,   // 이 부모에세 검색
+			Child  = 0b_1000,   // 이 자식객체에서 검색
 
 			AllObjectRoot = 0b_0001_0000,
 

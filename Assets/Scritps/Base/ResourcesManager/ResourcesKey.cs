@@ -16,12 +16,13 @@ namespace BC.Base
 		ResourcesLoad = 0,
 		AssetBundle = 1,
 	}
-	[Serializable, InlineProperty]
+	[Serializable]
 #pragma warning disable CS0282 // partial 구조체의 여러 선언에서 필드 간 순서가 정의되어 있지 않습니다.
 	public partial struct ResourcesKey : IEquatable<ResourcesKey>
 #pragma warning restore CS0282 // partial 구조체의 여러 선언에서 필드 간 순서가 정의되어 있지 않습니다.
 	{
 #if UNITY_EDITOR
+		[InfoBox(Success_CheckResourcesKey,InfoMessageType.Info,"ShowSuccessCheckResourcesKey")]
 		[InfoBox(Fail_CheckResourcesKey,InfoMessageType.Warning,"ShowErrorCheckResourcesKey")]
 		[LabelWidth(80),PropertyOrder(-11), HideLabel]
 #endif

@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace BC.ODCC
 {
@@ -10,7 +11,8 @@ namespace BC.ODCC
 	{
 		private Transform _ThisTransform;
 		public Transform ThisTransform { get => _ThisTransform ??= transform; protected set => _ThisTransform = value; }
-
+		public Scene ThisScene => gameObject.scene;
+		public int ThisComponentIndex => GetComponentIndex();
 		internal bool IsEnable { get; private set; } = false;
 		internal bool IsCanUpdateDisable { get; private set; } = false;
 
@@ -138,14 +140,14 @@ namespace BC.ODCC
 #if UNITY_EDITOR
 			if(Application.isPlaying)
 #endif
-			OdccManager.OdccStart(this);
+				OdccManager.OdccStart(this);
 		}
 		internal virtual void OdccOnTransformParentChanged()
 		{
 #if UNITY_EDITOR
 			if(Application.isPlaying)
 #endif
-			OdccManager.OdccChangeParent(this);
+				OdccManager.OdccChangeParent(this);
 		}
 
 		public virtual void BaseReset() { }

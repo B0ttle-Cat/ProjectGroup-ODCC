@@ -420,9 +420,23 @@ namespace BC.ODCC
 			DataList.GetAllDataAction<T, DataObject>(tAction, isBreak, condition);
 		}
 
-		public T AddObject<T>(GameObject obj = null) where T : ObjectBehaviour
+		public T AddChildObject<T>(bool onActive, string name = "") where T : ObjectBehaviour
 		{
-			return (obj ?? ThisObject.gameObject).AddComponent<T>();
+			if(string.IsNullOrWhiteSpace(name))
+			{
+				name = $"new {typeof(T).Name}";
+			}
+
+			GameObject newObject = new GameObject(name);
+			newObject.SetActive(false);
+			newObject.transform.parent = ThisObject.ThisTransform;
+
+			T child = newObject.AddComponent<T>();
+			if(onActive)
+			{
+				newObject.SetActive(onActive);
+			}
+			return child;
 		}
 		public T AddComponent<T>(GameObject obj = null) where T : ComponentBehaviour
 		{

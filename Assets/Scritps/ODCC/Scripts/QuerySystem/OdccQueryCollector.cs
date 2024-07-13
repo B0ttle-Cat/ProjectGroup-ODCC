@@ -67,7 +67,7 @@ namespace BC.ODCC
 		/// 라이프 아이템을 추가하는 메서드입니다.
 		/// </summary>
 		/// <param name="lifeItem">추가할 라이프 아이템</param>
-		private void AddLifeItem(object lifeItem)
+		public void AddLifeItem(object lifeItem)
 		{
 			if(lifeItem == null || IsDontDestoryLifeItem) return;
 			if(!lifeItems.Contains(lifeItem))
@@ -80,7 +80,7 @@ namespace BC.ODCC
 		/// 라이프 아이템을 제거하는 메서드입니다.
 		/// </summary>
 		/// <param name="lifeItem">제거할 라이프 아이템</param>
-		internal void RemoveLifeItem(object lifeItem)
+		public void RemoveLifeItem(object lifeItem)
 		{
 			if(lifeItem == null || IsDontDestoryLifeItem) return;
 			lifeItems.Remove(lifeItem);
@@ -260,22 +260,26 @@ namespace BC.ODCC
 		/// 루퍼 이벤트를 생성하는 메서드입니다.
 		/// </summary>
 		/// <param name="key">루퍼 키</param>
-		/// <param name="prevUpdate">이전 업데이트 여부</param>
+		/// <param name="loopOrder">업데이트 순서. 0 ~ 1 사이에 메인업데이트가 이루어짐</param>
 		/// <returns>OdccQueryLooper 객체</returns>
-		public OdccQueryLooper CreateLooperEvent(string key, bool prevUpdate = true)
+		public OdccQueryLooper CreateLooperEvent(string key, int loopOrder = 0)
+		{
+			return CreateLooperEvent(key, out _, loopOrder);
+		}
+		public OdccQueryLooper CreateLooperEvent(string key, out OdccQueryLooper looper, int loopOrder = 0)
 		{
 			if(odccLoopers.ContainsKey(key))
 			{
-				return odccLoopers[key];
+				looper = odccLoopers[key];
+				return looper;
 			}
 			else
 			{
-				var looper = OdccQueryLooper.CreateLooperEvent(this, key, prevUpdate);
+				looper = OdccQueryLooper.CreateLooperEvent(this, key, loopOrder);
 				odccLoopers.Add(key, looper);
 				return looper;
 			}
 		}
-
 		/// <summary>
 		/// 액션 이벤트를 생성하는 메서드입니다.
 		/// </summary>
@@ -283,13 +287,18 @@ namespace BC.ODCC
 		/// <returns>OdccQueryLooper 객체</returns>
 		public OdccQueryLooper CreateActionEvent(string key)
 		{
+			return CreateActionEvent(key, out _);
+		}
+		public OdccQueryLooper CreateActionEvent(string key, out OdccQueryLooper looper)
+		{
 			if(odccActions.ContainsKey(key))
 			{
-				return odccActions[key];
+				looper = odccActions[key];
+				return looper;
 			}
 			else
 			{
-				var looper = OdccQueryLooper.CreateActionEvent(this, key);
+				looper = OdccQueryLooper.CreateActionEvent(this, key);
 				odccActions.Add(key, looper);
 				return looper;
 			}
@@ -323,6 +332,34 @@ namespace BC.ODCC
 				odccActions.Remove(key);
 			}
 			return this;
+		}
+
+		/// <summary>
+		/// 루퍼 이벤트를 반환 메서드입니다.
+		/// </summary>
+		/// <param name="key">루퍼 키</param>
+		/// <returns>OdccQueryLooper 객체</returns>
+		public OdccQueryLooper GetLooperEvent(string key)
+		{
+			if(odccLoopers.ContainsKey(key))
+			{
+				return odccLoopers[key];
+			}
+			return null;
+		}
+
+		/// <summary>
+		/// 액션 이벤트를 반환 메서드입니다.
+		/// </summary>
+		/// <param name="key">액션 키</param>
+		/// <returns>OdccQueryLooper 객체</returns>
+		public OdccQueryLooper GetActionEvent(string key)
+		{
+			if(odccActions.ContainsKey(key))
+			{
+				return odccActions[key];
+			}
+			return null;
 		}
 
 		/// <summary>
@@ -499,30 +536,44 @@ namespace BC.ODCC
 			return querySystem;
 		}
 
+		/// <summary>
+		/// 이 OdccQueryCollector 객체를 반환하는 메서드입니다.
+		/// OdccQueryLooper와 혼용할 경우의 작성 규칙 통일을 위해 존재합니다.
+		/// </summary>
+		public OdccQueryCollector GetCollector()
+		{
+			return this;
+		}
+
 		/////////////////////////// Obsolete //////////////////////////
 
 		[Obsolete("CreateLooperEvent 를 사용할 것 - 오래된 이름 규칙", true)]
-		public OdccQueryLooper CreateLooper(string key, bool prevUpdate = true)
+		private OdccQueryLooper CreateLooper(string key, bool prevUpdate = true)
 		{
-			return CreateLooperEvent(key, prevUpdate);
+			return CreateLooperEvent(key, prevUpdate ? 0 : 1);
 		}
 
 		[Obsolete("DeleteLooperEvent 를 사용할 것 - 오래된 이름 규칙", true)]
-		public OdccQueryCollector DeleteLooper(string key)
+		private OdccQueryCollector DeleteLooper(string key)
 		{
 			return DeleteLooperEvent(key);
 		}
 
 		[Obsolete("CreateActionEvent 를 사용할 것 - 오래된 이름 규칙", true)]
-		public OdccQueryLooper CreateCallEvent(string key)
+		private OdccQueryLooper CreateCallEvent(string key)
 		{
 			return CreateActionEvent(key);
 		}
 
 		[Obsolete("DeleteActionEvent 를 사용할 것 - 오래된 이름 규칙", true)]
-		public OdccQueryCollector DeleteCallEvent(string key)
+		private OdccQueryCollector DeleteCallEvent(string key)
 		{
 			return DeleteActionEvent(key);
+		}
+
+		public OdccQueryCollector CreateLooperEvent(object onUnitTargetCollectorUpdate)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }
