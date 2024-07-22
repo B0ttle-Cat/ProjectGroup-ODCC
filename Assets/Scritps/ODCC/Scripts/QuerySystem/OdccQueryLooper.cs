@@ -237,7 +237,7 @@ namespace BC.ODCC
 
 			// 루프 작업에 대한 정보를 초기화합니다.
 			LoopInfo loopingInfo = new LoopInfo()
-	{
+			{
 				isLooperBreak = () => queryCollector is null && onLooperBreakFunction != null && onLooperBreakFunction.Invoke(), // 중단 여부를 확인하는 함수입니다.
 				loopStartTime = Time.timeAsDouble, // 루프 시작 시간을 현재 시간으로 설정합니다.
 
