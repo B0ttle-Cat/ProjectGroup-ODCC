@@ -162,6 +162,24 @@ namespace BC.ODCC
 			public double itemStartTime;
 			public int itemIndex;
 			public int itemTotalCount;
+
+			public double TempTimeCount { get; set; }
+			public bool HasDeltaTimeElapsed(double deltaTime)
+			{
+				var _deltaTime = Time.timeAsDouble - TempTimeCount;
+				if(_deltaTime < 0)
+				{
+					TempTimeCount = Time.timeAsDouble;
+					_deltaTime = 0;
+				}
+
+				if(_deltaTime > deltaTime)
+				{
+					TempTimeCount = Time.timeAsDouble;
+					return true;
+				}
+				return false;
+			}
 		}
 
 		/// <summary>

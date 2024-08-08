@@ -248,7 +248,7 @@ namespace BC.ODCC
 			}
 			return t;
 		}
-		public async void AwaitGetComponent<T>(Action<T> callback, Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccComponent
+		public async void NextGetComponent<T>(Action<T> callback, Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccComponent
 		{
 			if(callback is null) return;
 
@@ -256,7 +256,7 @@ namespace BC.ODCC
 			if(t is null) return;
 			callback.Invoke(t);
 		}
-		public async void AwaitGetComponentInChild<T>(Action<T> callback, Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccComponent
+		public async void NextGetComponentInChild<T>(Action<T> callback, Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccComponent
 		{
 			if(callback is null) return;
 
@@ -264,7 +264,7 @@ namespace BC.ODCC
 			if(t is null) return;
 			callback.Invoke(t);
 		}
-		public async void AwaitGetComponentList<T>(Action<T[]> callback, Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccComponent
+		public async void NextGetComponentList<T>(Action<T[]> callback, Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccComponent
 		{
 			if(callback is null) return;
 
@@ -272,7 +272,7 @@ namespace BC.ODCC
 			if(t is null) return;
 			callback.Invoke(t);
 		}
-		public async void AwaitGetAllComponentList<T>(Action<List<T>> callback, Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccComponent
+		public async void NextGetAllComponentList<T>(Action<List<T>> callback, Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccComponent
 		{
 			if(callback is null) return;
 
@@ -338,7 +338,7 @@ namespace BC.ODCC
 			}
 			return t;
 		}
-		public async void AwaitGetData<T>(Action<T> callback, Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccData
+		public async void NextGetData<T>(Action<T> callback, Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccData
 		{
 			if(callback is null) return;
 
@@ -346,7 +346,7 @@ namespace BC.ODCC
 			if(t is null) return;
 			callback.Invoke(t);
 		}
-		public async void AwaitGetDataList<T>(Action<T[]> callback, Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccData
+		public async void NextGetDataList<T>(Action<T[]> callback, Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccData
 		{
 			if(callback is null) return;
 

@@ -162,22 +162,11 @@ namespace BC.ODCC
 		public virtual void BaseTransformParentChanged() { }
 
 
-		//internal void OdccUpdateParent(ObjectBehaviour update) {  try {if(isActiveAndEnabled) OnUpdateParent(update); } catch(Exception ex) { Debug.LogException(ex); } }
-		//internal void OdccUpdateChilds(ObjectBehaviour[] update) {  try {if(isActiveAndEnabled) OnUpdateChilds(update); } catch(Exception ex) { Debug.LogException(ex); } }
-		//internal void OdccUpdateComponents(ComponentBehaviour[] update) { try { if(isActiveAndEnabled) OnUpdateComponents(update); } catch(Exception ex) { Debug.LogException(ex); } }
-		//internal void OdccUpdateDatas(DataObject[] update) {  try {if(isActiveAndEnabled) OnUpdateDatas(update); } catch(Exception ex) { Debug.LogException(ex); } }
-		//protected virtual void OnUpdateParent(ObjectBehaviour update) { }
-		//protected virtual void OnUpdateChilds(ObjectBehaviour[] update) { }
-		//protected virtual void OnUpdateComponents(ComponentBehaviour[] update) { }
-		//protected virtual void OnUpdateDatas(DataObject[] update) { }
-
 		private bool disposedValue;
-
 		protected virtual void Disposing()
 		{
 			_ThisTransform = null;
 		}
-
 		public void Dispose()
 		{
 			if(!disposedValue)
