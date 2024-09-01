@@ -10,6 +10,6 @@ namespace BC.OdccBase
 	public class AnimatorParameterControler
 	{
 		[ShowInInspector]
-		public Animator animator { get; set; }
+		public Animator ThisAnimator { get; set; }
 	}
 }

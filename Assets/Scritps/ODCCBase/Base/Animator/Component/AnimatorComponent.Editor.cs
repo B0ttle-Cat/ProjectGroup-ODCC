@@ -17,7 +17,7 @@ namespace BC.OdccBase
 			private List<ValueDropdownItem<StateInfo>> StateInfoDropdown()
 			{
 				List<ValueDropdownItem<StateInfo>> valueDropdownItems = new List<ValueDropdownItem<StateInfo>>();
-				if(Component != null)
+				if(Component != null && Component.ThisContainer != null)
 				{
 					if(Component.ThisContainer.TryGetData<AnimatorData>(out var data))
 					{

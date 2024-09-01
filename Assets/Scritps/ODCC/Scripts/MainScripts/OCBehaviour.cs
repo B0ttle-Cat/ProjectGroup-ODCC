@@ -45,7 +45,15 @@ namespace BC.ODCC
 			ThisTransform = transform;
 			if(ThisTransform == null) return;
 			BaseValidate();
+
 		}
+		protected bool IsEditingPrefab() => !gameObject.scene.isLoaded ||
+			(UnityEditor.SceneManagement.PrefabStageUtility.GetCurrentPrefabStage() != null &&
+			UnityEditor.SceneManagement.PrefabStageUtility.GetCurrentPrefabStage().IsPartOfPrefabContents(gameObject));
+		protected bool IsNotEditingPrefab() => !IsEditingPrefab();
+#else
+		protected bool IsEditingPrefab() => false;
+		protected bool IsNotEditingPrefab() => true;
 #endif
 		protected virtual void Awake()
 		{
@@ -92,7 +100,6 @@ namespace BC.ODCC
 		}
 
 
-		//[ButtonGroup("OdccItem"), Button("Awake")]
 		internal virtual void OdccAwake()
 		{
 #if UNITY_EDITOR
@@ -103,7 +110,6 @@ namespace BC.ODCC
 				OdccManager.OdccAwake(this);
 			}
 		}
-		//[ButtonGroup("OdccItem"), Button("Destroy")]
 		internal virtual void OdccOnDestroy()
 		{
 #if UNITY_EDITOR
@@ -113,7 +119,6 @@ namespace BC.ODCC
 				OdccManager.OdccDestroy(this);
 			}
 		}
-		//[ButtonGroup("OdccItem"), Button("Enable")]
 		internal virtual void OdccOnEnable()
 		{
 #if UNITY_EDITOR
@@ -124,7 +129,6 @@ namespace BC.ODCC
 				OdccManager.OdccEnable(this);
 			}
 		}
-		//[ButtonGroup("OdccItem"), Button("Disable")]
 		internal virtual void OdccOnDisable()
 		{
 #if UNITY_EDITOR
@@ -175,6 +179,18 @@ namespace BC.ODCC
 				disposedValue=true;
 			}
 			GC.SuppressFinalize(this);
+		}
+
+		public void DestroyThis(bool removeThisGameObject = false)
+		{
+			if(removeThisGameObject)
+			{
+				Destroy(gameObject);
+			}
+			else
+			{
+				Destroy(this);
+			}
 		}
 	}
 }

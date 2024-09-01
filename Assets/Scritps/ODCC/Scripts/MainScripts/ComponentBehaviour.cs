@@ -14,6 +14,7 @@ namespace BC.ODCC
 			get {
 #if UNITY_EDITOR
 				if(ThisObject == null) Reset();
+				if(ThisObject == null) return null;
 #endif
 				return ThisObject.ThisContainer;
 			}
@@ -22,7 +23,7 @@ namespace BC.ODCC
 		internal override void Reset()
 		{
 			if(UnityEditor.EditorApplication.isPlaying) return;
-			if(!gameObject.scene.isLoaded) return;
+			if(IsEditingPrefab()) return;
 
 			ThisTransform = transform;
 			if(ThisTransform == null) return;
@@ -33,7 +34,7 @@ namespace BC.ODCC
 		internal override void OnValidate()
 		{
 			if(UnityEditor.EditorApplication.isPlaying) return;
-			if(!gameObject.scene.isLoaded) return;
+			if(IsEditingPrefab()) return;
 
 			ThisTransform = transform;
 			if(ThisTransform == null) return;

@@ -17,7 +17,7 @@ namespace BC.ODCC
 	public static partial class OdccContainerTree
 	{
 		// 빈 오브젝트를 저장할 변수
-		private static ObjectBehaviour EmptyObject;
+		internal static ObjectBehaviour EmptyObject;
 
 		// ObjectBehaviour를 키로 하는 컨테이너 노드 리스트
 		public static Dictionary<ObjectBehaviour, ContainerNode> ContainerNodeList = new Dictionary<ObjectBehaviour, ContainerNode>();

@@ -48,14 +48,14 @@ namespace BC.OdccBase
 				}
 
 				scriptContent += "\n";
-				scriptContent += "\t\tprivate bool GetBool(string paramName) { return animator != null ? animator.GetBool(paramName) : default; }\n";
-				scriptContent += "\t\tprivate float GetFloat(string paramName) { return animator != null ? animator.GetFloat(paramName) : default; }\n";
-				scriptContent += "\t\tprivate int GetInteger(string paramName) { return animator != null ? animator.GetInteger(paramName) : default; }\n";
+				scriptContent += "\t\tprivate bool GetBool(string paramName) { return ThisAnimator != null ? ThisAnimator.GetBool(paramName) : default; }\n";
+				scriptContent += "\t\tprivate float GetFloat(string paramName) { return ThisAnimator != null ? ThisAnimator.GetFloat(paramName) : default; }\n";
+				scriptContent += "\t\tprivate int GetInteger(string paramName) { return ThisAnimator != null ? ThisAnimator.GetInteger(paramName) : default; }\n";
 				scriptContent += "\n";
-				scriptContent += "\t\tprivate void SetBool(string paramName, bool value) { if(animator != null) animator.SetBool(paramName, value); }\n";
-				scriptContent += "\t\tprivate void SetFloat(string paramName, float value) { if(animator != null) animator.SetFloat(paramName, value); }\n";
-				scriptContent += "\t\tprivate void SetInteger(string paramName, int value) { if(animator != null) animator.SetInteger(paramName, value); }\n";
-				scriptContent += "\t\tprivate void SetTrigger(string paramName, bool value) { if(animator != null) { if(value) animator.SetTrigger(paramName); else animator.ResetTrigger(paramName); } }\n";
+				scriptContent += "\t\tprivate void SetBool(string paramName, bool value) { if(ThisAnimator != null) ThisAnimator.SetBool(paramName, value); }\n";
+				scriptContent += "\t\tprivate void SetFloat(string paramName, float value) { if(ThisAnimator != null) ThisAnimator.SetFloat(paramName, value); }\n";
+				scriptContent += "\t\tprivate void SetInteger(string paramName, int value) { if(ThisAnimator != null) ThisAnimator.SetInteger(paramName, value); }\n";
+				scriptContent += "\t\tprivate void SetTrigger(string paramName, bool value) { if(ThisAnimator != null) { if(value) ThisAnimator.SetTrigger(paramName); else ThisAnimator.ResetTrigger(paramName); } }\n";
 				scriptContent += "\n";
 
 				scriptContent += "\t}\n}";

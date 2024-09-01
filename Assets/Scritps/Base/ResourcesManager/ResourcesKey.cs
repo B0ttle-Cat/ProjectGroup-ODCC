@@ -18,7 +18,7 @@ namespace BC.Base
 	}
 	[Serializable]
 #pragma warning disable CS0282 // partial 구조체의 여러 선언에서 필드 간 순서가 정의되어 있지 않습니다.
-	public partial struct ResourcesKey : IEquatable<ResourcesKey>
+	public partial struct ResourcesKey : IEquatable<ResourcesKey>, IDisposable
 #pragma warning restore CS0282 // partial 구조체의 여러 선언에서 필드 간 순서가 정의되어 있지 않습니다.
 	{
 #if UNITY_EDITOR
@@ -83,6 +83,12 @@ namespace BC.Base
 		public static bool operator !=(ResourcesKey left, ResourcesKey right)
 		{
 			return !(left==right);
+		}
+
+
+		public void Dispose()
+		{
+			ObjectAsset = null;
 		}
 	}
 
