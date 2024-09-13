@@ -1,4 +1,7 @@
 using System;
+#if !USING_AWAITABLE_LOOP
+using System.Collections;
+#endif
 using System.Collections.Generic;
 using System.Threading;
 
@@ -280,6 +283,99 @@ namespace BC.ODCC
 			if(t is null) return;
 			callback.Invoke(t);
 		}
+#else
+		public IEnumerator<T> AwaitGetComponent<T>(Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccComponent
+		{
+			T t = null;
+			cancelToken ??= ThisObject.DestroyCancelToken;
+			while(!cancelToken.Value.IsCancellationRequested && !TryGetComponent(out t, condition))
+			{
+				yield return null;
+			}
+			yield return t;
+		}
+		public IEnumerator<T> AwaitGetComponentInChild<T>(Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccComponent
+		{
+			T t = null;
+			cancelToken ??= ThisObject.DestroyCancelToken;
+			while(!cancelToken.Value.IsCancellationRequested && !TryGetComponentInChild(out t, condition))
+			{
+				yield return null;
+			}
+			yield return t;
+		}
+		public IEnumerator<T[]> AwaitGetComponentList<T>(Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccComponent
+		{
+			T[] t = null;
+			cancelToken ??= ThisObject.DestroyCancelToken;
+			while(!cancelToken.Value.IsCancellationRequested && !TryGetComponentList(out t, condition))
+			{
+				yield return null;
+			}
+			yield return t;
+		}
+		public IEnumerator<List<T>> AwaitGetAllComponentList<T>(Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccComponent
+		{
+			List<T> t = null;
+			cancelToken ??= ThisObject.DestroyCancelToken;
+			while(!cancelToken.Value.IsCancellationRequested && !TryGetAllComponentInChild(out t, condition))
+			{
+				yield return null;
+			}
+			yield return t;
+		}
+		public void NextGetComponent<T>(Action<T> callback, Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccComponent
+		{
+			ThisObject.StartCoroutine(Async());
+			IEnumerator Async()
+			{
+				if(callback is null) yield break;
+
+				var yT = AwaitGetComponent<T>(condition, cancelToken);
+				while(yT.MoveNext()) yield return null;
+				var t = yT.Current;
+				if(t is null) yield break;
+			}
+		}
+		public void NextGetComponentInChild<T>(Action<T> callback, Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccComponent
+		{
+			ThisObject.StartCoroutine(Async());
+			IEnumerator Async()
+			{
+				if(callback is null) yield break;
+
+				var yT = AwaitGetComponentInChild<T>(condition, cancelToken);
+				while(yT.MoveNext()) yield return null;
+				var t = yT.Current;
+				if(t is null) yield break;
+			}
+		}
+		public void NextGetComponentList<T>(Action<T[]> callback, Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccComponent
+		{
+			ThisObject.StartCoroutine(Async());
+			IEnumerator Async()
+			{
+				if(callback is null) yield break;
+
+				var yT = AwaitGetComponentList<T>(condition, cancelToken);
+				while(yT.MoveNext()) yield return null;
+				var t = yT.Current;
+				if(t is null) yield break;
+			}
+		}
+		public void NextGetAllComponentList<T>(Action<List<T>> callback, Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccComponent
+		{
+			ThisObject.StartCoroutine(Async());
+			IEnumerator Async()
+			{
+				if(callback is null) yield break;
+
+				var yT = AwaitGetAllComponentList<T>(condition, cancelToken);
+				while(yT.MoveNext()) yield return null;
+				var t = yT.Current;
+				if(t is null) yield break;
+			}
+		}
 #endif
 		public T GetData<T>(Func<T, bool> condition = null) where T : class, IOdccData
 		{
@@ -353,6 +449,55 @@ namespace BC.ODCC
 			var t = await AwaitGetDataList<T>(condition, cancelToken);
 			if(t is null) return;
 			callback.Invoke(t);
+		}
+#else
+		public IEnumerator<T> AwaitGetData<T>(Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccData
+		{
+			T t = null;
+			cancelToken ??= ThisObject.DestroyCancelToken;
+			while(!cancelToken.Value.IsCancellationRequested && !TryGetData(out t, condition))
+			{
+				yield return null;
+			}
+			yield return t;
+		}
+		public IEnumerator<T[]> AwaitGetDataList<T>(Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccData
+		{
+			T[] t = null;
+			cancelToken ??= ThisObject.DestroyCancelToken;
+			while(!cancelToken.Value.IsCancellationRequested && !TryGetDataList(out t, condition))
+			{
+				yield return null;
+			}
+			yield return t;
+		}
+		public void NextGetData<T>(Action<T> callback, Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccData
+		{
+			ThisObject.StartCoroutine(Async());
+			IEnumerator Async()
+			{
+				if(callback is null) yield break;
+
+				var yT = AwaitGetData<T>(condition, cancelToken);
+				while(yT.MoveNext()) yield return null;
+				var t = yT.Current;
+				if(t is null) yield break;
+				callback.Invoke(t);
+			}
+		}
+		public void NextGetDataList<T>(Action<T[]> callback, Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccData
+		{
+			ThisObject.StartCoroutine(Async());
+			IEnumerator Async()
+			{
+				if(callback is null) yield break;
+
+				var yT = AwaitGetDataList<T>(condition, cancelToken);
+				while(yT.MoveNext()) yield return null;
+				var t = yT.Current;
+				if(t is null) yield break;
+				callback.Invoke(t);
+			}
 		}
 #endif
 		public void CallActionObject<T>(Action<T> tAction, Func<T, bool> condition = null) where T : class, IOdccObject

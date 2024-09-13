@@ -744,7 +744,7 @@ namespace BC.ODCC
 			if(behaviour != null && ContainerNodeListContainsKey(behaviour))
 			{
 				var node = GetContainerNode(behaviour);
-
+				
 				// 컨테이너 노드 리스트에서 제거
 				ContainerNodeListRemove(behaviour);
 				var parentNode = GetContainerNode(node.parent);
@@ -753,7 +753,6 @@ namespace BC.ODCC
 				if(parentNode != null)
 				{
 					parentNode.RemoveFromChildObject(behaviour);
-					parentNode.AddFromChildToParent(node);
 				}
 				else
 				{
@@ -761,20 +760,20 @@ namespace BC.ODCC
 				}
 
 				// 자식 노드를 순회하며 부모를 갱신
-				int childCount = node.childs.Length;
-				for(int i = 0 ; i < childCount ; i++)
-				{
-					var child = node.childs[i];
-					if(ContainerNodeListContainsKey(child))
-					{
-						var _child = GetContainerNode(child);
-						if(_child is not null)
-						{
-							_child.parent = parentNode?.thisObject;
-							_child.RefreshTypeIndexs();
-						}
-					}
-				}
+				//int childCount = node.childs.Length;
+				//for(int i = 0 ; i < childCount ; i++)
+				//{
+				//	var child = node.childs[i];
+				//	if(ContainerNodeListContainsKey(child))
+				//	{
+				//		var _child = GetContainerNode(child);
+				//		if(_child is not null)
+				//		{
+				//			_child.parent = parentNode?.thisObject;
+				//			_child.RefreshTypeIndexs();
+				//		}
+				//	}
+				//}
 			}
 		}
 
@@ -839,9 +838,9 @@ namespace BC.ODCC
 				AwakeOCBehaviour(objectBehaviour);
 			}
 			bool isValidation = objectBehaviour.OnAddValidation(behaviour);
-			if(isValidation)
+			if(!isValidation)
 			{
-				return true;
+				return false;
 			}
 
 			// 부모 오브젝트의 컨테이너 노드를 가져옴

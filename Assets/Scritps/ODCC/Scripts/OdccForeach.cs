@@ -33,7 +33,7 @@ namespace BC.ODCC
 		[Obsolete("Using ForeachQueryUpdate", true)]
 		internal static Dictionary<OdccQueryLooper, UnityEngine.Awaitable> ForeachQueryNextUpdate = new ();
 #else
-		internal static SortedDictionary<int, Dictionary<OdccQueryLooper, UnityEngine.Awaitable>> ForeachQueryUpdate = new ();
+		internal static SortedDictionary<int, Dictionary<OdccQueryLooper, System.Collections.IEnumerator>> ForeachQueryUpdate = new ();
 		[Obsolete("Using ForeachQueryUpdate", true)]
 
 		internal static Dictionary<OdccQueryLooper, System.Collections.IEnumerator> ForeachQueryPrevUpdate  = new ();

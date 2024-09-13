@@ -49,7 +49,7 @@ namespace BC.Base
 				instance = GameObject.FindFirstObjectByType<T>(FindObjectsInactive.Include);
 				if(instance is null)
 				{
-					instance = SingletonPrefabDataList.This.FindTypePrefab<T>();
+					instance = SingletonPrefabDataList.This?.FindTypePrefab<T>();
 					if(instance is null)
 					{
 						instance = Resources.Load<T>(typeof(T).Name);

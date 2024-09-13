@@ -459,9 +459,9 @@ namespace BC.ODCC
 		/// <param name="item">제거할 ObjectBehaviour 객체</param>
 		internal void RemoveQuerySystemTarget(ObjectBehaviour item)
 		{
-			if(querySystem.TargetInstanceID == item.GetInstanceID())
+			if(querySystem.TargetObject == item)
 			{
-				querySystem.TargetInstanceID = 0;
+				querySystem.TargetObject = null;
 			}
 		}
 		/// <summary>
@@ -499,7 +499,7 @@ namespace BC.ODCC
 				Debug.LogException(ex);
 			}
 
-			return querySystem.IsAll(indexs) && querySystem.IsAny(indexs) && querySystem.IsNone(indexs);
+			return querySystem.IsRange(item) && querySystem.IsAll(indexs) && querySystem.IsAny(indexs) && querySystem.IsNone(indexs);
 		}
 
 		/// <summary>

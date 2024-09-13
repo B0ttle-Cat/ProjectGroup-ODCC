@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 
 using BC.Base;
@@ -80,11 +81,12 @@ namespace BC.ODCC
 				// OCBehaviour를 ODCC 컨테이너 트리에 추가하고, Foreach 시스템에 등록하며 이벤트 리스너를 추가합니다.
 				if(OdccContainerTree.AwakeOCBehaviour(ocBehaviour))
 				{
+					if(ocBehaviour.IsAwake) return;
 					OdccForeach.AddOdccCollectorList(ocBehaviour);
 					EventManager.AddListener(ocBehaviour);
 
 					// OCBehaviour의 BaseAwake 메서드를 호출합니다.
-					ocBehaviour.BaseAwake();
+					ocBehaviour.DoBaseAwake();
 
 					// OCBehaviour가 ObjectBehaviour인 경우 추가 작업을 수행합니다.
 					if(ocBehaviour is ObjectBehaviour objectBehaviour)
@@ -97,14 +99,15 @@ namespace BC.ODCC
 						for(int i = 0 ; i < Length ; i++)
 						{
 							var component = containerNode.componentList[i];
-							if(component.isActiveAndEnabled)
+							if(component.enabled && component.gameObject.activeInHierarchy)
 							{
 								if(OdccContainerTree.AwakeOCBehaviour(component))
 								{
 									OdccForeach.AddOdccCollectorList(component);
 									EventManager.AddListener(component);
 
-									component.BaseAwake();
+									if(component.IsAwake) continue;
+									component.DoBaseAwake();
 								}
 								else
 								{
@@ -136,6 +139,11 @@ namespace BC.ODCC
 				OdccContainerTree.DestroyOCBehaviour(ocBehaviour);
 				OdccForeach.RemoveOdccCollectorList(ocBehaviour);
 				EventManager.RemoveListener(ocBehaviour);
+
+				if(ocBehaviour is ObjectBehaviour @object)
+				{
+					GameObject.Destroy(@object.gameObject);
+				}
 			});
 		}
 

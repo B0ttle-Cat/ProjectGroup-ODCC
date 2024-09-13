@@ -12,7 +12,8 @@ namespace BC.ODCC
 		private Transform _ThisTransform;
 		public Transform ThisTransform { get => _ThisTransform ??= transform; protected set => _ThisTransform = value; }
 		public Scene ThisScene => gameObject.scene;
-		public int ThisComponentIndex => GetComponentIndex();
+		public int ComponentIndex => GetComponentIndex();
+		internal bool IsAwake { get; private set; } = false;
 		internal bool IsEnable { get; private set; } = false;
 		internal bool IsCanUpdateDisable { get; private set; } = false;
 
@@ -153,7 +154,11 @@ namespace BC.ODCC
 #endif
 				OdccManager.OdccChangeParent(this);
 		}
-
+		internal virtual void DoBaseAwake() {
+			if(IsAwake) return;
+			IsAwake = true;
+			BaseAwake();
+		}
 		public virtual void BaseReset() { }
 		public virtual void BaseValidate() { }
 		public virtual void BaseAwake() { }
@@ -180,7 +185,6 @@ namespace BC.ODCC
 			}
 			GC.SuppressFinalize(this);
 		}
-
 		public void DestroyThis(bool removeThisGameObject = false)
 		{
 			if(removeThisGameObject)

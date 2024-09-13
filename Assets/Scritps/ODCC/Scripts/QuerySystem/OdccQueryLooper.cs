@@ -1,4 +1,7 @@
 using System;
+#if !USING_AWAITABLE_LOOP
+using System.Collections;
+#endif
 using System.Collections.Generic;
 using System.Linq;
 
@@ -206,7 +209,11 @@ namespace BC.ODCC
 			looper.SetBreakFunction(null);
 			if(!OdccForeach.ForeachQueryUpdate.TryGetValue(loopOrder, out var loopDictionary))
 			{
+#if !USING_AWAITABLE_LOOP
+				loopDictionary = new Dictionary<OdccQueryLooper, IEnumerator>();
+#else
 				loopDictionary = new Dictionary<OdccQueryLooper, Awaitable>();
+#endif
 				OdccForeach.ForeachQueryUpdate.Add(loopOrder, loopDictionary);
 			}
 			loopDictionary.Add(looper, looper.RunLooper());

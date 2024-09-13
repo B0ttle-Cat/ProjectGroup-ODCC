@@ -14,7 +14,7 @@ namespace BC.ODCC
 	public sealed partial class QuerySystemBuilder
 	{
 		internal Scene TargetScene;
-		internal int TargetInstanceID;
+		internal ObjectBehaviour TargetObject;
 		internal QuerySystem.RangeType Range;
 
 		internal HashSet<int> Any = new HashSet<int>();
@@ -50,19 +50,19 @@ namespace BC.ODCC
 		public QuerySystem Build(Scene scene)
 		{
 			TargetScene = scene;
-			TargetInstanceID = 0;
+			TargetObject = null;
 			Range = QuerySystem.RangeType.Scene;
 			return _Build();
 		}
 		public QuerySystem Build(ObjectBehaviour target, QuerySystem.RangeType range)
 		{
 			TargetScene = default;
-			TargetInstanceID = 0;
+			TargetObject = null;
 
 			range &= ~QuerySystem.RangeType.Scene;
 			if(range != QuerySystem.RangeType.World && target != null)
 			{
-				TargetInstanceID = target.GetInstanceID();
+				TargetObject = target;
 			}
 			else
 			{
@@ -74,13 +74,13 @@ namespace BC.ODCC
 		public QuerySystem Build()
 		{
 			TargetScene = default;
-			TargetInstanceID = 0;
+			TargetObject = null;
 			Range = QuerySystem.RangeType.World;
 			return _Build();
 		}
 		private QuerySystem _Build()
 		{
-			return new QuerySystem(TargetScene, TargetInstanceID, Range,
+			return new QuerySystem(TargetScene, TargetObject, Range,
 				Any.OrderBy(x => x).ToArray(),
 				None.OrderBy(x => x).ToArray(),
 				All.OrderBy(x => x).ToArray(),
@@ -158,7 +158,7 @@ namespace BC.ODCC
 	public class QuerySystem : IEquatable<QuerySystem>
 	{
 		internal Scene TargetScene;
-		internal int TargetInstanceID;
+		internal ObjectBehaviour TargetObject;
 		internal RangeType Range;
 		[Flags]
 		public enum RangeType : int
@@ -169,7 +169,7 @@ namespace BC.ODCC
 			Parent = 0b_0100,   // 이 부모에세 검색
 			Child  = 0b_1000,   // 이 자식객체에서 검색
 
-			AllObjectRoot = 0b_0001_0000,
+			CheckInFamilyTree = 0b_0001_0000,
 
 			ObjectAndChild = Object | Child,
 			ObjectAndParent = Object | Parent,
@@ -190,12 +190,12 @@ namespace BC.ODCC
 		string onShowQuerySystem;
 #endif
 
-		internal QuerySystem(Scene targetScene, int targetInstanceID, RangeType range,
+		internal QuerySystem(Scene targetScene, ObjectBehaviour targetObject, RangeType range,
 			int[] any, int[] none, int[] all,
 			int[] inheritanceOfAny, int[] inheritanceOfNone, int[] inheritanceOfAll)
 		{
 			TargetScene = targetScene;
-			TargetInstanceID = targetInstanceID;
+			TargetObject = targetObject;
 			Range = range;
 
 			Any=any;
@@ -210,7 +210,7 @@ namespace BC.ODCC
 			void SetEditorQueryInfo()
 			{
 				onShowQuerySystem = "QuerySystem Info";
-				Object targetObject = TargetInstanceID == 0 ? null : UnityEditor.EditorUtility.InstanceIDToObject(TargetInstanceID);
+				Object targetObject = TargetObject;
 
 				string rangeString = Enum.GetValues(typeof(QuerySystem.RangeType))
 					.Cast<QuerySystem.RangeType>()
@@ -238,16 +238,16 @@ namespace BC.ODCC
 			if(Range == RangeType.World) return true;
 			if(Range == RangeType.Scene) return item.gameObject.scene == TargetScene;
 
-			if(Range.HasFlag(RangeType.Object | RangeType.Parent | RangeType.Child) && item is not null)
+			var opc = RangeType.Object | RangeType.Parent | RangeType.Child;
+			if((Range & opc) > 0 && item is not null)
 			{
 				if(Range.HasFlag(RangeType.Object))
 				{
-					int instanceID = item.GetInstanceID();
-					return TargetInstanceID == instanceID;
+					return TargetObject == item;
 				}
-				if(Range.HasFlag(RangeType.Parent))
+				if(Range.HasFlag(RangeType.Child))
 				{
-					if(Range.HasFlag(RangeType.AllObjectRoot))
+					if(Range.HasFlag(RangeType.CheckInFamilyTree))
 					{
 						var list = item.GetComponentsInParent<ObjectBehaviour>(true);
 						if(list != null)
@@ -255,7 +255,7 @@ namespace BC.ODCC
 							int length = list.Length;
 							for(int i = 1 ; i < length ; i++)
 							{
-								if(TargetInstanceID == list[i].GetInstanceID())
+								if(TargetObject == list[i])
 								{
 									return true;
 								}
@@ -265,15 +265,15 @@ namespace BC.ODCC
 					else
 					{
 						var parent = item.ThisContainer.ParentObject;
-						if(parent != null && TargetInstanceID == parent.GetInstanceID())
+						if(parent != null && TargetObject == parent)
 						{
 							return true;
 						}
 					}
 				}
-				if(Range.HasFlag(RangeType.Child))
+				if(Range.HasFlag(RangeType.Parent))
 				{
-					if(Range.HasFlag(RangeType.AllObjectRoot))
+					if(Range.HasFlag(RangeType.CheckInFamilyTree))
 					{
 						var list = item.GetComponentsInChildren<ObjectBehaviour>(true);
 						if(list != null)
@@ -281,7 +281,7 @@ namespace BC.ODCC
 							int length = list.Length;
 							for(int i = 1 ; i < length ; i++)
 							{
-								if(TargetInstanceID == list[i].GetInstanceID())
+								if(TargetObject == list[i])
 								{
 									return true;
 								}
@@ -296,7 +296,7 @@ namespace BC.ODCC
 							int length = list.Length;
 							for(int i = 0 ; i < length ; i++)
 							{
-								if(TargetInstanceID == list[i].GetInstanceID())
+								if(TargetObject == list[i])
 								{
 									return true;
 								}
@@ -344,7 +344,7 @@ namespace BC.ODCC
 			if(Range == other.Range)
 			{
 				if(TargetScene.name != other.TargetScene.name) return false;
-				if(TargetInstanceID != other.TargetInstanceID) return false;
+				if(TargetObject != other.TargetObject) return false;
 			}
 			else
 			{

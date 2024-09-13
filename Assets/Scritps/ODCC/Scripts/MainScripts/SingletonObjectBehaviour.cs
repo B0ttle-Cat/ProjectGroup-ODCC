@@ -119,6 +119,7 @@ namespace BC.ODCC
 		protected override void Awake()
 		{
 			base.Awake();
+			if(instance == null) Instance((_) => { });
 		}
 
 		protected override void OnDestroy()
