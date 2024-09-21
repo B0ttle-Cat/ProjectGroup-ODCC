@@ -12,16 +12,29 @@ namespace BC.Base
 	//[DefaultExecutionOrder(ConstInt.ODCC_MAIN_UPDATE)]
 	public class EventManager : MonoSingleton<EventManager>
 	{
+		private static EventManager Instance;
+
 		public bool showLog = false;
 		public bool showCallLog = false;
 		private List<Component> listenerList;
 		private Dictionary<Type, IEnumerable<object>> cashListenerList = new Dictionary<Type, IEnumerable<object>>();
 		public List<Component> ManagedList {
-			get
-			{
+			get {
 				return listenerList;
 			}
 		}
+		/// <summary>
+		/// ODCC 매니저를 초기화하는 메서드입니다. 씬이 로드되기 전에 실행됩니다.
+		/// </summary>
+		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+		static void InitManager()
+		{
+			// ODCC 매니저 인스턴스를 초기화하고 로그를 출력합니다.
+			EventManager.Instance(ins => {
+				Instance = ins;
+			});
+		}
+
 
 		protected override void CreatedSingleton() => New();
 		protected override void DestroySingleton() => Clear();
@@ -108,6 +121,7 @@ namespace BC.Base
 				modify?.Invoke();
 			}
 		}
+
 		private void _CallActionEvent<T>(Func<T, bool> condition, Action<T> action) where T : class
 		{
 			if(showCallLog)
@@ -153,40 +167,76 @@ namespace BC.Base
 				action.Invoke(resultList[i]);
 			}
 		}
-
-		private T _GetEventActor<T>() where T : class
+		private bool _CallActionEvent<T, TR>(Func<T, bool> condition, Func<T, TR> action, out TR _result) where T : class
 		{
-			Type type = typeof(T);
-			cashListenerList ??= new Dictionary<Type, IEnumerable<object>>();
-			if(cashListenerList.TryGetValue(type, out var cachedValue))
+			if(showCallLog)
 			{
-				List<object> actorsOfType = cachedValue as List<object>;
-				if(actorsOfType.Count > 0)
-				{
-					return actorsOfType[0] as T;
-				}
+				Debug.Log($"Call<{typeof(T)}, {typeof(TR)}>", 5);
 			}
-			int count = listenerList.Count;
+
+			_result = default;
+			List<T> resultList = _GetAllEventActor<T>();
+			int count = resultList.Count;
 			for(int i = 0 ; i < count ; i++)
 			{
-				if(listenerList[i] is T find)
+				var tValue = resultList[i];
+				if(condition == null || condition.Invoke(tValue))
 				{
-					if(cashListenerList.TryGetValue(type, out var newCache))
-					{
-						var list = newCache.ToList();
-						list.Add(find);
-						cashListenerList[type] = list;
-					}
-					else
-					{
-						cashListenerList[type] = new List<object>() { find };
-					}
-
-					return find;
+					_result = action.Invoke(tValue);
+					return true;
 				}
 			}
-			return null;
+			return false;
 		}
+
+		private async Awaitable _AwaitCallActionEvent<T>(Func<T, bool> condition, Func<T, Awaitable> action) where T : class
+		{
+			if(showCallLog)
+			{
+				Debug.Log($"Call<{typeof(T)}>", 5);
+			}
+
+			List<T> getList = _GetAllEventActor<T>();
+			List<T> resultList = new List<T>();
+			bool passCondition = condition == null;
+			int count = getList.Count;
+			for(int i = 0 ; i < count ; i++)
+			{
+				var tValue = getList[i];
+				if(passCondition || condition.Invoke(tValue))
+				{
+					resultList.Add(tValue);
+				}
+			}
+			count = resultList.Count;
+			for(int i = 0 ; i < count ; i++)
+			{
+				await action.Invoke(resultList[i]);
+			}
+		}
+		private async Awaitable<(bool, TR)> _AwaitCallActionEvent<T, TR>(Func<T, bool> condition, Func<T, Awaitable<TR>> action) where T : class
+		{
+			if(showCallLog)
+			{
+				Debug.Log($"Call<{typeof(T)}, {typeof(TR)}>", 5);
+			}
+
+			TR _result = default;
+			List<T> resultList = _GetAllEventActor<T>();
+			int count = resultList.Count;
+			for(int i = 0 ; i < count ; i++)
+			{
+				var tValue = resultList[i];
+				if(condition == null || condition.Invoke(tValue))
+				{
+					_result = await action.Invoke(tValue);
+					return (true, _result);
+				}
+			}
+			return (false, _result);
+		}
+
+
 		private List<T> _GetAllEventActor<T>() where T : class
 		{
 			List<T> resultList = new List<T>();
@@ -215,29 +265,6 @@ namespace BC.Base
 			cashListenerList[type] = resultList.Cast<object>();
 			return resultList;
 		}
-
-		private bool _CallActionEvent<T, TR>(Func<T, bool> condition, Func<T, TR> action, out TR _result) where T : class
-		{
-			if(showCallLog)
-			{
-				Debug.Log($"Call<{typeof(T)}, {typeof(TR)}>", 5);
-			}
-
-			_result = default;
-			List<T> resultList = _GetAllEventActor<T>();
-			int count = resultList.Count;
-			for(int i = 0 ; i < count ; i++)
-			{
-				var tValue = resultList[i];
-				if(condition == null || condition.Invoke(tValue))
-				{
-					_result = action.Invoke(tValue);
-					return true;
-				}
-			}
-			return false;
-		}
-
 		private bool _Contains(Component actor)
 		{
 			return Contains(actor, out _);
@@ -261,17 +288,14 @@ namespace BC.Base
 		{
 			if(action == null) return default;
 			TR result = defaultValue;
-			Instance(Instance =>
+			if(Instance._CallActionEvent<T, TR>(null, action, out TR _result))
 			{
-				if(Instance._CallActionEvent<T, TR>(null, action, out TR _result))
-				{
-					result = _result;
-				}
-				else
-				{
-					Debug.LogError("Call Result False");
-				}
-			});
+				result = _result;
+			}
+			else
+			{
+				Debug.LogError("Call Result False");
+			}
 			return result;
 
 		}
@@ -283,17 +307,17 @@ namespace BC.Base
 		public static void Call<T>(Action<T> action) where T : class
 		{
 			if(action == null) return;
-			Instance(Instance => Instance._CallActionEvent<T>(null, action));
+			Instance._CallActionEvent<T>(null, action);
 		}
 		public static void Call<T>(Func<T, bool> condition, Action<T> action) where T : class
 		{
 			if(action == null) return;
-			Instance(Instance => Instance._CallActionEvent<T>(condition, action));
+			Instance._CallActionEvent<T>(condition, action);
 		}
 		public static void Call<T, TR>(IEnumerable<T> enumerable, Action<TR> action) where T : class where TR : class
 		{
 			if(action == null) return;
-			Instance(Instance => Instance._CallActionEvent<T, TR>(enumerable, action));
+			Instance._CallActionEvent<T, TR>(enumerable, action);
 		}
 		public static void Call<T>(Component order, Action<T> action) where T : Component
 		{
@@ -305,11 +329,54 @@ namespace BC.Base
 			if(action == null) return;
 			Call(c => c.gameObject.Equals(order), action);
 		}
+
+		public static async Awaitable<TR> Call<T, TR>(TR defaultValue, Func<T, Awaitable<TR>> action) where T : class
+		{
+			if(action == null) return default;
+			TR result = defaultValue;
+			(bool isTry, TR result) item = await Instance._AwaitCallActionEvent<T, TR>(null, action);
+			if(item.isTry)
+			{
+				result = item.result;
+			}
+			else
+			{
+				Debug.LogError("Call Result False");
+			}
+			return result;
+
+		}
+		public static async Awaitable<TR> Call<T, TR>(Func<T, Awaitable<TR>> action, TR defaultValue = default) where T : class
+		{
+			if(action == null) return default;
+			return await Call<T, TR>(defaultValue, action);
+		}
+		public static async Awaitable Call<T>(Func<T, Awaitable> action) where T : class
+		{
+			if(action == null) return;
+			await Instance._AwaitCallActionEvent<T>(null, action);
+		}
+		public static async Awaitable Call<T>(Func<T, bool> condition, Func<T, Awaitable> action) where T : class
+		{
+			if(action == null) return;
+			await Instance._AwaitCallActionEvent<T>(condition, action);
+		}
+		public static async Awaitable Call<T>(Component order, Func<T, Awaitable> action) where T : Component
+		{
+			if(action == null) return;
+			await Call(c => c.gameObject.Equals(order.gameObject), action);
+		}
+		public static async Awaitable Call<T>(GameObject order, Func<T, Awaitable> action) where T : Component
+		{
+			if(action == null) return;
+			await Call(c => c.gameObject.Equals(order), action);
+		}
+
+
 		public static void AddListener(GameObject actor)
 		{
 			Component[] list = actor.GetComponents<Component>();
-			Instance(Instance =>
-			{
+			Instance(Instance => {
 				for(int i = 0 ; i < list.Length ; i++)
 				{
 					Instance._AddEventActor(list[i]);
@@ -319,8 +386,7 @@ namespace BC.Base
 		public static void RemoveListener(GameObject actor)
 		{
 			Component[] list = actor.GetComponents<Component>();
-			Instance(Instance =>
-			{
+			Instance(Instance => {
 				for(int i = 0 ; i < list.Length ; i++)
 				{
 					Instance._RemoveEventActor(list[i]);
@@ -341,8 +407,7 @@ namespace BC.Base
 		}
 		public static bool Contains(Component actor, out int findIndex)
 		{
-			Instance<int>(Instance =>
-			{
+			Instance<int>(Instance => {
 				Instance._Contains(actor, out int _findIndex);
 				return _findIndex;
 			}, out findIndex);
@@ -354,8 +419,7 @@ namespace BC.Base
 		}
 		public static bool Contains<T>(out int findIndex) where T : class
 		{
-			Instance<int>(Instance =>
-			{
+			Instance<int>(Instance => {
 				Instance._Contains<T>(out int _findIndex);
 				return _findIndex;
 			}, out findIndex);

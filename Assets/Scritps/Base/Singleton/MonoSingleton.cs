@@ -1,7 +1,5 @@
 using System;
 
-using Sirenix.OdinInspector;
-
 using UnityEngine;
 
 using Object = UnityEngine.Object;
@@ -22,8 +20,7 @@ namespace BC.Base
 			}
 			else
 			{
-				return Instance(out bool value, (t) =>
-				{
+				return Instance(out bool value, (t) => {
 					result?.Invoke(t);
 					return true;
 				});
