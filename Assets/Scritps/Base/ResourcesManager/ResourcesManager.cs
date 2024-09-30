@@ -43,8 +43,7 @@ namespace BC.Base
 				}
 			}
 			loader = resourcesLoader[index];
-			loader.AddHandler(mono, progress, (obj) =>
-			{
+			loader.AddHandler(mono, progress, (obj) => {
 				try
 				{
 					if(obj != null && obj is T t)
@@ -70,8 +69,7 @@ namespace BC.Base
 				loader.RemoveHandler(mono);
 			});
 
-			Instance((i) =>
-			{
+			Instance((i) => {
 				i.StartCoroutine(loader.OnDownload());
 			});
 		}
@@ -96,11 +94,8 @@ namespace BC.Base
 
 		private static Loader CreateLoader(eResourcesLoadType loadType)
 		{
-			return loadType switch
-			{
-				eResourcesLoadType.ResourcesLoad => new ResourcesAssetLoader(),
-				eResourcesLoadType.AssetBundle => new AssetBundleLoader(),
-				eResourcesLoadType.ObjectAsset => new GameObjectAssetLoader(),
+			return loadType switch {
+				eResourcesLoadType.None => new GameObjectAssetLoader(),
 				_ => null,
 			};
 		}
@@ -143,6 +138,14 @@ namespace BC.Base
 					bundleLoaderLink.Remove(removeKey);
 				}
 			}
+		}
+
+		protected override void CreatedSingleton()
+		{
+		}
+
+		protected override void DestroySingleton()
+		{
 		}
 	}
 }

@@ -2,7 +2,8 @@
     "name": "BC.ODCC",
     "rootNamespace": "BC.ODCC",
     "references": [
-        "GUID:7aa6ab5ead1fe264493d2913bdea2fe1"
+        "GUID:7aa6ab5ead1fe264493d2913bdea2fe1",
+        "GUID:2c3f48364a5004fd3a152fbdf5fea703"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

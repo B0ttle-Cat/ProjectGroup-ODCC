@@ -249,7 +249,7 @@ namespace BC.ODCC
 		/// 루퍼를 실행하는 비동기 메서드입니다.
 		/// </summary>
 		/// <returns>UnityEngine.Awaitable 객체</returns>
-		public async Awaitable RunLooper()
+		internal async Awaitable RunLooper()
 		{
 			// 쿼리 콜렉터가 null인 경우 중단합니다.
 			if(queryCollector is null) return;
@@ -341,19 +341,19 @@ namespace BC.ODCC
 		public async void RunAction(Action completed = null)
 		{
 			// 로그를 표시하는 경우 시작 로그를 출력합니다.
-			if(onShowCallLog)
-			{
-				Debug.Log($"Start: RunCallEvent : {looperKey}", onShowCallLogDepth);
-			}
+			//if(onShowCallLog)
+			//{
+			//	Debug.Log($"Start: RunCallEvent : {looperKey}", onShowCallLogDepth);
+			//}
 
 			// 루퍼를 실행합니다.
 			await RunLooper();
 
 			// 로그를 표시하는 경우 종료 로그를 출력합니다.
-			if(onShowCallLog)
-			{
-				Debug.Log($"Ended: RunCallEvent : {looperKey}");
-			}
+			//if(onShowCallLog)
+			//{
+			//	Debug.Log($"Ended: RunCallEvent : {looperKey}");
+			//}
 
 			// 완료 후 호출될 액션을 실행합니다.
 			try
@@ -652,7 +652,6 @@ namespace BC.ODCC
 		public OdccQueryLooper JoinNext(OdccQueryLooper join)
 		{
 			if(join == null) return this;
-
 			Func<Awaitable> action = async () =>
 			{
 				if(join.queryCollector != null)

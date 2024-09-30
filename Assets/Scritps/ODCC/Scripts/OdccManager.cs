@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 
 using BC.Base;
@@ -134,15 +133,25 @@ namespace BC.ODCC
 			Instance(Ins => {
 				// OCBehaviour의 BaseDestroy 메서드를 호출합니다.
 				ocBehaviour.BaseDestroy();
+				bool isObjectBehaviour = ocBehaviour is ObjectBehaviour;
 
+				if(isObjectBehaviour)
+				{
+					var destroyAll = ocBehaviour.GetComponentsInChildren<OCBehaviour>(true);
+					var length = destroyAll.Length;
+					for(int i = 0 ; i<length ; i++)
+					{
+						destroyAll[i].CallDestroy();
+					}
+				}
 				// OCBehaviour를 ODCC 컨테이너 트리와 Foreach 시스템에서 제거하고, 이벤트 리스너를 제거합니다.
 				OdccContainerTree.DestroyOCBehaviour(ocBehaviour);
 				OdccForeach.RemoveOdccCollectorList(ocBehaviour);
 				EventManager.RemoveListener(ocBehaviour);
 
-				if(ocBehaviour is ObjectBehaviour @object)
+				if(isObjectBehaviour)
 				{
-					GameObject.Destroy(@object.gameObject);
+					GameObject.Destroy(ocBehaviour.gameObject);
 				}
 			});
 		}

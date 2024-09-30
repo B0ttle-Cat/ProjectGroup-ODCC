@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using Sirenix.OdinInspector;
+using Sirenix.Utilities;
 
 using UnityEngine;
 
@@ -149,6 +150,8 @@ namespace BC.ODCC
 			// 타입 인덱스 배열
 			[ReadOnly, ShowInInspector, ShowIf("@ShowType")]
 			internal int[] typeIndex = new int[0];
+			[ReadOnly, ShowInInspector, ShowIf("@ShowType")]
+			internal int[] typeInheritanceIndex = new int[0];
 
 			/// <summary>
 			/// 생성자
@@ -171,6 +174,7 @@ namespace BC.ODCC
 				componentList = null;
 				dataList = null;
 				typeIndex = null;
+				typeInheritanceIndex = null;
 			}
 
 			/// <summary>
@@ -229,6 +233,7 @@ namespace BC.ODCC
 				if(componentList == null) componentList = new ComponentBehaviour[0];
 				if(dataList == null) dataList = new DataObject[0];
 				if(typeIndex == null) typeIndex = new int[0];
+				if(typeInheritanceIndex == null) typeInheritanceIndex = new int[0];
 
 				// 부모, 자식, 컴포넌트 갱신
 				RefreshParent();
@@ -373,6 +378,7 @@ namespace BC.ODCC
 				componentList = new ComponentBehaviour[0];
 				dataList = new DataObject[0];
 				typeIndex = new int[0];
+				typeInheritanceIndex = new int[0];
 			}
 
 			/// <summary>
@@ -479,18 +485,30 @@ namespace BC.ODCC
 				int count = 1 + compCount + dataCount;
 
 				// 타입 인덱스 배열을 초기화
-				typeIndex = new int[count];
+				HashSet<int> _typeIndex = new HashSet<int>();
+				HashSet<int> _typeInheritanceIndex = new HashSet<int>();
 
 				// 타입 인덱스 배열을 설정
-				typeIndex[0] = thisObject.OdccTypeIndex;
+				if(!thisObject.IsCallDestroy)
+				{
+					_typeIndex.Add(thisObject.OdccTypeIndex);
+					_typeInheritanceIndex.AddRange(thisObject.OdccTypeInheritanceIndex);
+					for(int i = 0 ; i < dataCount ; i++)
+					{
+						_typeIndex.Add(dataList[i].OdccTypeIndex);
+						_typeInheritanceIndex.AddRange(dataList[i].OdccTypeInheritanceIndex);
+					}
+				}
 				for(int i = 0 ; i < compCount ; i++)
 				{
-					typeIndex[1 + i] = componentList[i].OdccTypeIndex;
+					if(!componentList[i].IsCallDestroy)
+					{
+						_typeIndex.Add(componentList[i].OdccTypeIndex);
+						_typeInheritanceIndex.AddRange(componentList[i].OdccTypeInheritanceIndex);
+					}
 				}
-				for(int i = 0 ; i < dataCount ; i++)
-				{
-					typeIndex[1 + compCount + i] = dataList[i].OdccTypeIndex;
-				}
+				typeIndex = _typeIndex.ToArray();
+				typeInheritanceIndex = _typeInheritanceIndex.ToArray();
 			}
 		}
 
@@ -744,7 +762,7 @@ namespace BC.ODCC
 			if(behaviour != null && ContainerNodeListContainsKey(behaviour))
 			{
 				var node = GetContainerNode(behaviour);
-				
+
 				// 컨테이너 노드 리스트에서 제거
 				ContainerNodeListRemove(behaviour);
 				var parentNode = GetContainerNode(node.parent);

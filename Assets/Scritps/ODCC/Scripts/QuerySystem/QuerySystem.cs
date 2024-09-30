@@ -93,7 +93,7 @@ namespace BC.ODCC
 			foreach(var item in typeIndexs)
 			{
 				if(item<0) continue;
-				if(checkInheritance)
+				if(checkInheritance || OdccManager.CheckIsInterface(item))
 				{
 					InheritanceOfAny.Add(item);
 				}
@@ -109,7 +109,7 @@ namespace BC.ODCC
 			foreach(var item in typeIndexs)
 			{
 				if(item<0) continue;
-				if(checkInheritance)
+				if(checkInheritance || OdccManager.CheckIsInterface(item))
 				{
 					InheritanceOfNone.Add(item);
 				}
@@ -125,7 +125,7 @@ namespace BC.ODCC
 			foreach(var item in typeIndexs)
 			{
 				if(item<0) continue;
-				if(checkInheritance)
+				if(checkInheritance || OdccManager.CheckIsInterface(item))
 				{
 					InheritanceOfAll.Add(item);
 				}
@@ -184,7 +184,7 @@ namespace BC.ODCC
 		internal readonly int[] InheritanceOfNone = Array.Empty<int>();
 		internal readonly int[] InheritanceOfAll = Array.Empty<int>();
 
-
+		internal bool UsingInheritance = false;
 #if UNITY_EDITOR
 		[ShowInInspector, ReadOnly, TextArea(0, 50), HideLabel]
 		string onShowQuerySystem;
@@ -205,6 +205,7 @@ namespace BC.ODCC
 			InheritanceOfNone = inheritanceOfNone;
 			InheritanceOfAll = inheritanceOfAll;
 
+			UsingInheritance = InheritanceOfAny.Length > 0 || InheritanceOfNone.Length > 0 || InheritanceOfAll.Length > 0;
 #if UNITY_EDITOR
 			SetEditorQueryInfo();
 			void SetEditorQueryInfo()
@@ -309,25 +310,28 @@ namespace BC.ODCC
 
 			return false;
 		}
-		public bool IsAny(IEnumerable<int> odccItems)
+		public bool IsCheck(IEnumerable<int> odccItems, IEnumerable<int> odccInheritanceItems)
+		{
+			return IsAll(odccItems, odccInheritanceItems) && IsAny(odccItems, odccInheritanceItems) && IsNone(odccItems, odccInheritanceItems);
+		}
+		private bool IsAny(IEnumerable<int> odccItems, IEnumerable<int> odccInheritanceItems)
 		{
 			bool result
 				= (Any.Length == 0 || Any.Any((i) => odccItems.Contains(i)))
-				|| (InheritanceOfAny.Length == 0 || InheritanceOfAny.Any((i) => OdccManager.CheckIsInheritanceIndex(i, odccItems)));
+				|| (InheritanceOfAny.Length == 0 || InheritanceOfAny.Any((i) => odccInheritanceItems.Contains(i)));
 			return result;
 		}
-		public bool IsNone(IEnumerable<int> odccItems)
+		private bool IsNone(IEnumerable<int> odccItems, IEnumerable<int> odccInheritanceItems)
 		{
 			bool result
 				= (None.Length == 0 || !None.Any((i) => odccItems.Contains(i)))
-				|| (InheritanceOfNone.Length == 0 || !InheritanceOfNone.Any((i) => OdccManager.CheckIsInheritanceIndex(i, odccItems)));
+				|| (InheritanceOfNone.Length == 0 || !InheritanceOfNone.Any((i)  => odccInheritanceItems.Contains(i)));
 			return result;
 		}
-		public bool IsAll(IEnumerable<int> odccItems)
+		private bool IsAll(IEnumerable<int> odccItems, IEnumerable<int> odccInheritanceItems)
 		{
-			bool result
-				= (All.Length == 0 || All.All((i) => odccItems.Contains(i)))
-				&& (InheritanceOfAll.Length == 0 || InheritanceOfAll.All((i) => OdccManager.CheckIsInheritanceIndex(i, odccItems)));
+			bool result = (All.Length == 0 || All.All((i) => odccItems.Contains(i)))
+				&& (InheritanceOfAll.Length == 0 || InheritanceOfAll.All((i)  => odccInheritanceItems.Contains(i)));
 			return result;
 		}
 

@@ -1,3 +1,5 @@
+using System;
+
 using Sirenix.OdinInspector;
 
 using UnityEngine;
@@ -22,14 +24,21 @@ namespace BC.ODCC
 #if UNITY_EDITOR
 		internal override void Reset()
 		{
-			if(UnityEditor.EditorApplication.isPlaying) return;
-			if(IsEditingPrefab()) return;
+			try
+			{
+				if(UnityEditor.EditorApplication.isPlaying) return;
+				if(IsEditingPrefab()) return;
 
-			ThisTransform = transform;
-			if(ThisTransform == null) return;
-			ThisObject = GetComponentInParent<ObjectBehaviour>(true);
-			BaseReset();
-			BaseValidate();
+				ThisTransform = transform;
+				if(ThisTransform == null) return;
+				ThisObject = GetComponentInParent<ObjectBehaviour>(true);
+				BaseReset();
+				BaseValidate();
+			}
+			catch(Exception ex)
+			{
+				Debug.LogException(ex);
+			}
 		}
 		internal override void OnValidate()
 		{

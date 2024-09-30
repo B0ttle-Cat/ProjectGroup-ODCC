@@ -72,7 +72,7 @@ public class AssetBundleBuilder
 			foreach(string assetBundleName in allAssetBundles)
 			{
 				string[] dependencies = manifest.GetAllDependencies(assetBundleName);
-				Debug.Log("Built ObjectAsset Bundle: " + bundleName);
+				Debug.Log("Built None Bundle: " + bundleName);
 				Debug.Log("Dependencies: " + string.Join(", ", dependencies));
 			}
 		}

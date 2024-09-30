@@ -55,6 +55,7 @@ namespace BC.ODCC
 		}
 		internal override void OnValidate()
 		{
+			OnVHierarchy();
 			try
 			{
 				if(UnityEditor.EditorApplication.isPlaying) return;
@@ -74,6 +75,20 @@ namespace BC.ODCC
 			{
 				Debug.LogError("Exception OnValidate : " + gameObject.name);
 				Debug.LogException(ex);
+			}
+		}
+		private void OnVHierarchy()
+		{
+			try
+			{
+				if(this is ObjectBehaviour)
+				{
+					VHierarchy.VHierarchy.OnSetIcon(this.gameObject, "d_PreMatCube");
+				}
+			}
+			catch(Exception ex)
+			{
+				//	Debug.LogException(ex);
 			}
 		}
 		[ContextMenu("ContainerUpdateInEditor")]

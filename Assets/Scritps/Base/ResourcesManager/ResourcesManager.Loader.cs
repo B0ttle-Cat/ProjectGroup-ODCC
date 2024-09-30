@@ -15,6 +15,15 @@ namespace BC.Base
 {
 	public partial class ResourcesManager
 	{
+		// 로드 상태 정의
+		public enum LoadState
+		{
+			None = 0,
+			Loading = 1,
+			Success = 2,
+			Error = 3,
+		}
+
 		[Serializable]
 		public abstract class Loader
 		{
@@ -120,8 +129,8 @@ namespace BC.Base
 
 			protected override IEnumerator Download()
 			{
-				string bundleName = ResourcesKey.BundleName;
-				string assetName = ResourcesKey.FullPath;
+				string bundleName = "";// ResourcesKey.BundleName;
+				string assetName = "";// ResourcesKey.FullPath;
 				if(bundleLoaderLinkStack.ContainsKey(bundleName))
 				{
 					bundleLoaderLinkStack[bundleName]++;
@@ -155,8 +164,7 @@ namespace BC.Base
 							{
 								Debug.Log($"Already Loaded Check");
 								var loadedList =  AssetBundle.GetAllLoadedAssetBundles();
-								loadedList.ForEach(loaded =>
-								{
+								loadedList.ForEach(loaded => {
 									if(loaded.name == bundleName)
 									{
 										Debug.Log($"Is Already Loaded LoadAssetBundle");
@@ -310,7 +318,7 @@ namespace BC.Base
 
 			protected override IEnumerator Download()
 			{
-				string assetName = ResourcesKey.FullPath;
+				string assetName = "";// ResourcesKey.FullPath;
 
 				ResourceRequest asyncObject = Resources.LoadAsync(assetName);
 				yield return asyncObject;

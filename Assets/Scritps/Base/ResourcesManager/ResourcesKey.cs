@@ -1,7 +1,4 @@
 using System;
-using System.Collections.Generic;
-
-using Sirenix.OdinInspector;
 
 using UnityEngine;
 
@@ -11,45 +8,20 @@ namespace BC.Base
 {
 	public enum eResourcesLoadType
 	{
-		None = -1,
-		ObjectAsset = 2,
-		ResourcesLoad = 0,
-		AssetBundle = 1,
+		None = 0,
+		//ResourcesLoad = 0,
+		//AssetBundle = 1,
 	}
 	[Serializable]
 #pragma warning disable CS0282 // partial 구조체의 여러 선언에서 필드 간 순서가 정의되어 있지 않습니다.
-	public partial struct ResourcesKey : IEquatable<ResourcesKey>, IDisposable
+	public partial struct ResourcesKey : IDisposable
 #pragma warning restore CS0282 // partial 구조체의 여러 선언에서 필드 간 순서가 정의되어 있지 않습니다.
 	{
-#if UNITY_EDITOR
-		[InfoBox(Success_CheckResourcesKey,InfoMessageType.Info,"ShowSuccessCheckResourcesKey")]
-		[InfoBox(Fail_CheckResourcesKey,InfoMessageType.Warning,"ShowErrorCheckResourcesKey")]
-		[LabelWidth(80),PropertyOrder(-11), HideLabel]
-#endif
 		public eResourcesLoadType LoadType;
-#if UNITY_EDITOR
-		[LabelWidth(80)]
-		[ShowIf("@ShowBundleName"), EnableIf("@EnableBundleName")]
-#endif
-		public string BundleName;
-#if UNITY_EDITOR
-		[ShowIf("@ShowFullPath"), EnableIf("@EnableFullPath")]
-		[LabelWidth(80)]
-		[Multiline(2)]
-#endif
-		public string FullPath;
-#if UNITY_EDITOR
-		[ShowIf("@ShowObjectAsset"), EnableIf("@EnableObjectAsset")]
-		[LabelWidth(80)]
-#endif
 		public Object ObjectAsset;
 
-		public static ResourcesKey Empty => new ResourcesKey() { LoadType = eResourcesLoadType.None, FullPath = "", BundleName = "", ObjectAsset  = null };
 		public bool IsEmpty => LoadType switch {
-			eResourcesLoadType.None => true,
-			eResourcesLoadType.ResourcesLoad => string.IsNullOrWhiteSpace(FullPath),
-			eResourcesLoadType.AssetBundle => string.IsNullOrWhiteSpace(FullPath) || string.IsNullOrWhiteSpace(BundleName),
-			eResourcesLoadType.ObjectAsset => ObjectAsset == null,
+			eResourcesLoadType.None => ObjectAsset == null,
 			_ => false,
 		};
 		public override bool Equals(object obj)
@@ -62,10 +34,7 @@ namespace BC.Base
 			if(other == null || this == null) return false;
 
 			if(LoadType!=other.LoadType) return false;
-			if(LoadType == eResourcesLoadType.None) return true;
-			if(LoadType == eResourcesLoadType.AssetBundle && BundleName != other.BundleName) return false;
-			if((LoadType == eResourcesLoadType.ResourcesLoad||LoadType == eResourcesLoadType.AssetBundle) && FullPath != other.FullPath) return false;
-			if(LoadType == eResourcesLoadType.ObjectAsset && !EqualityComparer<Object>.Default.Equals(ObjectAsset, other.ObjectAsset)) return false;
+			if(LoadType == eResourcesLoadType.None) return ObjectAsset == other.ObjectAsset;
 			return true;
 		}
 		public override int GetHashCode()
@@ -94,22 +63,31 @@ namespace BC.Base
 
 	public static class UtilResourcesKey
 	{
-		public static void AsyncInstantiate<T>(this ResourcesKey loadKey, MonoBehaviour mono, Action<float> progress, Action<T> result) where T : Object
+		public static void AsyncInstantiate<T>(this ResourcesKey loadKey, MonoBehaviour mono, Action<T> result, Action<float> progress = null) where T : Object
 		{
+			loadKey.LoadType = eResourcesLoadType.None;
 			if(loadKey.IsEmpty)
 			{
+				Debug.LogError("ResourcesKey Is Empty");
 				result?.Invoke(null);
 				return;
 			}
 			ResourcesManager.AsyncInstantiate(loadKey, mono, progress, result);
 		}
-		public static void AsyncInstantiate<T>(this ResourcesKey loadKey, MonoBehaviour mono, Action<T> result) where T : Object
+		public static async Awaitable<T> AsyncInstantiate<T>(this ResourcesKey loadKey, MonoBehaviour mono, Action<float> progress = null) where T : Object
 		{
-			AsyncInstantiate(loadKey, mono, null, result);
+			T obj = null;
+			bool wait = true;
+			AsyncInstantiate<T>(loadKey, mono, (t) => { obj = t; wait = false; }, progress);
+			while(wait)
+			{
+				await Awaitable.NextFrameAsync();
+			}
+			return obj;
 		}
 		public static void Unload(this ResourcesKey loadKey, MonoBehaviour mono)
 		{
-			if(loadKey.LoadType != eResourcesLoadType.ObjectAsset)
+			if(loadKey.LoadType != eResourcesLoadType.None)
 			{
 				ResourcesManager.Unload(loadKey, mono);
 			}

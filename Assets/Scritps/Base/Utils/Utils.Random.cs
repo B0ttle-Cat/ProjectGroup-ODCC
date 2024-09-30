@@ -194,9 +194,6 @@ namespace BC.Base
 			/// 중앙에 밀도가 높고, 양쪽으로 갈수록 낮아집니다.
 			/// 양쪽은 이론상 무한대로 분산됩니다.
 			/// </summary>
-			/// <param name="mean">평균값</param>
-			/// <param name="stdDev">표준편차</param>
-			/// <returns></returns>
 			public static float NextGaussian(float mean = 0f, float stdDev = 1f)
 			{
 				// Box-Muller 변환을 사용하여 표준 정규 분포 값 생성
@@ -212,12 +209,18 @@ namespace BC.Base
 			/// 중앙에 밀도가 높고, 양쪽으로 갈수록 낮아집니다.
 			/// NextGaussian(0f, 0.25f); 와 동일합니다.
 			/// </summary>
-			/// <param name="mean">평균값</param>
-			/// <param name="stdDev">표준편차</param>
-			/// <returns></returns>
-			public static float NextGaussianClamp1()
+			public static float NextGaussianSize1()
 			{
 				return Mathf.Clamp(NextGaussian(0f, 0.25f), -1f, 1f);
+			}
+			/// <summary>
+			/// 0 ~ 1 사이의 값이 나오도록 제한&조정된 가우시한 분포 함수입니다.
+			/// 중앙에 밀도가 높고, 양쪽으로 갈수록 낮아집니다.
+			/// NextGaussian(0f, 0.25f); 와 동일합니다.
+			/// </summary>
+			public static float NextGaussianClamp1()
+			{
+				return (Mathf.Clamp(NextGaussian(0f, 0.25f), -1f, 1f) + 1f) * 0.5f;
 			}
 			/// <summary>
 			/// 지수 분포 입니다.

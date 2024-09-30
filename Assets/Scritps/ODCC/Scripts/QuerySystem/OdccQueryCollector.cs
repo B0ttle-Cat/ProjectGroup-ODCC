@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using Sirenix.OdinInspector;
+using Sirenix.Utilities;
 
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -16,14 +17,13 @@ namespace BC.ODCC
 	[Serializable]
 	public class OdccQueryCollector : IDisposable
 	{
-#if UNITY_EDITOR
 		[ShowInInspector, ReadOnly, InlineProperty, HideLabel]
-		private QuerySystem onShowQuerySystem;
+		// QuerySystem 객체입니다.
+		internal QuerySystem querySystem;
+#if UNITY_EDITOR
 		[ShowInInspector, ReadOnly]
 		private List<ObjectBehaviour> onShowQueryItems;
 #endif
-		// QuerySystem 객체입니다.
-		internal QuerySystem querySystem;
 
 		// 라이프 아이템 목록입니다.
 		internal List<object> lifeItems;
@@ -50,7 +50,6 @@ namespace BC.ODCC
 		internal OdccQueryCollector(QuerySystem querySystem)
 		{
 #if UNITY_EDITOR
-			onShowQuerySystem = querySystem;
 			onShowQueryItems = new List<ObjectBehaviour>();
 #endif
 			this.querySystem = querySystem;
@@ -229,7 +228,6 @@ namespace BC.ODCC
 		public void Dispose()
 		{
 #if UNITY_EDITOR
-			onShowQuerySystem = null;
 			onShowQueryItems = null;
 #endif
 			querySystem = null;
@@ -378,6 +376,31 @@ namespace BC.ODCC
 
 			return this;
 		}
+		/// <summary>
+		/// 변경된 목록 이벤트를 생성하는 메서드입니다.
+		/// 초기화 목록을 따로 등록하지 않는 대신 최초에 한번 changeListEvent를 여러번 호출합니다.
+		/// </summary>
+		/// <param name="changeListEvent">목록 변경 이벤트 액션</param>
+		/// <returns>OdccQueryCollector 객체</returns>
+		public OdccQueryCollector CreateChangeListEvent(Action<ObjectBehaviour, bool> changeListEvent)
+		{
+			if(changeListEvent != null)
+			{
+				var list = GetQueryItems();
+				if(list != null)
+				{
+					foreach(var item in list)
+					{
+						changeListEvent.Invoke(item, true);
+					}
+				}
+			}
+
+			if(changeListEvent != null)
+				changeItemList += changeListEvent;
+
+			return this;
+		}
 
 		/// <summary>
 		/// 변경된 목록 이벤트를 삭제하는 메서드입니다.
@@ -406,10 +429,6 @@ namespace BC.ODCC
 				var list = queryItems.ToList();
 				list.Add(item);
 				queryItems = list;
-#if UNITY_EDITOR
-				onShowQueryItems = new List<ObjectBehaviour>();
-				onShowQueryItems.AddRange(list);
-#endif
 				changeItemList?.Invoke(item, true);
 
 				foreach(var looper in odccLoopers)
@@ -421,6 +440,10 @@ namespace BC.ODCC
 				{
 					looper.Value.Add(item);
 				}
+#if UNITY_EDITOR
+				onShowQueryItems = new List<ObjectBehaviour>();
+				onShowQueryItems.AddRange(list);
+#endif
 			}
 		}
 
@@ -436,10 +459,6 @@ namespace BC.ODCC
 			if(list.Remove(item))
 			{
 				queryItems = list;
-#if UNITY_EDITOR
-				onShowQueryItems = new List<ObjectBehaviour>();
-				onShowQueryItems.AddRange(list);
-#endif
 				changeItemList?.Invoke(item, false);
 
 				foreach(var looper in odccLoopers)
@@ -451,6 +470,10 @@ namespace BC.ODCC
 				{
 					looper.Value.Remove(item);
 				}
+#if UNITY_EDITOR
+				onShowQueryItems = new List<ObjectBehaviour>();
+				onShowQueryItems.AddRange(list);
+#endif
 			}
 		}
 		/// <summary>
@@ -475,7 +498,12 @@ namespace BC.ODCC
 				querySystem.TargetScene = default;
 			}
 		}
-
+		[Button]
+		private void TestIsSatisfiesQuery(ObjectBehaviour item)
+		{
+			if(item == null) return;
+			Debug.Log(IsSatisfiesQuery(item));
+		}
 		/// <summary>
 		/// ObjectBehaviour 객체가 쿼리 조건을 만족하는지 확인하는 메서드입니다.
 		/// </summary>
@@ -487,11 +515,18 @@ namespace BC.ODCC
 			if(!Application.isPlaying) return false;
 #endif
 			if(item == null) return false;
+			if(item.IsCallDestroy) return false;
 
-			List<int> indexs = new List<int>();
+			HashSet<int> indexs = new HashSet<int>();
+			HashSet<int> indexInheritances = new HashSet<int>();
 			try
 			{
 				indexs.AddRange(OdccManager.GetTypeToIndex(item));
+				if(querySystem.UsingInheritance)
+				{
+					indexInheritances.AddRange(indexs);
+					indexInheritances.AddRange(OdccManager.GetTypeInheritanceTable(item));
+				}
 			}
 			catch(Exception ex)
 			{
@@ -499,7 +534,20 @@ namespace BC.ODCC
 				Debug.LogException(ex);
 			}
 
-			return querySystem.IsRange(item) && querySystem.IsAll(indexs) && querySystem.IsAny(indexs) && querySystem.IsNone(indexs);
+			if(querySystem.UsingInheritance)
+			{
+				try
+				{
+
+				}
+				catch(Exception ex)
+				{
+					Debug.LogError($"item:{item}{item.name}");
+					Debug.LogException(ex);
+				}
+			}
+
+			return querySystem.IsRange(item) && querySystem.IsCheck(indexs, indexInheritances);
 		}
 
 		/// <summary>

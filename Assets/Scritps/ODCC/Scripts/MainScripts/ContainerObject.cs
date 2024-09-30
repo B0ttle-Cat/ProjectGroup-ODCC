@@ -1,7 +1,5 @@
 using System;
-#if !USING_AWAITABLE_LOOP
-using System.Collections;
-#endif
+
 using System.Collections.Generic;
 using System.Threading;
 
@@ -24,6 +22,7 @@ namespace BC.ODCC
 		public ComponentBehaviour[] ComponentList => ContainerNode.componentList;
 		public DataObject[] DataList => ContainerNode.dataList;
 		internal int[] TypeIndex => ContainerNode.typeIndex;
+		internal int[] TypeInheritanceIndex => ContainerNode.typeInheritanceIndex;
 
 		private Queue<Action> callActionQueue;
 
@@ -79,10 +78,14 @@ namespace BC.ODCC
 				}
 			}
 		}
-		public bool TryGetObject<T>(out T t) where T : class, IOdccObject
+		public bool TryGetObject<T>(out T t, Func<T, bool> condition = null) where T : class, IOdccObject
 		{
 			t = ThisObject is T v ? v : null;
-			return t is not null;
+			if(t is not null)
+			{
+				if(condition == null || condition.Invoke(t)) return true;
+			}
+			return false;
 		}
 		public bool TryGetParentObject<T>(out T t, Func<T, bool> condition = null) where T : class, IOdccObject
 		{
@@ -123,7 +126,212 @@ namespace BC.ODCC
 		{
 			return ChildObject.GetAll<T, ObjectBehaviour>(condition);
 		}
+#if USING_AWAITABLE_LOOP
+		public async Awaitable<T> AwaitGetObject<T>(Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccObject
+		{
+			T t = null;
+			cancelToken ??= ThisObject.DestroyCancelToken;
+			while(!cancelToken.Value.IsCancellationRequested && !TryGetObject(out t, condition))
+			{
+				try
+				{
+					await Awaitable.NextFrameAsync(cancelToken.Value);
+				}
+				catch
+				{
+					t= null;
+					break;
+				}
+			}
+			return t;
+		}
+		public async Awaitable<T> AwaitGetParentObject<T>(Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccObject
+		{
+			T t = null;
+			cancelToken ??= ThisObject.DestroyCancelToken;
+			while(!cancelToken.Value.IsCancellationRequested && !TryGetParentObject(out t, condition))
+			{
+				try
+				{
+					await Awaitable.NextFrameAsync(cancelToken.Value);
+				}
+				catch
+				{
+					t= null;
+					break;
+				}
+			}
+			return t;
+		}
+		public async Awaitable<T> AwaitGetChildObject<T>(Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccObject
+		{
+			T t = null;
+			cancelToken ??= ThisObject.DestroyCancelToken;
+			while(!cancelToken.Value.IsCancellationRequested && !TryGetChildObject(out t, condition))
+			{
+				try
+				{
+					await Awaitable.NextFrameAsync(cancelToken.Value);
+				}
+				catch
+				{
+					t= null;
+					break;
+				}
+			}
+			return t;
+		}
+		public async Awaitable<T[]> AwaitGetChildObjectList<T>(Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccObject
+		{
+			T[] t = null;
+			cancelToken ??= ThisObject.DestroyCancelToken;
+			while(!cancelToken.Value.IsCancellationRequested && !TryGetChildObjectList(out t, condition))
+			{
+				try
+				{
+					await Awaitable.NextFrameAsync(cancelToken.Value);
+				}
+				catch
+				{
+					t= null;
+					break;
+				}
+			}
+			return t;
+		}
+		public async void NextGetObject<T>(Action<T> callback, Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccObject
+		{
+			if(callback is null) return;
 
+			var t = await AwaitGetObject<T>(condition, cancelToken);
+			if(t is null) return;
+			callback.Invoke(t);
+		}
+		public async void NextGetParentObject<T>(Action<T> callback, Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccObject
+		{
+			if(callback is null) return;
+
+			var t = await AwaitGetParentObject<T>(condition, cancelToken);
+			if(t is null) return;
+			callback.Invoke(t);
+		}
+		public async void NextGetChildObject<T>(Action<T> callback, Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccObject
+		{
+			if(callback is null) return;
+
+			var t = await AwaitGetChildObject<T>(condition, cancelToken);
+			if(t is null) return;
+			callback.Invoke(t);
+		}
+		public async void NextGetChildObjectList<T>(Action<T[]> callback, Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccObject
+		{
+			if(callback is null) return;
+
+			var t = await AwaitGetChildObjectList<T>(condition, cancelToken);
+			if(t is null) return;
+			callback.Invoke(t);
+		}
+#else
+		public IEnumerator<T> AwaitGetObject<T>(Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccObject
+		{
+			T t = null;
+			cancelToken ??= ThisObject.DestroyCancelToken;
+			while(!cancelToken.Value.IsCancellationRequested && !TryGetObject(out t, condition))
+			{
+				yield return null;
+			}
+			yield return t;
+		}
+		public IEnumerator<T> AwaitGetParentObject<T>(Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccObject
+		{
+			T t = null;
+			cancelToken ??= ThisObject.DestroyCancelToken;
+			while(!cancelToken.Value.IsCancellationRequested && !TryGetParentObject(out t, condition))
+			{
+				yield return null;
+			}
+			yield return t;
+		}
+		public IEnumerator<T> AwaitGetChildObject<T>(Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccObject
+		{
+			T t = null;
+			cancelToken ??= ThisObject.DestroyCancelToken;
+			while(!cancelToken.Value.IsCancellationRequested && !TryGetChildObject(out t, condition))
+			{
+				yield return null;
+			}
+			yield return t;
+		}
+		public IEnumerator<T[]> AwaitGetChildObjectList<T>(Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccObject
+		{
+			T[] t = null;
+			cancelToken ??= ThisObject.DestroyCancelToken;
+			while(!cancelToken.Value.IsCancellationRequested && !TryGetChildObjectList(out t, condition))
+			{
+				yield return null;
+			}
+			yield return t;
+		}
+		public void NextGetObject<T>(Action<T> callback, Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccObject
+		{
+			ThisObject.StartCoroutine(Async());
+			System.Collections.IEnumerator Async()
+			{
+				if(callback is null) yield break;
+
+				var yT = AwaitGetObject<T>(condition, cancelToken);
+				while(yT.MoveNext()) yield return null;
+				var t = yT.Current;
+				if(t is null) yield break;
+				callback.Invoke(t);
+			}
+
+		}
+		public void NextGetParentObject<T>(Action<T> callback, Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccObject
+		{
+			ThisObject.StartCoroutine(Async());
+			System.Collections.IEnumerator Async()
+			{
+				if(callback is null) yield break;
+
+				var yT = AwaitGetParentObject<T>(condition, cancelToken);
+				while(yT.MoveNext()) yield return null;
+				var t = yT.Current;
+				if(t is null) yield break;
+				callback.Invoke(t);
+			}
+
+		}
+		public void NextGetChildObject<T>(Action<T> callback, Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccObject
+		{
+			ThisObject.StartCoroutine(Async());
+			System.Collections.IEnumerator Async()
+			{
+				if(callback is null) yield break;
+
+				var yT = AwaitGetChildObject<T>(condition, cancelToken);
+				while(yT.MoveNext()) yield return null;
+				var t = yT.Current;
+				if(t is null) yield break;
+				callback.Invoke(t);
+			}
+
+		}
+		public async void NextGetChildObjectList<T>(Action<T[]> callback, Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccObject
+		{
+			ThisObject.StartCoroutine(Async());
+			System.Collections.IEnumerator Async()
+			{
+				if(callback is null) yield break;
+
+				var yT = AwaitGetChildObjectList<T>(condition, cancelToken);
+				while(yT.MoveNext()) yield return null;
+				var t = yT.Current;
+				if(t is null) yield break;
+				callback.Invoke(t);
+			}
+		}
+#endif
 		public T GetComponent<T>(Func<T, bool> condition = null) where T : class, IOdccComponent
 		{
 			return ComponentList.Get<T, ComponentBehaviour>(condition);
@@ -327,7 +535,7 @@ namespace BC.ODCC
 		public void NextGetComponent<T>(Action<T> callback, Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccComponent
 		{
 			ThisObject.StartCoroutine(Async());
-			IEnumerator Async()
+			System.Collections.IEnumerator Async()
 			{
 				if(callback is null) yield break;
 
@@ -335,12 +543,13 @@ namespace BC.ODCC
 				while(yT.MoveNext()) yield return null;
 				var t = yT.Current;
 				if(t is null) yield break;
+				callback.Invoke(t);
 			}
 		}
 		public void NextGetComponentInChild<T>(Action<T> callback, Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccComponent
 		{
 			ThisObject.StartCoroutine(Async());
-			IEnumerator Async()
+			System.Collections.IEnumerator Async()
 			{
 				if(callback is null) yield break;
 
@@ -348,12 +557,13 @@ namespace BC.ODCC
 				while(yT.MoveNext()) yield return null;
 				var t = yT.Current;
 				if(t is null) yield break;
+				callback.Invoke(t);
 			}
 		}
 		public void NextGetComponentList<T>(Action<T[]> callback, Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccComponent
 		{
 			ThisObject.StartCoroutine(Async());
-			IEnumerator Async()
+			System.Collections.IEnumerator Async()
 			{
 				if(callback is null) yield break;
 
@@ -361,12 +571,13 @@ namespace BC.ODCC
 				while(yT.MoveNext()) yield return null;
 				var t = yT.Current;
 				if(t is null) yield break;
+				callback.Invoke(t);
 			}
 		}
 		public void NextGetAllComponentList<T>(Action<List<T>> callback, Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccComponent
 		{
 			ThisObject.StartCoroutine(Async());
-			IEnumerator Async()
+			System.Collections.IEnumerator Async()
 			{
 				if(callback is null) yield break;
 
@@ -374,6 +585,7 @@ namespace BC.ODCC
 				while(yT.MoveNext()) yield return null;
 				var t = yT.Current;
 				if(t is null) yield break;
+				callback.Invoke(t);
 			}
 		}
 #endif
@@ -474,7 +686,7 @@ namespace BC.ODCC
 		public void NextGetData<T>(Action<T> callback, Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccData
 		{
 			ThisObject.StartCoroutine(Async());
-			IEnumerator Async()
+			System.Collections.IEnumerator Async()
 			{
 				if(callback is null) yield break;
 
@@ -488,7 +700,7 @@ namespace BC.ODCC
 		public void NextGetDataList<T>(Action<T[]> callback, Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccData
 		{
 			ThisObject.StartCoroutine(Async());
-			IEnumerator Async()
+			System.Collections.IEnumerator Async()
 			{
 				if(callback is null) yield break;
 
@@ -577,10 +789,8 @@ namespace BC.ODCC
 			newObject.transform.parent = ThisObject.ThisTransform;
 
 			T child = newObject.AddComponent<T>();
-			if(onActive)
-			{
-				newObject.SetActive(onActive);
-			}
+			if(onActive) newObject.SetActive(true);
+			else child.OdccAwake();
 			return child;
 		}
 		public T AddComponent<T>(GameObject obj = null) where T : ComponentBehaviour

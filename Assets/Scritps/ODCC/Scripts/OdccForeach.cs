@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace BC.ODCC
@@ -308,7 +309,14 @@ namespace BC.ODCC
 						if(!value.MoveNext())
 #endif
 						{
-							listToNext += () => dictionary[key] = key.RunLooper();
+							try
+							{
+								listToNext += () => dictionary[key] = key.RunLooper();
+							}
+							catch(Exception ex)
+							{
+								Debug.LogException(ex);
+							}
 						}
 					}
 				}

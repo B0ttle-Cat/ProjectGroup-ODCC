@@ -11,13 +11,16 @@ namespace BC.ODCC
 	{
 		private Transform _ThisTransform;
 		public Transform ThisTransform { get => _ThisTransform ??= transform; protected set => _ThisTransform = value; }
+		public MonoBehaviour ThisMono { get => this; }
 		public Scene ThisScene => gameObject.scene;
 		public int ComponentIndex => GetComponentIndex();
 		internal bool IsAwake { get; private set; } = false;
 		internal bool IsEnable { get; private set; } = false;
+		internal bool IsCallDestroy { get; private set; } = false;
 		internal bool IsCanUpdateDisable { get; private set; } = false;
 
 		private int odccTypeIndex = -1;
+		private int[] odccTypeInheritanceIndex = null;
 		public int OdccTypeIndex {
 			get {
 				if(odccTypeIndex == -1) odccTypeIndex = OdccManager.GetTypeToIndex(GetType());
@@ -25,11 +28,36 @@ namespace BC.ODCC
 			}
 		}
 
-		private CancellationTokenSource cancellationEnableSource;
-		private CancellationToken cancellationEnableToken;
+		public int[] OdccTypeInheritanceIndex {
+			get {
+				if(odccTypeInheritanceIndex == null || odccTypeInheritanceIndex.Length == 0) odccTypeInheritanceIndex = OdccManager.GetTypeInheritanceTable(OdccTypeIndex);
+				return odccTypeInheritanceIndex;
+			}
+		}
+		private CancellationTokenSource disableCancellationSource;
+		private CancellationToken disableCancellationToken {
+			get {
+				if(this == null)
+				{
+					throw new MissingReferenceException("DisableCancelToken token should be called atleast once before destroying the monobehaviour object");
+				}
 
+				if(disableCancellationSource == null)
+				{
+					disableCancellationSource = new CancellationTokenSource();
+				}
+				var token = disableCancellationSource.Token;
+				if(!enabled)
+				{
+					disableCancellationSource.Cancel();
+					disableCancellationSource.Dispose();
+					disableCancellationSource = null;
+				}
+				return disableCancellationSource.Token;
+			}
+		}
 		public CancellationToken DestroyCancelToken => destroyCancellationToken;
-		public CancellationToken DisableCancelToken => cancellationEnableToken;
+		public CancellationToken DisableCancelToken => disableCancellationToken;
 
 #if UNITY_EDITOR
 		internal virtual void Reset()
@@ -46,8 +74,8 @@ namespace BC.ODCC
 			ThisTransform = transform;
 			if(ThisTransform == null) return;
 			BaseValidate();
-
 		}
+
 		protected bool IsEditingPrefab() => !gameObject.scene.isLoaded ||
 			(UnityEditor.SceneManagement.PrefabStageUtility.GetCurrentPrefabStage() != null &&
 			UnityEditor.SceneManagement.PrefabStageUtility.GetCurrentPrefabStage().IsPartOfPrefabContents(gameObject));
@@ -62,21 +90,26 @@ namespace BC.ODCC
 			if(odccTypeIndex == -1) odccTypeIndex = OdccManager.GetTypeToIndex(GetType());
 			OdccAwake();
 		}
+		internal void CallDestroy()
+		{
+			IsCallDestroy = true;
+		}
 		protected virtual void OnDestroy()
 		{
+			IsCallDestroy = true;
 			OdccOnDestroy();
 
-			if(cancellationEnableSource != null)
+			if(disableCancellationSource != null)
 			{
-				cancellationEnableSource.Cancel();
-				cancellationEnableSource.Dispose();
-				cancellationEnableSource = null;
+				disableCancellationSource.Cancel();
+				disableCancellationSource.Dispose();
+				disableCancellationSource = null;
 			}
 		}
 		protected virtual void OnEnable()
 		{
-			cancellationEnableSource = new CancellationTokenSource();
-			cancellationEnableToken = cancellationEnableSource.Token;
+			if(disableCancellationSource == null)
+				disableCancellationSource = new CancellationTokenSource();
 
 			OdccOnEnable();
 		}
@@ -84,11 +117,11 @@ namespace BC.ODCC
 		{
 			OdccOnDisable();
 
-			if(cancellationEnableSource != null)
+			if(disableCancellationSource != null)
 			{
-				cancellationEnableSource.Cancel();
-				cancellationEnableSource.Dispose();
-				cancellationEnableSource = null;
+				disableCancellationSource.Cancel();
+				disableCancellationSource.Dispose();
+				disableCancellationSource = null;
 			}
 		}
 		protected virtual void Start()
@@ -154,9 +187,11 @@ namespace BC.ODCC
 #endif
 				OdccManager.OdccChangeParent(this);
 		}
-		internal virtual void DoBaseAwake() {
+		internal virtual void DoBaseAwake()
+		{
 			if(IsAwake) return;
 			IsAwake = true;
+			IsCallDestroy = false;
 			BaseAwake();
 		}
 		public virtual void BaseReset() { }

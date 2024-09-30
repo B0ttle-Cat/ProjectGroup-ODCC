@@ -18,8 +18,9 @@ namespace BC.ODCC
 		private static Dictionary<int, Type> intToTypeTable;
 		[ShowInInspector, ReadOnly]
 		private static Dictionary<int, int[]> inheritanceTable;
-		private static bool IsEmpty => typeToIntTable is null || intToTypeTable is null || inheritanceTable is null;
-
+		[ShowInInspector, ReadOnly]
+		private static HashSet<int> interfaceList;
+		private static bool IsEmpty => typeToIntTable is null || intToTypeTable is null || inheritanceTable is null || interfaceList is null;
 		public static Dictionary<Type, int> TypeIntTable {
 			get {
 				if(IsEmpty) SetIsAsisgnable();
@@ -38,6 +39,12 @@ namespace BC.ODCC
 				return inheritanceTable;
 			}
 		}
+		public static HashSet<int> InterfaceList {
+			get {
+				if(IsEmpty) SetIsAsisgnable();
+				return interfaceList;
+			}
+		}
 
 		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
 		static void SetIsAsisgnable()
@@ -52,6 +59,7 @@ namespace BC.ODCC
 			var typeToIntTable = new Dictionary<Type, int>();
 			var intToTypeTable = new Dictionary<int, Type>();
 			var inheritanceTable = new Dictionary<int,int[]>();
+			var interfaceList = new HashSet<int>();
 			for(int i = 0 ; i < length ; i++)
 			{
 				var type = typeList[i];
@@ -69,23 +77,27 @@ namespace BC.ODCC
 				typeToIntTable.Add(type, i);
 				intToTypeTable.Add(i, type);
 				inheritanceTable.Add(i, array);
+				if(type.IsInterface)
+				{
+					interfaceList.Add(i);
+				}
 			}
 
 
 			OdccManager.typeToIntTable = typeToIntTable;
 			OdccManager.intToTypeTable = intToTypeTable;
 			OdccManager.inheritanceTable = inheritanceTable;
-
+			OdccManager.interfaceList = interfaceList;
 			string resultLog = "Odcc Type Indexer Result";
 
 			foreach(var item in inheritanceTable)
 			{
 				var key = item.Key;
 				var list = item.Value;
-				resultLog += $"\n\t {key:000}:{intToTypeTable[key].FullName}";
+				resultLog += $"\n\t {key:000}:{intToTypeTable[key].FullName} ({(interfaceList.Contains(key) ? "I" : "C")})";
 				foreach(var item2 in list)
 				{
-					resultLog += $"\n\t - {item2:000}:{intToTypeTable[item2].FullName}";
+					resultLog += $"\n\t - {item2:000}:{intToTypeTable[item2].FullName} ({(interfaceList.Contains(item2) ? "I" : "C")})";
 				}
 				resultLog += $"\n\t";
 			}
@@ -135,6 +147,25 @@ namespace BC.ODCC
 		public static int[] GetTypeToIndex(ObjectBehaviour item)
 		{
 			return (item is null || item.ThisContainer is null) ? new int[0] : item.ThisContainer.TypeIndex;
+		}
+		public static int[] GetTypeInheritanceTable(Type type)
+		{
+			return GetTypeInheritanceTable(GetTypeToIndex(type));
+		}
+		public static int[] GetTypeInheritanceTable(int type)
+		{
+			if(InheritanceTable.TryGetValue(type, out int[] inheritanceArray))
+			{
+				return inheritanceArray;
+			}
+			else
+			{
+				return new int[0];
+			}
+		}
+		public static int[] GetTypeInheritanceTable(ObjectBehaviour item)
+		{
+			return (item is null || item.ThisContainer is null) ? new int[0] : item.ThisContainer.TypeInheritanceIndex;
 		}
 		public static bool CheckIsInheritanceType(Type type, Type check)
 		{
@@ -198,6 +229,11 @@ namespace BC.ODCC
 				}
 			}
 			return false;
+		}
+
+		public static bool CheckIsInterface(int type)
+		{
+			return interfaceList.Contains(type);
 		}
 	}
 }
