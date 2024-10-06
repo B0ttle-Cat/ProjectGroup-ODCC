@@ -192,6 +192,9 @@ namespace BC.ODCC
 			if(IsAwake) return;
 			IsAwake = true;
 			IsCallDestroy = false;
+#if UNITY_EDITOR
+			name = (this is ObjectBehaviour ? $"[O] {name}" : name);
+#endif
 			BaseAwake();
 		}
 		public virtual void BaseReset() { }

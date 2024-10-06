@@ -805,7 +805,10 @@ namespace BC.ODCC
 			ContainerNode.DataObjectListAdd(data);
 			return data;
 		}
-
+		public void AddData(DataObject data = null)
+		{
+			if(data != null) ContainerNode.DataObjectListAdd(data);
+		}
 		[Obsolete("되도록 Destroy 사용해 직접 삭제하는걸로...", true)]
 		public void RemoveChildObject<T>(T target = null) where T : ObjectBehaviour
 		{
@@ -891,10 +894,10 @@ namespace BC.ODCC
 	{
 		public static T Get<T, TT>(this TT[] thisList, Func<T, bool> condition = null) where T : class where TT : class, IOdccItem
 		{
-#if UNITY_EDITOR
-			if(typeof(T).IsSubclassOf(typeof(DataObject)))
-				throw new Exception($"ODCC.GetComponent 에서 {typeof(T)}에 대한 잘못된 ODCC 변환입니다.");
-#endif
+			//#if UNITY_EDITOR
+			//			if(typeof(T).IsSubclassOf(typeof(DataObject)))
+			//				throw new Exception($"ODCC.GetComponent 에서 {typeof(T)}에 대한 잘못된 ODCC 변환입니다.");
+			//#endif
 			int count = thisList.Length;
 			for(int i = 0 ; i < count ; i++)
 			{
@@ -908,10 +911,10 @@ namespace BC.ODCC
 		}
 		public static T[] GetAll<T, TT>(this TT[] thisList, Func<T, bool> condition = null) where T : class where TT : class, IOdccItem
 		{
-#if UNITY_EDITOR
-			if(typeof(T).IsSubclassOf(typeof(DataObject)))
-				throw new Exception($"ODCC.GetComponent 에서 {typeof(T)}에 대한 잘못된 ODCC 변환입니다.");
-#endif
+			//#if UNITY_EDITOR
+			//			if(typeof(T).IsSubclassOf(typeof(DataObject)))
+			//				throw new Exception($"ODCC.GetComponent 에서 {typeof(T)}에 대한 잘못된 ODCC 변환입니다.");
+			//#endif
 			List<T> list = new List<T>();
 			int count = thisList.Length;
 			for(int i = 0 ; i < count ; i++)
@@ -926,10 +929,10 @@ namespace BC.ODCC
 		}
 		public static T GetData<T, TT>(this TT[] thisList, Func<T, bool> condition = null) where T : class, IOdccItem
 		{
-#if UNITY_EDITOR
-			if(typeof(T).IsSubclassOf(typeof(ComponentBehaviour)))
-				throw new Exception($"ODCC.GetData 에서 {typeof(T)}에 대한 잘못된 ODCC 변환입니다.");
-#endif
+			//#if UNITY_EDITOR
+			//			if(typeof(T).IsSubclassOf(typeof(ComponentBehaviour)))
+			//				throw new Exception($"ODCC.GetData 에서 {typeof(T)}에 대한 잘못된 ODCC 변환입니다.");
+			//#endif
 			int count = thisList.Length;
 			for(int i = 0 ; i < count ; i++)
 			{
@@ -943,10 +946,10 @@ namespace BC.ODCC
 		}
 		public static T[] GetAllData<T, TT>(this TT[] thisList, Func<T, bool> condition = null) where T : class, IOdccItem
 		{
-#if UNITY_EDITOR
-			if(typeof(T).IsSubclassOf(typeof(ComponentBehaviour)))
-				throw new Exception($"ODCC.GetData 에서 {typeof(T)}에 대한 잘못된 ODCC 변환입니다.");
-#endif
+			//#if UNITY_EDITOR
+			//			if(typeof(T).IsSubclassOf(typeof(ComponentBehaviour)))
+			//				throw new Exception($"ODCC.GetData 에서 {typeof(T)}에 대한 잘못된 ODCC 변환입니다.");
+			//#endif
 			List<T> list = new List<T>();
 			int count = thisList.Length;
 			for(int i = 0 ; i < count ; i++)
@@ -963,10 +966,10 @@ namespace BC.ODCC
 
 		public static void GetAction<T, TT>(this TT[] thisList, Action<T> action, Func<T, bool> condition = null) where T : class where TT : class, IOdccItem
 		{
-#if UNITY_EDITOR
-			if(typeof(T).IsSubclassOf(typeof(DataObject)))
-				throw new Exception($"ODCC.GetComponent 에서 {typeof(T)}에 대한 잘못된 ODCC 변환입니다.");
-#endif
+			//#if UNITY_EDITOR
+			//			if(typeof(T).IsSubclassOf(typeof(DataObject)))
+			//				throw new Exception($"ODCC.GetComponent 에서 {typeof(T)}에 대한 잘못된 ODCC 변환입니다.");
+			//#endif
 			int count = thisList.Length;
 			for(int i = 0 ; i < count ; i++)
 			{
@@ -980,10 +983,10 @@ namespace BC.ODCC
 		}
 		public static void GetAllAction<T, TT>(this TT[] thisList, Action<T> action, Func<bool> isBreak = null, Func<T, bool> condition = null) where T : class where TT : class, IOdccItem
 		{
-#if UNITY_EDITOR
-			if(typeof(T).IsSubclassOf(typeof(DataObject)))
-				throw new Exception($"ODCC.GetComponent 에서 {typeof(T)}에 대한 잘못된 ODCC 변환입니다.");
-#endif
+			//#if UNITY_EDITOR
+			//			if(typeof(T).IsSubclassOf(typeof(DataObject)))
+			//				throw new Exception($"ODCC.GetComponent 에서 {typeof(T)}에 대한 잘못된 ODCC 변환입니다.");
+			//#endif
 			//List<T> list = new List<T>();
 			int count = thisList.Length;
 			for(int i = 0 ; i < count ; i++)
@@ -1003,10 +1006,10 @@ namespace BC.ODCC
 
 		public static void GetDataAction<T, TT>(this TT[] thisList, Action<T> action, Func<T, bool> condition = null) where T : class, IOdccItem
 		{
-#if UNITY_EDITOR
-			if(!OdccManager.isProfilerEnabled && typeof(T).IsSubclassOf(typeof(ComponentBehaviour)))
-				throw new Exception($"ODCC.GetData 에서 {typeof(T)}에 대한 잘못된 ODCC 변환입니다.");
-#endif
+			//#if UNITY_EDITOR
+			//			if(!OdccManager.isProfilerEnabled && typeof(T).IsSubclassOf(typeof(ComponentBehaviour)))
+			//				throw new Exception($"ODCC.GetData 에서 {typeof(T)}에 대한 잘못된 ODCC 변환입니다.");
+			//#endif
 			int count = thisList.Length;
 			for(int i = 0 ; i < count ; i++)
 			{
@@ -1020,10 +1023,10 @@ namespace BC.ODCC
 		}
 		public static void GetAllDataAction<T, TT>(this TT[] thisList, Action<T> action, Func<bool> isBreak = null, Func<T, bool> condition = null) where T : class, IOdccItem
 		{
-#if UNITY_EDITOR
-			if(!OdccManager.isProfilerEnabled && typeof(T).IsSubclassOf(typeof(ComponentBehaviour)))
-				throw new Exception($"ODCC.GetData 에서 {typeof(T)}에 대한 잘못된 ODCC 변환입니다.");
-#endif
+			//#if UNITY_EDITOR
+			//			if(!OdccManager.isProfilerEnabled && typeof(T).IsSubclassOf(typeof(ComponentBehaviour)))
+			//				throw new Exception($"ODCC.GetData 에서 {typeof(T)}에 대한 잘못된 ODCC 변환입니다.");
+			//#endif
 			int count = thisList.Length;
 			for(int i = 0 ; i < count ; i++)
 			{

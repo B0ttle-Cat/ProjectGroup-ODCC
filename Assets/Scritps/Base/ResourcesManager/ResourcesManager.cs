@@ -50,12 +50,23 @@ namespace BC.Base
 					{
 						if(t is GameObject gameObject)
 						{
+							bool prevActive = gameObject.activeSelf;
 							gameObject.SetActive(false);
-						}
-						var newObject = Instantiate(t);
-						newObject.name = obj.name;
 
-						result.Invoke(newObject);
+							var newObject = Instantiate(t);
+							newObject.name = obj.name;
+
+							result.Invoke(newObject);
+
+							gameObject.SetActive(prevActive);
+						}
+						else
+						{
+							var newObject = Instantiate(t);
+							newObject.name = obj.name;
+
+							result.Invoke(newObject);
+						}
 					}
 					else
 					{

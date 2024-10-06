@@ -516,38 +516,8 @@ namespace BC.ODCC
 #endif
 			if(item == null) return false;
 			if(item.IsCallDestroy) return false;
-
-			HashSet<int> indexs = new HashSet<int>();
-			HashSet<int> indexInheritances = new HashSet<int>();
-			try
-			{
-				indexs.AddRange(OdccManager.GetTypeToIndex(item));
-				if(querySystem.UsingInheritance)
-				{
-					indexInheritances.AddRange(indexs);
-					indexInheritances.AddRange(OdccManager.GetTypeInheritanceTable(item));
-				}
-			}
-			catch(Exception ex)
-			{
-				Debug.LogError($"item:{item}{item.name}");
-				Debug.LogException(ex);
-			}
-
-			if(querySystem.UsingInheritance)
-			{
-				try
-				{
-
-				}
-				catch(Exception ex)
-				{
-					Debug.LogError($"item:{item}{item.name}");
-					Debug.LogException(ex);
-				}
-			}
-
-			return querySystem.IsRange(item) && querySystem.IsCheck(indexs, indexInheritances);
+			if(querySystem == null) return false;
+			return querySystem.IsSatisfiesQuery(item);
 		}
 
 		/// <summary>

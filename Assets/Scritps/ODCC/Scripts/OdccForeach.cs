@@ -20,6 +20,9 @@ namespace BC.ODCC
 		// ODCC 쿼리 컬렉터들을 관리하는 딕셔너리입니다.
 		internal static Dictionary<QuerySystem, OdccQueryCollector> OdccQueryCollectors = new ();
 
+		// ODCC 쿼리 컬렉터들을 관리하는 딕셔너리입니다.
+		internal static Dictionary<QuerySystem, ObjectBehaviour> OdccQueryFindCashList = new ();
+
 		// ObjectBehaviour 리스트입니다.
 		internal static List<ObjectBehaviour> objectBehaviourList = new List<ObjectBehaviour>();
 
@@ -54,6 +57,7 @@ namespace BC.ODCC
 			OCBehaviourListQuerySystem = QuerySystemBuilder.CreateQuery().WithAll<ObjectBehaviour>(true).Build();
 			OCBehaviourList = new OdccQueryCollector(OCBehaviourListQuerySystem);
 			OdccQueryCollectors.Add(OCBehaviourListQuerySystem, OCBehaviourList);
+			OdccQueryFindCashList = new Dictionary<QuerySystem, ObjectBehaviour>();
 			OCBehaviourList.IsDontDestoryLifeItem = true;
 			OCBehaviourList.ClearLifeItem();
 		}
@@ -71,6 +75,8 @@ namespace BC.ODCC
 			// 컬렉터와 업데이트 목록을 초기화합니다.
 			OdccQueryCollectors.Clear();
 			ForeachQueryUpdate.Clear();
+
+			OdccQueryFindCashList = null;
 
 			// 액션 큐를 초기화합니다.
 			foreachAction.Clear();
@@ -213,6 +219,16 @@ namespace BC.ODCC
 						queryCollector.RemoveObject(objectBehaviour);
 						queryCollector.RemoveQuerySystemTarget(objectBehaviour);
 					});
+				}
+				foreach(var item in OdccQueryFindCashList)
+				{
+					if(item.Value == objectBehaviour)
+					{
+						var key = item.Key;
+						foreachAction.Enqueue(() => {
+							OdccQueryFindCashList.Remove(key);
+						});
+					}
 				}
 			}
 			// ComponentBehaviour인 경우 처리합니다.
@@ -370,6 +386,24 @@ namespace BC.ODCC
 			{
 				foreachAction.Dequeue().Invoke();
 			}
+		}
+
+		internal static bool TryFindOdccObject(QuerySystem findQuery, bool findInCash, out ObjectBehaviour find)
+		{
+			if(findInCash && OdccQueryFindCashList.TryGetValue(findQuery, out find) && find != null)
+			{
+				return true;
+			}
+			find = objectBehaviourList.Find(item => findQuery.IsSatisfiesQuery(item));
+
+			if(OdccQueryFindCashList.ContainsKey(findQuery)) OdccQueryFindCashList.Add(findQuery, null);
+			OdccQueryFindCashList[findQuery] = find;
+
+			return find != null;
+		}
+		internal static bool TryFindOdccObject(QuerySystem findQuery, out ObjectBehaviour find)
+		{
+			return TryFindOdccObject(findQuery, true, out find);
 		}
 	}
 }

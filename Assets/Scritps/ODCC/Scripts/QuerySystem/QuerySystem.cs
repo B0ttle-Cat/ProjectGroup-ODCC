@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using Sirenix.OdinInspector;
+using Sirenix.Utilities;
 
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -151,6 +152,16 @@ namespace BC.ODCC
 		{
 			All.Clear();
 			return this;
+		}
+
+
+		/// <summary>
+		/// <code>WithAny() - where T : ObjectBehaviour
+		/// return Build()</code>
+		/// </summary>
+		public static QuerySystem SimpleQueryBuild<T>(bool checkInheritance = false) where T : ObjectBehaviour
+		{
+			return CreateQuery().WithAny<T>(checkInheritance).Build();
 		}
 	}
 
@@ -312,26 +323,34 @@ namespace BC.ODCC
 		}
 		public bool IsCheck(IEnumerable<int> odccItems, IEnumerable<int> odccInheritanceItems)
 		{
-			return IsAll(odccItems, odccInheritanceItems) && IsAny(odccItems, odccInheritanceItems) && IsNone(odccItems, odccInheritanceItems);
+			bool result = IsAll(odccItems, odccInheritanceItems) && IsAny(odccItems, odccInheritanceItems) && IsNone(odccItems, odccInheritanceItems);
+			return result;
 		}
 		private bool IsAny(IEnumerable<int> odccItems, IEnumerable<int> odccInheritanceItems)
 		{
+			bool isEmpty = Any.Length + InheritanceOfAny.Length == 0;
+			if(isEmpty) return true;
 			bool result
-				= (Any.Length == 0 || Any.Any((i) => odccItems.Contains(i)))
-				|| (InheritanceOfAny.Length == 0 || InheritanceOfAny.Any((i) => odccInheritanceItems.Contains(i)));
+				= Any.Any((i) => odccItems.Contains(i))
+				|| InheritanceOfAny.Any((i) => odccInheritanceItems.Contains(i));
 			return result;
 		}
 		private bool IsNone(IEnumerable<int> odccItems, IEnumerable<int> odccInheritanceItems)
 		{
+			bool isEmpty = None.Length + InheritanceOfNone.Length == 0;
+			if(isEmpty) return true;
 			bool result
-				= (None.Length == 0 || !None.Any((i) => odccItems.Contains(i)))
-				|| (InheritanceOfNone.Length == 0 || !InheritanceOfNone.Any((i)  => odccInheritanceItems.Contains(i)));
+				= !None.Any((i) => odccItems.Contains(i))
+				|| !InheritanceOfNone.Any((i)  => odccInheritanceItems.Contains(i));
 			return result;
 		}
 		private bool IsAll(IEnumerable<int> odccItems, IEnumerable<int> odccInheritanceItems)
 		{
-			bool result = (All.Length == 0 || All.All((i) => odccItems.Contains(i)))
-				&& (InheritanceOfAll.Length == 0 || InheritanceOfAll.All((i)  => odccInheritanceItems.Contains(i)));
+			bool isEmpty = All.Length + InheritanceOfAll.Length == 0;
+			if(isEmpty) return true;
+			bool result
+				= All.All((i) => odccItems.Contains(i))
+				&& InheritanceOfAll.All((i)  => odccInheritanceItems.Contains(i));
 			return result;
 		}
 
@@ -407,6 +426,44 @@ namespace BC.ODCC
 				return false;
 
 			return a1.SequenceEqual(a2);
+		}
+
+		internal bool IsSatisfiesQuery(ObjectBehaviour item)
+		{
+			Debug.Log($"item:{item}{item.name}");
+
+			HashSet<int> indexs = new HashSet<int>();
+			HashSet<int> indexInheritances = new HashSet<int>();
+			try
+			{
+				indexs.AddRange(OdccManager.GetTypeToIndex(item));
+				if(UsingInheritance)
+				{
+					indexInheritances.AddRange(indexs);
+					indexInheritances.AddRange(OdccManager.GetTypeInheritanceTable(item));
+				}
+			}
+			catch(Exception ex)
+			{
+				Debug.LogError($"item:{item}{item.name}");
+				Debug.LogException(ex);
+			}
+
+			if(UsingInheritance)
+			{
+				try
+				{
+
+				}
+				catch(Exception ex)
+				{
+					Debug.LogError($"item:{item}{item.name}");
+					Debug.LogException(ex);
+				}
+			}
+
+			bool result = IsRange(item) && IsCheck(indexs, indexInheritances);
+			return result;
 		}
 	}
 }

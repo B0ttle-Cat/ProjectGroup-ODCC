@@ -288,6 +288,34 @@ namespace BC.ODCC
 			OdccForeach.ForeachLateUpdate();
 		}
 
+
+		public static bool TryFindOdccObject(QuerySystem findQuery, bool findInCash, out ObjectBehaviour find)
+		{
+			return OdccForeach.TryFindOdccObject(findQuery, findInCash, out find);
+		}
+		public static bool TryFindOdccObject(QuerySystem findQuery, out ObjectBehaviour find)
+		{
+			return OdccForeach.TryFindOdccObject(findQuery, out find);
+		}
+		public static bool TryFindOdccObject<T>(QuerySystem findQuery, bool findInCash, out T find) where T : ObjectBehaviour
+		{
+			find = null;
+			if(TryFindOdccObject(findQuery, findInCash, out var _find))
+			{
+				find = _find as T;
+			}
+			return find != null;
+		}
+		public static bool TryFindOdccObject<T>(QuerySystem findQuery, out T find) where T : ObjectBehaviour
+		{
+			find = null;
+			if(TryFindOdccObject(findQuery, out var _find))
+			{
+				find = _find as T;
+			}
+			return find != null;
+		}
+
 #if USING_AWAITABLE_LOOP
 		/// <summary>
 		/// 프레임의 끝에서 실행되는 Awaitable 입니다.
