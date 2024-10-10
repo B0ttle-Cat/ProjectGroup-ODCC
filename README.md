@@ -8,7 +8,7 @@ ODCC(Object-Data-Component Container)는
 유니티에서 개발이 길어질 수록, 늘어가는 GameObject와 Component로 붙어있는 여러 Scritps 들을 어떻게 관리해야 하는지에 대한 설계규칙을 제공해 주는 프레임워크 입니다.
 또한 해당 설계 규칙이 준수되는 한 사용할 수 있는 여러 도구를 포함합니다.
 
-도구들이 정상적인 동작을 위해서는 [Odin Inspector and Serializer]를 필요로 합니다.
+도구들이 정상적인 동작을 위해서는 [Odin Inspector and Serializer]를 필요로 합니다. 해당 에셋은 별도로 받으셔야 합니다.
 
 ---
 주요 폴더 및 스크립트 
@@ -30,5 +30,3 @@ Assets/Scritps/ODCC/Scripts/MainScripts
     * 게임오브젝트에 등록해야할 데이터를 만들때 사용합니다.
   * ComponentBehaviour.cs
     * 게임오브젝트에서 동작해야할 기능을 작성할 떄 사용됩니다.
- 
-
