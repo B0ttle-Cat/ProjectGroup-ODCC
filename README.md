@@ -32,5 +32,7 @@ Assets/Scritps/ODCC/Scripts/MainScripts
     * 게임오브젝트에서 동작해야할 기능을 작성할 떄 사용됩니다.
 
 
+---
+
 [ProjectGroup-GamePlayer](https://github.com/B0ttle-Cat/ProjectGroup-GamePlayer/tree/master) 는 ODCC를 기반으로 만들어지고 있는 프로젝트 입니다. 
 Assets/Scripts 에서 ODCC의 사용 방식을 확인해 보실 수 있습니다.
