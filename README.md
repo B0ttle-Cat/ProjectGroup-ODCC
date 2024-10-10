@@ -11,7 +11,7 @@ ODCC(Object-Data-Component Container)는
 도구들이 정상적인 동작을 위해서는 [Odin Inspector and Serializer]를 필요로 합니다.
 
 ---
-주요 스크립트
+주요 폴더 및 스크립트 
 ---
 Assets/Scritps/Base
 * ODCC와 별개로 개발된 기타 도구들 입니다.
