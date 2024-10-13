@@ -8,6 +8,7 @@ using Debug = BC.Base.Debug;
 
 namespace BC.ODCC
 {
+	[Obsolete]
 	public abstract class SingletonObjectBehaviour<T> : ObjectBehaviour where T : SingletonObjectBehaviour<T>
 	{
 		public bool didInit { get; private set; } = false;

@@ -515,7 +515,7 @@ namespace BC.ODCC
 			if(!Application.isPlaying) return false;
 #endif
 			if(item == null) return false;
-			if(item.IsCallDestroy) return false;
+			if(item.ThisBehaviour.IsCallDestroy) return false;
 			if(querySystem == null) return false;
 			return querySystem.IsSatisfiesQuery(item);
 		}

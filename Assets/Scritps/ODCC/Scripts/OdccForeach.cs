@@ -100,10 +100,10 @@ namespace BC.ODCC
 			foreach(var _item in behaviour)
 			{
 				var item = _item;
-				if(item.IsEnable || item.IsCanUpdateDisable)
+				if(item is IOdccUpdate update && (item.ThisBehaviour.IsEnable || item.ThisBehaviour.IsCanUpdateDisable))
 				{
 					foreachAction.Enqueue(() => {
-						item.BaseUpdate();
+						update.BaseUpdate();
 					});
 				}
 			}
@@ -133,10 +133,10 @@ namespace BC.ODCC
 			foreach(var _item in behaviour)
 			{
 				var item = _item;
-				if(item.IsEnable || item.IsCanUpdateDisable)
+				if(item is IOdccUpdate.Late update && (item.ThisBehaviour.IsEnable || item.ThisBehaviour.IsCanUpdateDisable))
 				{
 					foreachAction.Enqueue(() => {
-						item.BaseLateUpdate();
+						update.BaseLateUpdate();
 					});
 				}
 			}

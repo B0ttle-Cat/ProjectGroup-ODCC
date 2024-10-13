@@ -1,10 +1,12 @@
 using System.Collections.Generic;
 
+using BC.ODCC;
+
 using UnityEngine;
 
-namespace BC.ODCC
+namespace BC.ODCCBase
 {
-	public abstract class OdccFiniteStateMachine : ComponentBehaviour
+	public abstract class OdccFiniteStateMachine : ComponentBehaviour, IOdccUpdate, IOdccUpdate.Late
 	{
 		[SerializeField]
 		internal bool OnDebugLog;
@@ -69,8 +71,8 @@ namespace BC.ODCC
 		sealed public override void BaseEnable() { FSMEnable(); }
 		sealed public override void BaseDisable() { FSMDisable(); }
 		sealed public override void BaseStart() { FSMStart(); }
-		sealed public override void BaseUpdate() { FSMChangeBeforeUpdate(); FSMUpdate(); }
-		sealed public override void BaseLateUpdate() { FSMLateUpdate(); }
+		public void BaseUpdate() { FSMChangeBeforeUpdate(); FSMUpdate(); }
+		public void BaseLateUpdate() { FSMLateUpdate(); }
 
 		protected abstract void FSMAwake();
 		protected abstract void FSMDestroy();

@@ -1,4 +1,6 @@
-namespace BC.ODCC
+using BC.ODCC;
+
+namespace BC.ODCCBase
 {
 	public interface IStateData
 	{

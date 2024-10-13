@@ -14,7 +14,7 @@ using Random = UnityEngine.Random;
 
 namespace BC.BaseUI
 {
-	public class ImageTransitions : ComponentBehaviour
+	public class ImageTransitions : ComponentBehaviour, IOdccUpdate
 	{
 		[Serializable]
 		public class TransitionsItem
@@ -125,42 +125,42 @@ namespace BC.BaseUI
 				switch(runTimeShowType)
 				{
 					case Transitions.None:
-					break;
+						break;
 					case Transitions.Fade:
-					Color nextColot = baseColor;
-					nextColot.a = 0;
-					NextImage.UI.color = nextColot;
-					break;
+						Color nextColot = baseColor;
+						nextColot.a = 0;
+						NextImage.UI.color = nextColot;
+						break;
 					case Transitions.MoveUp:
 					case Transitions.OverUp:
-					NextRect.anchorMin = downAnchorMin;
-					NextRect.anchorMax = downAnchorMax;
-					break;
+						NextRect.anchorMin = downAnchorMin;
+						NextRect.anchorMax = downAnchorMax;
+						break;
 					case Transitions.MoveDown:
 					case Transitions.OverDown:
-					NextRect.anchorMin = upAnchorMin;
-					NextRect.anchorMax = upAnchorMax;
-					break;
+						NextRect.anchorMin = upAnchorMin;
+						NextRect.anchorMax = upAnchorMax;
+						break;
 					case Transitions.MoveLeft:
 					case Transitions.OverLeft:
-					NextRect.anchorMin = rightAnchorMin;
-					NextRect.anchorMax = rightAnchorMax;
-					break;
+						NextRect.anchorMin = rightAnchorMin;
+						NextRect.anchorMax = rightAnchorMax;
+						break;
 					case Transitions.MoveRight:
 					case Transitions.OverRight:
-					NextRect.anchorMin = leftAnchorMin;
-					NextRect.anchorMax = leftAnchorMax;
-					break;
+						NextRect.anchorMin = leftAnchorMin;
+						NextRect.anchorMax = leftAnchorMax;
+						break;
 					case Transitions.ZoomIn:
-					NextRect.localScale = Vector3.zero;
-					break;
+						NextRect.localScale = Vector3.zero;
+						break;
 					case Transitions.ZoomOut:
-					if(NextRect.parent == null || NextRect.gameObject.activeInHierarchy)
-					{
-						NextRect.transform.SetSiblingIndex(0);
-						PrevRect.transform.SetSiblingIndex(1);
-					}
-					break;
+						if(NextRect.parent == null || NextRect.gameObject.activeInHierarchy)
+						{
+							NextRect.transform.SetSiblingIndex(0);
+							PrevRect.transform.SetSiblingIndex(1);
+						}
+						break;
 				}
 			}
 			public void Update(TransitionsItem TransitionsPrev, TransitionsItem TransitionsNext)
@@ -179,56 +179,56 @@ namespace BC.BaseUI
 				switch(runTimeShowType)
 				{
 					case Transitions.None:
-					break;
+						break;
 					case Transitions.Fade:
-					NextImage.UI.DOFade(1f, _ChangeTime).OnStart(() => { });
-					break;
+						NextImage.UI.DOFade(1f, _ChangeTime).OnStart(() => { });
+						break;
 					case Transitions.MoveUp:
-					NextRect.DOAnchorMin(zero, _ChangeTime).SetEase(EaseType).OnStart(() => { });
-					NextRect.DOAnchorMax(one_, _ChangeTime).SetEase(EaseType).OnStart(() => { });
-					PrevRect.DOAnchorMin(upAnchorMin, _ChangeTime).SetEase(EaseType).OnStart(() => { });
-					PrevRect.DOAnchorMax(upAnchorMax, _ChangeTime).SetEase(EaseType).OnStart(() => { });
-					break;
+						NextRect.DOAnchorMin(zero, _ChangeTime).SetEase(EaseType).OnStart(() => { });
+						NextRect.DOAnchorMax(one_, _ChangeTime).SetEase(EaseType).OnStart(() => { });
+						PrevRect.DOAnchorMin(upAnchorMin, _ChangeTime).SetEase(EaseType).OnStart(() => { });
+						PrevRect.DOAnchorMax(upAnchorMax, _ChangeTime).SetEase(EaseType).OnStart(() => { });
+						break;
 					case Transitions.MoveDown:
-					NextRect.DOAnchorMin(zero, _ChangeTime).SetEase(EaseType).OnStart(() => { });
-					NextRect.DOAnchorMax(one_, _ChangeTime).SetEase(EaseType).OnStart(() => { });
-					PrevRect.DOAnchorMin(downAnchorMin, _ChangeTime).SetEase(EaseType).OnStart(() => { });
-					PrevRect.DOAnchorMax(downAnchorMax, _ChangeTime).SetEase(EaseType).OnStart(() => { });
-					break;
+						NextRect.DOAnchorMin(zero, _ChangeTime).SetEase(EaseType).OnStart(() => { });
+						NextRect.DOAnchorMax(one_, _ChangeTime).SetEase(EaseType).OnStart(() => { });
+						PrevRect.DOAnchorMin(downAnchorMin, _ChangeTime).SetEase(EaseType).OnStart(() => { });
+						PrevRect.DOAnchorMax(downAnchorMax, _ChangeTime).SetEase(EaseType).OnStart(() => { });
+						break;
 					case Transitions.MoveLeft:
-					NextRect.DOAnchorMin(zero, _ChangeTime).SetEase(EaseType).OnStart(() => { });
-					NextRect.DOAnchorMax(one_, _ChangeTime).SetEase(EaseType).OnStart(() => { });
-					PrevRect.DOAnchorMin(leftAnchorMin, _ChangeTime).SetEase(EaseType).OnStart(() => { });
-					PrevRect.DOAnchorMax(leftAnchorMax, _ChangeTime).SetEase(EaseType).OnStart(() => { });
-					break;
+						NextRect.DOAnchorMin(zero, _ChangeTime).SetEase(EaseType).OnStart(() => { });
+						NextRect.DOAnchorMax(one_, _ChangeTime).SetEase(EaseType).OnStart(() => { });
+						PrevRect.DOAnchorMin(leftAnchorMin, _ChangeTime).SetEase(EaseType).OnStart(() => { });
+						PrevRect.DOAnchorMax(leftAnchorMax, _ChangeTime).SetEase(EaseType).OnStart(() => { });
+						break;
 					case Transitions.MoveRight:
-					NextRect.DOAnchorMin(zero, _ChangeTime).SetEase(EaseType).OnStart(() => { });
-					NextRect.DOAnchorMax(one_, _ChangeTime).SetEase(EaseType).OnStart(() => { });
-					PrevRect.DOAnchorMin(rightAnchorMin, _ChangeTime).SetEase(EaseType).OnStart(() => { });
-					PrevRect.DOAnchorMax(rightAnchorMax, _ChangeTime).SetEase(EaseType).OnStart(() => { });
-					break;
+						NextRect.DOAnchorMin(zero, _ChangeTime).SetEase(EaseType).OnStart(() => { });
+						NextRect.DOAnchorMax(one_, _ChangeTime).SetEase(EaseType).OnStart(() => { });
+						PrevRect.DOAnchorMin(rightAnchorMin, _ChangeTime).SetEase(EaseType).OnStart(() => { });
+						PrevRect.DOAnchorMax(rightAnchorMax, _ChangeTime).SetEase(EaseType).OnStart(() => { });
+						break;
 					case Transitions.OverUp:
-					NextRect.DOAnchorMin(zero, _ChangeTime).SetEase(EaseType).OnStart(() => { });
-					NextRect.DOAnchorMax(one_, _ChangeTime).SetEase(EaseType).OnStart(() => { });
-					break;
+						NextRect.DOAnchorMin(zero, _ChangeTime).SetEase(EaseType).OnStart(() => { });
+						NextRect.DOAnchorMax(one_, _ChangeTime).SetEase(EaseType).OnStart(() => { });
+						break;
 					case Transitions.OverDown:
-					NextRect.DOAnchorMin(zero, _ChangeTime).SetEase(EaseType).OnStart(() => { });
-					NextRect.DOAnchorMax(one_, _ChangeTime).SetEase(EaseType).OnStart(() => { });
-					break;
+						NextRect.DOAnchorMin(zero, _ChangeTime).SetEase(EaseType).OnStart(() => { });
+						NextRect.DOAnchorMax(one_, _ChangeTime).SetEase(EaseType).OnStart(() => { });
+						break;
 					case Transitions.OverLeft:
-					NextRect.DOAnchorMin(zero, _ChangeTime).SetEase(EaseType).OnStart(() => { });
-					NextRect.DOAnchorMax(one_, _ChangeTime).SetEase(EaseType).OnStart(() => { });
-					break;
+						NextRect.DOAnchorMin(zero, _ChangeTime).SetEase(EaseType).OnStart(() => { });
+						NextRect.DOAnchorMax(one_, _ChangeTime).SetEase(EaseType).OnStart(() => { });
+						break;
 					case Transitions.OverRight:
-					NextRect.DOAnchorMin(zero, _ChangeTime).SetEase(EaseType).OnStart(() => { });
-					NextRect.DOAnchorMax(one_, _ChangeTime).SetEase(EaseType).OnStart(() => { });
-					break;
+						NextRect.DOAnchorMin(zero, _ChangeTime).SetEase(EaseType).OnStart(() => { });
+						NextRect.DOAnchorMax(one_, _ChangeTime).SetEase(EaseType).OnStart(() => { });
+						break;
 					case Transitions.ZoomIn:
-					NextRect.DOScale(Vector3.one, _ChangeTime).SetEase(EaseType).OnStart(() => { });
-					break;
+						NextRect.DOScale(Vector3.one, _ChangeTime).SetEase(EaseType).OnStart(() => { });
+						break;
 					case Transitions.ZoomOut:
-					PrevRect.DOScale(Vector3.zero, _ChangeTime).SetEase(EaseType).OnStart(() => { });
-					break;
+						PrevRect.DOScale(Vector3.zero, _ChangeTime).SetEase(EaseType).OnStart(() => { });
+						break;
 				}
 			}
 
@@ -298,7 +298,7 @@ namespace BC.BaseUI
 		{
 			EndUpdate();
 		}
-		public override void BaseUpdate()
+		public void BaseUpdate()
 		{
 			if(EditTransitionsImageList == null || EditTransitionsImageList.Count == 0) return;
 			if(currentIndex < 0)

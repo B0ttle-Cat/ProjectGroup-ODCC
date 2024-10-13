@@ -489,22 +489,22 @@ namespace BC.ODCC
 				HashSet<int> _typeInheritanceIndex = new HashSet<int>();
 
 				// 타입 인덱스 배열을 설정
-				if(!thisObject.IsCallDestroy)
+				if(!thisObject.ThisBehaviour.IsCallDestroy)
 				{
-					_typeIndex.Add(thisObject.OdccTypeIndex);
-					_typeInheritanceIndex.AddRange(thisObject.OdccTypeInheritanceIndex);
+					_typeIndex.Add(thisObject.IOdccItem.OdccTypeIndex);
+					_typeInheritanceIndex.AddRange(thisObject.IOdccItem.OdccTypeInheritanceIndex);
 					for(int i = 0 ; i < dataCount ; i++)
 					{
-						_typeIndex.Add(dataList[i].OdccTypeIndex);
-						_typeInheritanceIndex.AddRange(dataList[i].OdccTypeInheritanceIndex);
+						_typeIndex.Add(dataList[i].IOdccItem.OdccTypeIndex);
+						_typeInheritanceIndex.AddRange(dataList[i].IOdccItem.OdccTypeInheritanceIndex);
 					}
 				}
 				for(int i = 0 ; i < compCount ; i++)
 				{
-					if(!componentList[i].IsCallDestroy)
+					if(!componentList[i].ThisBehaviour.IsCallDestroy)
 					{
-						_typeIndex.Add(componentList[i].OdccTypeIndex);
-						_typeInheritanceIndex.AddRange(componentList[i].OdccTypeInheritanceIndex);
+						_typeIndex.Add(componentList[i].IOdccItem.OdccTypeIndex);
+						_typeInheritanceIndex.AddRange(componentList[i].IOdccItem.OdccTypeInheritanceIndex);
 					}
 				}
 				typeIndex = _typeIndex.ToArray();

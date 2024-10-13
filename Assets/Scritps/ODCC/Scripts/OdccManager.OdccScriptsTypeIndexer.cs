@@ -20,6 +20,10 @@ namespace BC.ODCC
 		private static Dictionary<int, int[]> inheritanceTable;
 		[ShowInInspector, ReadOnly]
 		private static HashSet<int> interfaceList;
+
+		// 특정 타입에서 다른 타입으로 할당 가능한지 여부를 저장하는 딕셔너리입니다.
+		internal Dictionary<int, List<int>> IsAssignableFromList;
+
 		private static bool IsEmpty => typeToIntTable is null || intToTypeTable is null || inheritanceTable is null || interfaceList is null;
 		public static Dictionary<Type, int> TypeIntTable {
 			get {

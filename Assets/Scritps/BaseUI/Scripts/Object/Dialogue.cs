@@ -10,8 +10,7 @@ namespace BC.BaseUI
 	{
 		private DialogueData dialogueData = null;
 		public DialogueData DialogueData {
-			get
-			{
+			get {
 				if(!ThisContainer.TryGetData<DialogueData>(out dialogueData))
 				{
 					dialogueData = ThisContainer.AddData<DialogueData>();
@@ -126,11 +125,6 @@ namespace BC.BaseUI
 				StopCoroutine(playDialogue);
 				playDialogue = null;
 			}
-		}
-
-		public override void BaseUpdate()
-		{
-
 		}
 
 		private IEnumerator PlayDialogue()

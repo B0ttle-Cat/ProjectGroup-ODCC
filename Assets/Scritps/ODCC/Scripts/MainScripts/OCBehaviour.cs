@@ -7,33 +7,22 @@ using UnityEngine.SceneManagement;
 namespace BC.ODCC
 {
 
-	public abstract class OCBehaviour : MonoBehaviour, IOdccItem, IDisposable
+	public abstract class OCBehaviour : MonoBehaviour, IOCBehaviour, IDisposable
 	{
 		private Transform _ThisTransform;
 		public Transform ThisTransform { get => _ThisTransform ??= transform; protected set => _ThisTransform = value; }
 		public MonoBehaviour ThisMono { get => this; }
 		public Scene ThisScene => gameObject.scene;
 		public int ComponentIndex => GetComponentIndex();
-		internal bool IsAwake { get; private set; } = false;
-		internal bool IsEnable { get; private set; } = false;
-		internal bool IsCallDestroy { get; private set; } = false;
-		internal bool IsCanUpdateDisable { get; private set; } = false;
+		public IOCBehaviour ThisBehaviour => this;
+		bool IOCBehaviour.IsAwake { get; set; } = false;
+		bool IOCBehaviour.IsEnable { get; set; } = false;
+		bool IOCBehaviour.IsCallDestroy { get; set; } = false;
+		bool IOCBehaviour.IsCanUpdateDisable { get; set; } = false;
+		internal IOdccItem IOdccItem => this;
+		int IOdccItem.odccTypeIndex { get; set; }
+		int[] IOdccItem.odccTypeInheritanceIndex { get; set; }
 
-		private int odccTypeIndex = -1;
-		private int[] odccTypeInheritanceIndex = null;
-		public int OdccTypeIndex {
-			get {
-				if(odccTypeIndex == -1) odccTypeIndex = OdccManager.GetTypeToIndex(GetType());
-				return odccTypeIndex;
-			}
-		}
-
-		public int[] OdccTypeInheritanceIndex {
-			get {
-				if(odccTypeInheritanceIndex == null || odccTypeInheritanceIndex.Length == 0) odccTypeInheritanceIndex = OdccManager.GetTypeInheritanceTable(OdccTypeIndex);
-				return odccTypeInheritanceIndex;
-			}
-		}
 		private CancellationTokenSource disableCancellationSource;
 		private CancellationToken disableCancellationToken {
 			get {
@@ -87,16 +76,16 @@ namespace BC.ODCC
 		protected virtual void Awake()
 		{
 			ThisTransform = transform;
-			if(odccTypeIndex == -1) odccTypeIndex = OdccManager.GetTypeToIndex(GetType());
+			if(IOdccItem.odccTypeIndex == 0) IOdccItem.odccTypeIndex = OdccManager.GetTypeToIndex(GetType());
 			OdccAwake();
 		}
 		internal void CallDestroy()
 		{
-			IsCallDestroy = true;
+			ThisBehaviour.IsCallDestroy = true;
 		}
 		protected virtual void OnDestroy()
 		{
-			IsCallDestroy = true;
+			ThisBehaviour.IsCallDestroy = true;
 			OdccOnDestroy();
 
 			if(disableCancellationSource != null)
@@ -140,7 +129,7 @@ namespace BC.ODCC
 			if(Application.isPlaying)
 #endif
 			{
-				IsEnable = false;
+				ThisBehaviour.IsEnable = false;
 				OdccManager.OdccAwake(this);
 			}
 		}
@@ -159,7 +148,7 @@ namespace BC.ODCC
 			if(Application.isPlaying)
 #endif
 			{
-				IsEnable = true;
+				ThisBehaviour.IsEnable = true;
 				OdccManager.OdccEnable(this);
 			}
 		}
@@ -169,7 +158,7 @@ namespace BC.ODCC
 			if(Application.isPlaying)
 #endif
 			{
-				IsEnable = false;
+				ThisBehaviour.IsEnable = false;
 				OdccManager.OdccDisable(this);
 			}
 		}
@@ -189,11 +178,14 @@ namespace BC.ODCC
 		}
 		internal virtual void DoBaseAwake()
 		{
-			if(IsAwake) return;
-			IsAwake = true;
-			IsCallDestroy = false;
+			if(ThisBehaviour.IsAwake) return;
+			ThisBehaviour.IsAwake = true;
+			ThisBehaviour.IsCallDestroy = false;
 #if UNITY_EDITOR
-			name = (this is ObjectBehaviour ? $"[O] {name}" : name);
+			if(!gameObject.name.StartsWith("[O]"))
+			{
+				name = (this is ObjectBehaviour ? $"[O] {name}" : name);
+			}
 #endif
 			BaseAwake();
 		}
@@ -204,8 +196,8 @@ namespace BC.ODCC
 		public virtual void BaseEnable() { }
 		public virtual void BaseDisable() { }
 		public virtual void BaseStart() { }
-		public virtual void BaseUpdate() { }
-		public virtual void BaseLateUpdate() { }
+		//public virtual void BaseUpdate() { }
+		//public virtual void BaseLateUpdate() { }
 		public virtual void BaseTransformParentChanged() { }
 
 

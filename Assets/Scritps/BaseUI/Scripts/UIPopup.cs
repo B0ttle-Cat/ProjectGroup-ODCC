@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 
+using BC.ODCC;
+
 using Sirenix.OdinInspector;
 
 using UnityEngine;
@@ -43,7 +45,7 @@ namespace BC.BaseUI
 	}
 
 
-	public class UIPopup : Canvas
+	public class UIPopup : Canvas, IOdccUpdate
 	{
 		public static void OpenPopup(UIPopupMetadata uiPopupMetadata)
 		{
@@ -300,9 +302,8 @@ namespace BC.BaseUI
 			}
 		}
 
-		public override void BaseUpdate()
+		public void BaseUpdate()
 		{
-			base.BaseUpdate();
 			OnPopupCustomUpdate?.Invoke(this);
 		}
 	}

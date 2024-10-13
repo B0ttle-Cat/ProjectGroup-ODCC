@@ -1,8 +1,10 @@
+using BC.ODCC;
+
 using Sirenix.OdinInspector;
 
 using UnityEngine;
 
-namespace BC.ODCC
+namespace BC.ODCCBase
 {
 	public abstract class OdccStateComponent : ComponentBehaviour
 	{
@@ -63,8 +65,7 @@ namespace BC.ODCC
 			}
 			StateStart();
 		}
-		sealed public override void BaseUpdate() { }
-		sealed public override void BaseLateUpdate() { }
+
 		internal void MachineEnable()
 		{
 			if(ThisStateMachine != null && ThisStateMachine.OnDebugLog)
