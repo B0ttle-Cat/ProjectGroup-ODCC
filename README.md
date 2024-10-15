@@ -156,7 +156,7 @@ public class PlayerHealth : ComponentBehaviour
         Debug.Log("PlayerHealth 컴포넌트가 시작되었습니다. 현재 체력: " + healthData.currentHealth);
     }
 
-    public void TakeDamage(int damage)
+    public virtual void TakeDamage(int damage)
     {
         if (healthData != null)
         {
@@ -169,6 +169,17 @@ public class PlayerHealth : ComponentBehaviour
         }
     }
 }
+
+// PlayerHealth 를 확장하는 방식.
+public class PlayerHealthOther : PlayerHealth
+{
+    public override void TakeDamage(int damage)
+    {
+        if (healthData != null)
+        {
+           // TODO : 무언가 또다른 데미지 처리 방
+        }
+    }
 ```
-더 큰 스케일의 예제
+더 많은 예제
 - [ProjectGroup-GamePlayer](https://github.com/B0ttle-Cat/ProjectGroup-GamePlayer/tree/master) 는 ODCC를 기반으로 만들어지고 있는 프로젝트 입니다. (Assets/Scripts 에서 ODCC의 사용 방식을 확인해 보실 수 있습니다.)
