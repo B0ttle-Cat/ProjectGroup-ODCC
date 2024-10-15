@@ -46,6 +46,7 @@ ODCC가 정상적으로 동작 하기 위해 동작하는 기능이 들어있는
 
 7. **OCBehaviour** (기반 추상 클래스)
    - `ObjectBehaviour`과 `ComponentBehaviour` 클래스의 기반이 되는 추상 클래스입니다. Unity의 라이프사이클 메서드를 구현하고 ODCC 시스템 내에서 객체의 생명주기 관리에 사용됩니다.
+   - `MonoBehaviour`를 상속받고 있습니다.
 
 8. **ContainerObject** (계층 구조 관리)
    - `ContainerNode`를 통해 오브젝트의 부모-자식 관계, 데이터, 컴포넌트를 관리하는 클래스입니다. 이 클래스는 객체 간의 계층 구조와 관련된 접근성을 제공합니다.
