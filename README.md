@@ -25,6 +25,7 @@ ODCC는 프로젝트가 커질수록 늘어나는 GameObject와 복잡해지는 
 
 ## 주요 스크립트 
 ### 관리 영역
+ODCC가 정상적으로 동작 하기 위해 동작하는 기능이 들어있는 클래스 입니다.
 1. **OdccManager** (핵심 관리 클래스)
    - ODCC의 초기화, 트리 및 반복 시스템 관리, 씬 로딩 전 설정을 수행하는 핵심 클래스입니다. 모든 구성 요소의 중앙 제어 역할을 하며 싱글톤 패턴으로 관리됩니다.
 
@@ -43,24 +44,129 @@ ODCC는 프로젝트가 커질수록 늘어나는 GameObject와 복잡해지는 
 6. **OdccQueryLooper** (비동기 루프 작업 관리)
    - `OdccQueryCollector`로부터 수집된 항목을 기반으로 비동기 루프 작업을 수행하며, 각 항목에 대해 반복 작업을 관리합니다. `RunForeachStruct`를 사용해 반복 작업을 정의하고, 필요에 따라 항목을 추가하거나 제거할 수 있습니다.
 
+7. **OCBehaviour** (기반 추상 클래스)
+   - `ObjectBehaviour`과 `ComponentBehaviour` 클래스의 기반이 되는 추상 클래스입니다. Unity의 라이프사이클 메서드를 구현하고 ODCC 시스템 내에서 객체의 생명주기 관리에 사용됩니다.
+
+8. **ContainerObject** (계층 구조 관리)
+   - `ContainerNode`를 통해 오브젝트의 부모-자식 관계, 데이터, 컴포넌트를 관리하는 클래스입니다. 이 클래스는 객체 간의 계층 구조와 관련된 접근성을 제공합니다.
+
 ### 구현 영역
+사용자가 원하는 기능을 ODCC로 구현하기 위해 상속 받아야 하는 클래스들 입니다. 
 1. **ObjectBehaviour** (주요 오브젝트 관리 클래스)
    - ODCC 시스템의 주요 오브젝트를 관리하는 클래스입니다. 이 클래스는 `ContainerObject`를 통해 계층 구조를 정의하고, 객체의 컴포넌트와 자식을 관리하며 편집기에서 초기화와 유효성 검사를 수행합니다.
-
-2. **OCBehaviour** (기반 추상 클래스)
-   - 모든 ODCC 관련 클래스의 기반이 되는 추상 클래스입니다. Unity의 라이프사이클 메서드를 구현하고 ODCC 시스템 내에서 객체의 생명주기 관리에 사용됩니다.
-
-3. **ContainerObject** (계층 구조 관리)
-   - `ContainerNode`를 통해 오브젝트의 부모-자식 관계, 데이터, 컴포넌트를 관리하는 클래스입니다. 이 클래스는 객체 간의 계층 구조와 관련된 접근성을 제공합니다.
 
 4. **ComponentBehaviour** (컴포넌트 클래스)
    - 각 `ObjectBehaviour`와 연관된 컴포넌트를 관리하며, 초기화, 유효성 검사, 폐기 작업을 수행합니다. 개별 기능을 담당하는 컴포넌트를 정의하고 관리하는 역할을 합니다.
 
 5. **DataObject** (데이터 관리)
-   - 오브젝트나 컴포넌트와 관련된 데이터를 저장하고 관리하는 클래스입니다. `Dispose()` 메서드를 통해 데이터의 정리 및 폐기를 처리합니다.
+   - 오브젝트나 컴포넌트와 관련된 데이터를 저장하고 관리하는 클래스입니다.
 
 ---
+## 구현 예제
+```csharp
+using BC.ODCC;
+using UnityEngine;
 
-#### 사용 예제
-[ProjectGroup-GamePlayer](https://github.com/B0ttle-Cat/ProjectGroup-GamePlayer/tree/master) 는 ODCC를 기반으로 만들어지고 있는 프로젝트 입니다. 
-Assets/Scripts 에서 ODCC의 사용 방식을 확인해 보실 수 있습니다.
+public class PlayerObject : ObjectBehaviour
+{
+    protected override void BaseAwake()
+    {
+        base.BaseAwake();
+        Debug.Log("PlayerObject가 생성되었습니다.");
+
+        // PlayerMovementData를 생성하여 오브젝트의 이동 관련 데이터를 저장
+        PlayerMovementData movementData = ThisContainer.AddData<PlayerMovementData>();
+        movementData.speed = 7.0f;
+        movementData.jumpHeight = 3.0f;
+
+        // PlayerHealthData를 생성하여 오브젝트의 체력 관련 데이터를 저장
+        PlayerHealthData healthData = ThisContainer.AddData<PlayerHealthData>();
+        healthData.maxHealth = 100;
+        healthData.currentHealth = 100;
+
+        // 컴포넌트를 추가하여 이동 기능을 정의
+        PlayerMovement playerMovement = ThisContainer.AddComponent<PlayerMovement>();
+        playerMovement.movementData = movementData;
+
+        // 컴포넌트를 추가하여 체력 관리 기능을 정의
+        PlayerHealth playerHealth = ThisContainer.AddComponent<PlayerHealth>();
+        playerHealth.healthData = healthData;
+    }
+}
+
+// PlayerMovementData 클래스 정의
+public class PlayerMovementData : DataObject
+{
+    public float speed;
+    public float jumpHeight;
+}
+
+// PlayerHealthData 클래스 정의
+public class PlayerHealthData : DataObject
+{
+    public int maxHealth;
+    public int currentHealth;
+}
+
+// PlayerMovement 컴포넌트 정의
+public class PlayerMovement : ComponentBehaviour
+{
+    public PlayerMovementData movementData;
+
+    protected override void BaseStart()
+    {
+        base.BaseStart();
+        // PlayerMovementData를 가져오기
+        if (movementData == null)
+        {
+            movementData = ThisContainer.GetData<PlayerMovementData>();
+        }
+        Debug.Log("PlayerMovement 컴포넌트가 시작되었습니다.");
+    }
+
+    protected override void BaseUpdate()
+    {
+        base.BaseUpdate();
+        // 간단한 이동 로직
+        if (movementData != null)
+        {
+            float moveHorizontal = Input.GetAxis("Horizontal");
+            float moveVertical = Input.GetAxis("Vertical");
+            Vector3 movement = new Vector3(moveHorizontal, 0.0f, moveVertical);
+            transform.Translate(movement * movementData.speed * Time.deltaTime);
+        }
+    }
+}
+
+// PlayerHealth 컴포넌트 정의
+public class PlayerHealth : ComponentBehaviour
+{
+    public PlayerHealthData healthData;
+
+    protected override void BaseStart()
+    {
+        base.BaseStart();
+        // PlayerHealthData를 가져오기
+        if (healthData == null)
+        {
+            healthData = ThisContainer.GetData<PlayerHealthData>();
+        }
+        Debug.Log("PlayerHealth 컴포넌트가 시작되었습니다. 현재 체력: " + healthData.currentHealth);
+    }
+
+    public void TakeDamage(int damage)
+    {
+        if (healthData != null)
+        {
+            healthData.currentHealth -= damage;
+            Debug.Log("데미지를 입었습니다. 현재 체력: " + healthData.currentHealth);
+            if (healthData.currentHealth <= 0)
+            {
+                Debug.Log("플레이어가 사망했습니다.");
+            }
+        }
+    }
+}
+```
+더 큰 스케일의 예제
+- [ProjectGroup-GamePlayer](https://github.com/B0ttle-Cat/ProjectGroup-GamePlayer/tree/master) 는 ODCC를 기반으로 만들어지고 있는 프로젝트 입니다. (Assets/Scripts 에서 ODCC의 사용 방식을 확인해 보실 수 있습니다.)
