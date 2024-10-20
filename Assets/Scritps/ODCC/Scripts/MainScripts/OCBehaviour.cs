@@ -9,16 +9,18 @@ namespace BC.ODCC
 
 	public abstract class OCBehaviour : MonoBehaviour, IOCBehaviour, IDisposable
 	{
-		private Transform _ThisTransform;
-		public Transform ThisTransform { get => _ThisTransform ??= transform; protected set => _ThisTransform = value; }
+		public Transform ThisTransform => transform;
+		public GameObject GameObject => gameObject;
 		public MonoBehaviour ThisMono { get => this; }
 		public Scene ThisScene => gameObject.scene;
 		public int ComponentIndex => GetComponentIndex();
 		public IOCBehaviour ThisBehaviour => this;
-		bool IOCBehaviour.IsAwake { get; set; } = false;
-		bool IOCBehaviour.IsEnable { get; set; } = false;
-		bool IOCBehaviour.IsCallDestroy { get; set; } = false;
-		bool IOCBehaviour.IsCanUpdateDisable { get; set; } = false;
+
+		IOCBehaviour.StateFlag IOCBehaviour.AwakeState { get; set; }
+		IOCBehaviour.StateFlag IOCBehaviour.EnableState { get; set; }
+		IOCBehaviour.StateFlag IOCBehaviour.StartState { get; set; }
+		IOCBehaviour.StateFlag IOCBehaviour.DestroyState { get; set; }
+
 		internal IOdccItem IOdccItem => this;
 		int IOdccItem.odccTypeIndex { get; set; }
 		int[] IOdccItem.odccTypeInheritanceIndex { get; set; }
@@ -52,7 +54,6 @@ namespace BC.ODCC
 		internal virtual void Reset()
 		{
 			if(UnityEditor.EditorApplication.isPlaying) return;
-			ThisTransform = transform;
 			if(ThisTransform == null) return;
 			BaseReset();
 			BaseValidate();
@@ -60,7 +61,6 @@ namespace BC.ODCC
 		internal virtual void OnValidate()
 		{
 			if(UnityEditor.EditorApplication.isPlaying) return;
-			ThisTransform = transform;
 			if(ThisTransform == null) return;
 			BaseValidate();
 		}
@@ -73,20 +73,18 @@ namespace BC.ODCC
 		protected bool IsEditingPrefab() => false;
 		protected bool IsNotEditingPrefab() => true;
 #endif
-		protected virtual void Awake()
+		internal void Awake()
 		{
-			ThisTransform = transform;
+			Debug.Log($"Awake| {gameObject.name}({GetType()})");
+
 			if(IOdccItem.odccTypeIndex == 0) IOdccItem.odccTypeIndex = OdccManager.GetTypeToIndex(GetType());
-			OdccAwake();
+
+			OdccManager.OdccAwake(this);
 		}
-		internal void CallDestroy()
+		protected void OnDestroy()
 		{
-			ThisBehaviour.IsCallDestroy = true;
-		}
-		protected virtual void OnDestroy()
-		{
-			ThisBehaviour.IsCallDestroy = true;
-			OdccOnDestroy();
+			Debug.Log($"Destroy| {gameObject.name}({GetType()})");
+			OdccManager.OdccDestroy(this);
 
 			if(disableCancellationSource != null)
 			{
@@ -95,16 +93,16 @@ namespace BC.ODCC
 				disableCancellationSource = null;
 			}
 		}
-		protected virtual void OnEnable()
+		protected void OnEnable()
 		{
 			if(disableCancellationSource == null)
 				disableCancellationSource = new CancellationTokenSource();
 
-			OdccOnEnable();
+			OdccManager.OdccEnable(this);
 		}
-		protected virtual void OnDisable()
+		protected void OnDisable()
 		{
-			OdccOnDisable();
+			OdccManager.OdccDisable(this);
 
 			if(disableCancellationSource != null)
 			{
@@ -113,74 +111,25 @@ namespace BC.ODCC
 				disableCancellationSource = null;
 			}
 		}
-		protected virtual void Start()
+		protected void Start()
 		{
-			OdccOnStart();
+			OdccManager.OdccStart(this);
 		}
-		protected void OnTransformParentChanged()
+		protected virtual void OnTransformParentChanged()
 		{
-			OdccOnTransformParentChanged();
+			Debug.Log($"{gameObject.name} : OnTransformParentChanged");
+		}
+		protected virtual void OnTransformChildrenChanged()
+		{
+			Debug.Log($"{gameObject.name} : OnTransformChildrenChanged");
+		}
+		protected virtual void OnBeforeTransformParentChanged()
+		{
+			Debug.Log($"{gameObject.name} : OnBeforeTransformParentChanged");
 		}
 
-
-		internal virtual void OdccAwake()
+		void IOCBehaviour.OdccAwake()
 		{
-#if UNITY_EDITOR
-			if(Application.isPlaying)
-#endif
-			{
-				ThisBehaviour.IsEnable = false;
-				OdccManager.OdccAwake(this);
-			}
-		}
-		internal virtual void OdccOnDestroy()
-		{
-#if UNITY_EDITOR
-			if(Application.isPlaying)
-#endif
-			{
-				OdccManager.OdccDestroy(this);
-			}
-		}
-		internal virtual void OdccOnEnable()
-		{
-#if UNITY_EDITOR
-			if(Application.isPlaying)
-#endif
-			{
-				ThisBehaviour.IsEnable = true;
-				OdccManager.OdccEnable(this);
-			}
-		}
-		internal virtual void OdccOnDisable()
-		{
-#if UNITY_EDITOR
-			if(Application.isPlaying)
-#endif
-			{
-				ThisBehaviour.IsEnable = false;
-				OdccManager.OdccDisable(this);
-			}
-		}
-		internal virtual void OdccOnStart()
-		{
-#if UNITY_EDITOR
-			if(Application.isPlaying)
-#endif
-				OdccManager.OdccStart(this);
-		}
-		internal virtual void OdccOnTransformParentChanged()
-		{
-#if UNITY_EDITOR
-			if(Application.isPlaying)
-#endif
-				OdccManager.OdccChangeParent(this);
-		}
-		internal virtual void DoBaseAwake()
-		{
-			if(ThisBehaviour.IsAwake) return;
-			ThisBehaviour.IsAwake = true;
-			ThisBehaviour.IsCallDestroy = false;
 #if UNITY_EDITOR
 			if(!gameObject.name.StartsWith("[O]"))
 			{
@@ -189,6 +138,23 @@ namespace BC.ODCC
 #endif
 			BaseAwake();
 		}
+		void IOCBehaviour.OdccDestroy()
+		{
+			BaseDestroy();
+		}
+		void IOCBehaviour.OdcnEnable()
+		{
+			BaseEnable();
+		}
+		void IOCBehaviour.OdccDisable()
+		{
+			BaseDisable();
+		}
+		void IOCBehaviour.OdccStart()
+		{
+			BaseStart();
+		}
+
 		public virtual void BaseReset() { }
 		public virtual void BaseValidate() { }
 		public virtual void BaseAwake() { }
@@ -198,13 +164,12 @@ namespace BC.ODCC
 		public virtual void BaseStart() { }
 		//public virtual void BaseUpdate() { }
 		//public virtual void BaseLateUpdate() { }
-		public virtual void BaseTransformParentChanged() { }
 
 
 		private bool disposedValue;
 		protected virtual void Disposing()
 		{
-			_ThisTransform = null;
+
 		}
 		public void Dispose()
 		{

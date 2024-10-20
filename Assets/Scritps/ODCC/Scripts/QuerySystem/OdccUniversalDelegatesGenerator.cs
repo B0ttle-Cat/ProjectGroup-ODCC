@@ -289,7 +289,7 @@ namespace BC.ODCC
 			string[] generateMethod = new string[count];
 			for(int i = 0 ; i < count ; i++)
 			{
-				generateMethod[i] = $"public QuerySystemBuilder {key}<{GenerateParameters(i)}>(bool checkInheritance = false) {GenerateWhere(i)} => {key}(checkInheritance, OdccManager.GetTypeToIndex({GenerateTypeof(i)}));";
+				generateMethod[i] = $"public QuerySystemBuilder {key}<{GenerateParameters(i)}>() {GenerateWhere(i)} => {key}(OdccManager.GetTypeToIndex({GenerateTypeof(i)}));";
 			}
 			return generateMethod;
 

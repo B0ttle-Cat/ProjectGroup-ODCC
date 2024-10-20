@@ -1,4 +1,4 @@
-#if UNITY_EDITOR
+#if UNITY_EDITOR && USING_AWAITABLE_LOOP
 using System;
 using System.Collections.Generic;
 

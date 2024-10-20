@@ -20,7 +20,7 @@ namespace BC.ODCC
 					var node = item.Value;
 					try
 					{
-						foreach(var comp in node.componentList)
+						foreach(var comp in node.components)
 						{
 							if(comp is T tComp)
 							{
@@ -35,7 +35,7 @@ namespace BC.ODCC
 					}
 					try
 					{
-						foreach(var data in node.dataList)
+						foreach(var data in node.datas)
 						{
 							if(data is T tData)
 							{

@@ -22,7 +22,7 @@ namespace BC.BaseUI
 			base.BaseAwake();
 		}
 
-		public override void BaseTransformParentChanged()
+		protected override void OnTransformParentChanged()
 		{
 			if(ThisObject is Dropdown ThisDropdown)
 			{
@@ -49,8 +49,7 @@ namespace BC.BaseUI
 			{
 				scrollRect.onValueChanged.RemoveAllListeners();
 				scrollRect.normalizedPosition = initScrollPosition;
-				scrollRect.onValueChanged.AddListener((position) =>
-				{
+				scrollRect.onValueChanged.AddListener((position) => {
 					onValueChanged?.Invoke(position);
 				});
 			}

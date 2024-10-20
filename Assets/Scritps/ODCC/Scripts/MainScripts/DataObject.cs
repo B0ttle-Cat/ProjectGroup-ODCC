@@ -5,6 +5,7 @@ namespace BC.ODCC
 	[Serializable]
 	public class DataObject : IOdccData
 	{
+		bool IOdccData.IsData => true;
 		public DataObject()
 		{
 		}

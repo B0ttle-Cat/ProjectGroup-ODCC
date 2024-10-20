@@ -1,3 +1,7 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
 using BC.Base;
 
 using UnityEngine;
@@ -14,6 +18,12 @@ namespace BC.ODCC
 	public sealed partial class OdccManager : MonoBehaviour
 	{
 		public static OdccManager Instance;
+
+		// 파괴가 예약된 오브젝트 집합
+		public static HashSet<IOCBehaviour> reservationDestroyObject = new HashSet<IOCBehaviour>();
+		public static bool awaitReservationDestroyObject;
+
+
 		/// <summary>
 		/// ODCC 매니저를 초기화하는 메서드입니다. 씬이 로드되기 전에 실행됩니다.
 		/// </summary>
@@ -54,82 +64,361 @@ namespace BC.ODCC
 			OdccForeach.RemoveLifeItemOdccCollectorList(scene);
 		}
 
-		/// <summary>
-		/// 특정 OCBehaviour가 깨어날 때 호출되는 메서드입니다.
-		/// </summary>
-		/// <param name="ocBehaviour">깨어나는 OCBehaviour</param>
+		Action beforeAwake;
 		internal static void OdccAwake(OCBehaviour ocBehaviour)
 		{
-			// OCBehaviour를 ODCC 컨테이너 트리에 추가하고, Foreach 시스템에 등록하며 이벤트 리스너를 추가합니다.
-			if(OdccContainerTree.AwakeOCBehaviour(ocBehaviour))
+			if(ocBehaviour == null) return;
+
+			_OdccAwake(ocBehaviour);
+			void _OdccAwake(IOCBehaviour target)
 			{
-				if(ocBehaviour.ThisBehaviour.IsAwake) return;
-				OdccForeach.AddOdccCollectorList(ocBehaviour);
-				EventManager.AddListener(ocBehaviour);
+				/// Awake 가 처음인지 검사.
+				if(!target._IsCanEnterAwake) return;
 
-				// OCBehaviour의 BaseAwake 메서드를 호출합니다.
-				ocBehaviour.DoBaseAwake();
+				/// 부모가 있을경우 부모가 Awake 한적 있는지 검사 
+				Transform parentTr = target.ThisTransform.parent;
+				IOCBehaviour parent = parentTr == null ? null : parentTr.gameObject.GetComponentInParent<IOCBehaviour>(true);
+				if(parent != null && parent._IsCanEnterAwake) return;
 
-				// OCBehaviour가 ObjectBehaviour인 경우 추가 작업을 수행합니다.
-				if(ocBehaviour is ObjectBehaviour objectBehaviour)
+				// 기본 리스트 구성하기
+				List<IOCBehaviour> awakeList = CreateAwakeList();
+				List<ContainerNode> duplicatesNodeList = ContainerNodeList(in awakeList);
+				HashSet<ContainerNode> nodeList = null;
+				// ContainerNode 중복 제거
+				NodeDuplicatesCheck(in duplicatesNodeList, out nodeList);
+
+				// 노드 Self 연결하기
+				LinkNodeSelfObject(in awakeList, in duplicatesNodeList);
+
+				// 노드 Parent/Child 연결하기
+				LinkNodeParentObject(in nodeList);
+				LinkNodeChildrenObject(in nodeList);
+
+				// 노드 리스트 갱신하기
+				UpdateContainerNode(in nodeList);
+
+				// Awake 호출
+				OCBehaviourAwake(in awakeList);
+				OCBehaviourUpdate(in awakeList);
+
+				// 이벤트 연결하기
+				AddEventManager(in awakeList);
+				AddOdccCollectorList(in nodeList);
+
+				List<IOCBehaviour> CreateAwakeList()
 				{
-					OdccContainerTree.ContainerNode containerNode = OdccContainerTree.GetContainerNode(objectBehaviour);
+					List<IOCBehaviour> awakeList = new List<IOCBehaviour>();
 
-					int Length = containerNode.componentList.Length;
-
-					// 각 컴포넌트를 순회하며 활성화된 경우 처리를 수행합니다.
-					for(int i = 0 ; i < Length ; i++)
+					// 순서 중요.
+					if(ocBehaviour is ObjectBehaviour)
 					{
-						var component = containerNode.componentList[i];
-						if(component.enabled && component.gameObject.activeInHierarchy)
-						{
-							if(OdccContainerTree.AwakeOCBehaviour(component))
-							{
-								OdccForeach.AddOdccCollectorList(component);
-								EventManager.AddListener(component);
+						awakeList.Add(ocBehaviour);
+						awakeList.AddRange(ocBehaviour.gameObject.GetComponentsInChildren<ObjectBehaviour>(true));
+						awakeList.AddRange(ocBehaviour.gameObject.GetComponentsInChildren<ComponentBehaviour>(true));
+					}
+					else
+					{
+						awakeList.AddRange(ocBehaviour.gameObject.GetComponentsInChildren<ObjectBehaviour>(true));
+						awakeList.Add(ocBehaviour);
+						awakeList.AddRange(ocBehaviour.gameObject.GetComponentsInChildren<ComponentBehaviour>(true));
+					}
 
-								if(component.ThisBehaviour.IsAwake) continue;
-								component.DoBaseAwake();
-							}
-							else
+					/// Awake 된 객체 제거.
+					int length = awakeList.Count;
+					for(int i = 0 ; i < length ; i++)
+					{
+						if(awakeList[i]._IsCanEnterAwake)
+						{
+							awakeList[i].AwakeState = IOCBehaviour.StateFlag.On;
+						}
+						else
+						{
+							awakeList.RemoveAt(i--);
+							length--;
+						}
+					}
+					return awakeList;
+				}
+				List<ContainerNode> ContainerNodeList(in List<IOCBehaviour> awakeList)
+				{
+					/// Node 없는 객체 제거.
+					List<ContainerNode> nodeList = new List<ContainerNode>();
+					int length = awakeList.Count;
+					for(int i = 0 ; i < length ; i++)
+					{
+						var target = awakeList[i];
+						if(OdccContainerTree.CreateAndConnectSelfContainerNode(target, out ContainerNode node))
+						{
+							nodeList.Add(node);
+						}
+						else
+						{
+							awakeList.RemoveAt(i--);
+							length--;
+						}
+					}
+					return nodeList;
+				}
+
+				void NodeDuplicatesCheck(in List<ContainerNode> duplicatesNodeList, out HashSet<ContainerNode> nodeList)
+				{
+					/// 중복된 ContainerNode 제거 하고 전체리스트 갱신
+					nodeList = new HashSet<ContainerNode>();
+					int length = duplicatesNodeList.Count;
+					for(int i = 0 ; i < length ; i++)
+					{
+						ContainerNode node = duplicatesNodeList[i];
+						if(nodeList.Add(node))
+						{
+							node.CurrentInit();
+						}
+					}
+				}
+
+				void LinkNodeSelfObject(in List<IOCBehaviour> awakeList, in List<ContainerNode> nodeList)
+				{
+					int length = awakeList.Count;
+					for(int i = 0 ; i < length ; i++)
+					{
+						var awake = awakeList[i];
+						ContainerNode node = nodeList[i];
+						node.AddInit(awake);
+						if(awake is IOdccObject _object)
+						{
+							node.thisObject = _object;
+							node.AddInit(_object);
+							var dataList = _object.ThisContainer.DataList;
+							int dLength = dataList.Length;
+							for(int d = 0 ; d < dLength ; d++)
 							{
-								Destroy(component);
+								if(dataList[d] == null) continue;
+								node.AddInit(dataList[d]);
 							}
 						}
 					}
 				}
+
+				void LinkNodeParentObject(in HashSet<ContainerNode> nodeList)
+				{
+					foreach(var node in nodeList)
+					{
+						var thisTransform = node.thisObject.ThisTransform;
+						var parentTransform = thisTransform.parent;
+						if(parentTransform == null) continue;
+						var parent = parentTransform.GetComponentInParent<ObjectBehaviour>(true);
+						if(parent == null) continue;
+						var parentNode = OdccContainerTree.GetContainerNode(parent);
+						if(parentNode == null) continue;
+
+						node.parent = parentNode.thisObject;
+
+						if(!nodeList.Contains(parentNode))
+						{
+							parentNode.AddItem(node.thisObject);
+						}
+					}
+				}
+				void LinkNodeChildrenObject(in HashSet<ContainerNode> nodeList)
+				{
+					foreach(var node in nodeList)
+					{
+						var parentNode = OdccContainerTree.GetContainerNode(node.parent);
+						if(parentNode == null) continue;
+						parentNode.AddInit(node.thisObject);
+					}
+				}
+				void UpdateContainerNode(in HashSet<ContainerNode> nodeList)
+				{
+					foreach(var node in nodeList)
+					{
+						node.UpdateInit();
+					}
+				}
+
+				void OCBehaviourAwake(in List<IOCBehaviour> awakeList)
+				{
+					int length = awakeList.Count;
+					for(int i = 0 ; i < length ; i++)
+					{
+						var target =awakeList[i];
+						target.OdccAwake();
+					}
+				}
+				void OCBehaviourUpdate(in List<IOCBehaviour> awakeList)
+				{
+					int length = awakeList.Count;
+					for(int i = 0 ; i < length ; i++)
+					{
+						var target = awakeList[i];
+						if(target is IOdccUpdate odccUpdate)
+						{
+							OdccForeach.AddUpdateBehaviour(odccUpdate);
+						}
+						if(target is IOdccUpdate.Late odccUpdateLate)
+						{
+							OdccForeach.AddLateUpdateBehaviour(odccUpdateLate);
+						}
+					}
+				}
+
+				void AddEventManager(in List<IOCBehaviour> awakeList)
+				{
+					int length = awakeList.Count;
+					for(int i = 0 ; i < length ; i++)
+					{
+						if(awakeList[i] is OCBehaviour behaviour)
+							EventManager.AddListener(behaviour);
+					}
+				}
+				void AddOdccCollectorList(in HashSet<ContainerNode> nodeList)
+				{
+					foreach(var node in nodeList)
+					{
+						OdccForeach.UpdateOdccCollectorList(node.thisObject);
+					}
+				}
 			}
 		}
-
 		/// <summary>
 		/// 특정 OCBehaviour가 파괴될 때 호출되는 메서드입니다.
 		/// </summary>
 		/// <param name="ocBehaviour">파괴되는 OCBehaviour</param>
 		internal static void OdccDestroy(OCBehaviour ocBehaviour)
 		{
-			// OCBehaviour의 BaseDestroy 메서드를 호출합니다.
-			ocBehaviour.BaseDestroy();
-			bool isObjectBehaviour = ocBehaviour is ObjectBehaviour;
+			if(ocBehaviour == null) return;
 
-			if(isObjectBehaviour)
+			_OdccDestroy(ocBehaviour);
+			void _OdccDestroy(IOCBehaviour target)
 			{
-				var destroyAll = ocBehaviour.GetComponentsInChildren<OCBehaviour>(true);
-				var length = destroyAll.Length;
-				for(int i = 0 ; i<length ; i++)
-				{
-					destroyAll[i].CallDestroy();
-				}
-			}
-			// OCBehaviour를 ODCC 컨테이너 트리와 Foreach 시스템에서 제거하고, 이벤트 리스너를 제거합니다.
-			OdccContainerTree.DestroyOCBehaviour(ocBehaviour);
-			OdccForeach.RemoveOdccCollectorList(ocBehaviour);
-			EventManager.RemoveListener(ocBehaviour);
+				/// Destroy 가 처음인지 검사.
+				if(!target._IsCanEnterDestroy) return;
+				target.DestroyState = IOCBehaviour.StateFlag.On;
 
-			if(isObjectBehaviour)
-			{
-				GameObject.Destroy(ocBehaviour.gameObject);
+				//// 삭제 예정 목록에 추가.
+				reservationDestroyObject.Add(target);
+				awaitReservationDestroyObject = false;
 			}
 		}
+		private static void _OdccDestroy(IOCBehaviour[] deleteList)
+		{
+			int length = deleteList.Length;
+			if(length == 0) return;
+
+
+			List<IOdccObject> objectList = new List<IOdccObject>();
+			Dictionary<ContainerNode, List<IOdccComponent>> nodeComponentList = new Dictionary<ContainerNode, List<IOdccComponent>>();
+
+			CreateDeleteList(ref objectList, ref nodeComponentList);
+
+
+			OCBehaviourDestroy(in deleteList);
+			RemoveOCBehaviourUpdate(in deleteList);
+
+			/// Node 에서 삭제
+			RemoveAndReleaseSelfContainerNode(in objectList, in nodeComponentList);
+			/// 콜렉터에서 오브젝트 삭제하고 
+			RemoveOdccCollectorList(in objectList, in nodeComponentList);
+			RemoveEventManager();
+
+			Dispose(in deleteList);
+
+			void CreateDeleteList(ref List<IOdccObject> objectList, ref Dictionary<ContainerNode, List<IOdccComponent>> nodeComponentList)
+			{
+				for(int i = 0 ; i < length ; i++)
+				{
+					IOCBehaviour item = deleteList[i];
+					if(item is IOdccObject @object)
+					{
+						objectList.Add(@object);
+					}
+					else if(item is IOdccComponent component)
+					{
+						var node = OdccContainerTree.GetContainerNode(component);
+						if(!nodeComponentList.TryGetValue(node, out var list))
+						{
+							list = new List<IOdccComponent>();
+							nodeComponentList.Add(node, list);
+						}
+						list.Add(component);
+					}
+				}
+			}
+			void OCBehaviourDestroy(in IOCBehaviour[] deleteList)
+			{
+				for(int i = 0 ; i < length ; i++)
+				{
+					var target =deleteList[i];
+					target.OdccDestroy();
+				}
+			}
+			void RemoveOCBehaviourUpdate(in IOCBehaviour[] deleteList)
+			{
+				for(int i = 0 ; i < length ; i++)
+				{
+					var target = deleteList[i];
+					if(target is IOdccUpdate odccUpdate)
+					{
+						OdccForeach.RemoveUpdateBehaviour(odccUpdate);
+					}
+					if(target is IOdccUpdate.Late odccUpdateLate)
+					{
+						OdccForeach.RemoveLateUpdateBehaviour(odccUpdateLate);
+					}
+				}
+			}
+			void RemoveAndReleaseSelfContainerNode(in List<IOdccObject> objectList, in Dictionary<ContainerNode, List<IOdccComponent>> componentList)
+			{
+				foreach(var item in componentList)
+				{
+					OdccContainerTree.RemoveAndReleaseSelfContainerNode(item.Key, item.Value);
+				}
+				foreach(var item in objectList)
+				{
+					OdccContainerTree.RemoveAndReleaseSelfContainerNode(item);
+				}
+			}
+			void RemoveOdccCollectorList(in List<IOdccObject> objectList, in Dictionary<ContainerNode, List<IOdccComponent>> nodeComponentList)
+			{
+				int length = objectList.Count;
+				for(int i = 0 ; i < length ; i++)
+				{
+					OdccForeach.RemoveOdccCollectorList(objectList[i]);
+				}
+				foreach(var item in nodeComponentList)
+				{
+					OdccForeach.UpdateOdccCollectorList(item.Key.thisObject);
+				}
+			}
+			void RemoveEventManager()
+			{
+				for(int i = 0 ; i < length ; i++)
+				{
+					if(deleteList[i] is OCBehaviour behaviour)
+						EventManager.RemoveListener(behaviour);
+				}
+			}
+
+			void Dispose(in IOCBehaviour[] deleteList)
+			{
+				for(int i = 0 ; i < length ; i++)
+				{
+					var target =deleteList[i];
+					try
+					{
+						target.Dispose();
+					}
+					catch(Exception ex)
+					{
+						Debug.LogException(ex);
+					}
+				}
+			}
+		}
+		/// <summary>
+		/// 특정 OCBehaviour가 파괴될 때 호출되는 메서드입니다.
+		/// </summary>
+		/// <param name="ocBehaviour">파괴되는 OCBehaviour</param>
+
 
 		/// <summary>
 		/// 특정 OCBehaviour가 활성화될 때 호출되는 메서드입니다.
@@ -138,7 +427,11 @@ namespace BC.ODCC
 		internal static void OdccEnable(OCBehaviour ocBehaviour)
 		{
 			// OCBehaviour의 BaseEnable 메서드를 호출합니다.
-			ocBehaviour.BaseEnable();
+			if(ocBehaviour is IOCBehaviour iBehaviour)
+			{
+				iBehaviour.EnableState = IOCBehaviour.StateFlag.On;
+				iBehaviour.OdcnEnable();
+			}
 		}
 
 		/// <summary>
@@ -148,7 +441,11 @@ namespace BC.ODCC
 		internal static void OdccDisable(OCBehaviour ocBehaviour)
 		{
 			// OCBehaviour의 BaseDisable 메서드를 호출합니다.
-			ocBehaviour.BaseDisable();
+			if(ocBehaviour is IOCBehaviour iBehaviour)
+			{
+				iBehaviour.EnableState = IOCBehaviour.StateFlag.Off;
+				iBehaviour.OdccDisable();
+			}
 		}
 
 		/// <summary>
@@ -158,42 +455,10 @@ namespace BC.ODCC
 		internal static void OdccStart(OCBehaviour ocBehaviour)
 		{
 			// OCBehaviour의 BaseStart 메서드를 호출합니다.
-			ocBehaviour.BaseStart();
-		}
-
-		/// <summary>
-		/// 특정 OCBehaviour의 부모가 변경될 때 호출되는 메서드입니다.
-		/// </summary>
-		/// <param name="ocBehaviour">부모가 변경되는 OCBehaviour</param>
-		internal static void OdccChangeParent(OCBehaviour ocBehaviour)
-		{
-			// 부모 변경 여부를 저장하는 변수입니다.
-			bool isChangeParent = false;
-
-			// OCBehaviour가 ObjectBehaviour인 경우 부모를 변경합니다.
-			if(ocBehaviour is ObjectBehaviour)
+			if(ocBehaviour is IOCBehaviour iBehaviour)
 			{
-				isChangeParent = OdccContainerTree.ChangeParent(ocBehaviour);
-			}
-			// OCBehaviour가 ComponentBehaviour인 경우 부모를 변경합니다.
-			else if(ocBehaviour is ComponentBehaviour componentBehaviour)
-			{
-				var oldObject = componentBehaviour.ThisObject;
-				isChangeParent = OdccContainerTree.ChangeParent(ocBehaviour);
-
-				// 부모가 변경된 경우 Foreach 시스템에서 객체를 업데이트합니다.
-				if(isChangeParent)
-				{
-					var newObject = componentBehaviour.ThisObject;
-					OdccForeach.UpdateObjectInQuery(oldObject);
-					OdccForeach.UpdateObjectInQuery(newObject);
-				}
-			}
-
-			// 부모가 변경된 경우 BaseTransformParentChanged 메서드를 호출합니다.
-			if(isChangeParent)
-			{
-				ocBehaviour.BaseTransformParentChanged();
+				iBehaviour.StartState = IOCBehaviour.StateFlag.On;
+				iBehaviour.OdccStart();
 			}
 		}
 
@@ -287,28 +552,20 @@ namespace BC.ODCC
 			{
 				// awaitReservationDestroyObject 를 기다립니다.
 
-				while(OdccContainerTree.awaitReservationDestroyObject)
+				while(awaitReservationDestroyObject)
 				{
-					await Awaitable.NextFrameAsync();
+					await Awaitable.EndOfFrameAsync();
 				}
-				OdccContainerTree.awaitReservationDestroyObject = true;
+				awaitReservationDestroyObject = true;
 
 				// 예약된 파괴 오브젝트 집합을 초기화합니다.
-				var list = OdccContainerTree.reservationDestroyObject;
-				OdccContainerTree.reservationDestroyObject.Clear();
+				var list = reservationDestroyObject.ToArray();
+				reservationDestroyObject.Clear();
 
 				// 예약된 파괴 오브젝트를 순회하며 Dispose를 호출합니다.
-				foreach(var item in list)
-				{
-					try
-					{
-						item.Dispose();
-					}
-					catch(System.Exception ex)
-					{
-						Debug.LogException(ex);
-					}
-				}
+				OdccManager._OdccDestroy(list);
+
+				list = null;
 			}
 		}
 #else

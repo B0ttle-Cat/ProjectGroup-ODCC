@@ -14,22 +14,21 @@ namespace BC.ODCC
 	{
 		[ShowInInspector, InlineProperty, HideLabel, HideReferenceObjectPicker]
 		[PropertyOrder(-5)]
-		public OdccContainerTree.ContainerNode ContainerNode;
-		public ObjectBehaviour ThisObject => ContainerNode.thisObject;
-		public ObjectBehaviour ParentObject => ContainerNode.parent;
+		public ContainerNode ContainerNode;
+		public IOdccObject ThisObject => ContainerNode.thisObject;
+		public IOdccObject ParentObject => ContainerNode.parent;
 		public ContainerObject ParentContainer => ParentObject?.ThisContainer;
-		public ObjectBehaviour[] ChildObject => ContainerNode.childs;
-		public ComponentBehaviour[] ComponentList => ContainerNode.componentList;
-		public DataObject[] DataList => ContainerNode.dataList;
+		public IOdccObject[] ChildObject => ContainerNode.children;
+		public IOdccComponent[] ComponentList => ContainerNode.components;
+		public IOdccData[] DataList => ContainerNode.datas;
 		internal int[] TypeIndex => ContainerNode.typeIndex;
-		internal int[] TypeInheritanceIndex => ContainerNode.typeInheritanceIndex;
 
 		private Queue<Action> callActionQueue;
 
 
-		public ContainerObject(ObjectBehaviour objectBehaviour)
+		public ContainerObject(ContainerNode containerNode)
 		{
-			ContainerNode = new OdccContainerTree.ContainerNode(objectBehaviour);
+			ContainerNode = containerNode;
 			callActionQueue = new Queue<Action>();
 		}
 		public void Dispose()
@@ -120,11 +119,11 @@ namespace BC.ODCC
 		}
 		public T GetChildObject<T>(Func<T, bool> condition = null) where T : class, IOdccObject
 		{
-			return ChildObject.Get<T, ObjectBehaviour>(condition);
+			return ChildObject.Get<T, IOdccObject>(condition);
 		}
 		public T[] GetChildAllObject<T>(Func<T, bool> condition = null) where T : class, IOdccObject
 		{
-			return ChildObject.GetAll<T, ObjectBehaviour>(condition);
+			return ChildObject.GetAll<T, IOdccObject>(condition);
 		}
 #if USING_AWAITABLE_LOOP
 		public async Awaitable<T> AwaitGetObject<T>(Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccObject
@@ -334,11 +333,11 @@ namespace BC.ODCC
 #endif
 		public T GetComponent<T>(Func<T, bool> condition = null) where T : class, IOdccComponent
 		{
-			return ComponentList.Get<T, ComponentBehaviour>(condition);
+			return ComponentList.Get<T, IOdccComponent>(condition);
 		}
 		public T GetComponentInChild<T>(Func<T, bool> condition = null) where T : class, IOdccComponent
 		{
-			T t = ComponentList.Get<T, ComponentBehaviour>(condition);
+			T t = ComponentList.Get<T, IOdccComponent>(condition);
 			if(t is not null) return t;
 
 			int length = ChildObject.Length;
@@ -351,12 +350,12 @@ namespace BC.ODCC
 		}
 		public T[] GetAllComponent<T>(Func<T, bool> condition = null) where T : class, IOdccComponent
 		{
-			return ComponentList.GetAll<T, ComponentBehaviour>(condition);
+			return ComponentList.GetAll<T, IOdccComponent>(condition);
 		}
 		public void GetAllComponentInChild<T>(out List<T> resultArray, Func<T, bool> condition = null) where T : class, IOdccComponent
 		{
 			resultArray = new List<T>();
-			resultArray.AddRange(ComponentList.GetAll<T, ComponentBehaviour>(condition));
+			resultArray.AddRange(ComponentList.GetAll<T, IOdccComponent>(condition));
 
 			int length = ChildObject.Length;
 			for(int i = 0 ; i < length ; i++)
@@ -591,12 +590,12 @@ namespace BC.ODCC
 #endif
 		public T GetData<T>(Func<T, bool> condition = null) where T : class, IOdccData
 		{
-			T t = DataList.GetData<T, DataObject>(condition);
+			T t = DataList.GetData<T, IOdccData>(condition);
 			return t;
 		}
 		public T[] GetAllData<T>(Func<T, bool> condition = null) where T : class, IOdccData
 		{
-			T[] t = DataList.GetAllData<T, DataObject>(condition);
+			T[] t = DataList.GetAllData<T, IOdccData>(condition);
 			return t;
 		}
 		public bool TryGetData<T>(out T t, Func<T, bool> condition = null) where T : class, IOdccData
@@ -715,7 +714,7 @@ namespace BC.ODCC
 		public void CallActionObject<T>(Action<T> tAction, Func<T, bool> condition = null) where T : class, IOdccObject
 		{
 			if(tAction is null) return;
-			ChildObject.GetAction<T, ObjectBehaviour>(GetAction, condition);
+			ChildObject.GetAction<T, IOdccObject>(GetAction, condition);
 			void GetAction(T t)
 			{
 				AddInCallActionQueue(() => tAction.Invoke(t));
@@ -724,7 +723,7 @@ namespace BC.ODCC
 		public void CallActionAllObject<T>(Action<T> tAction, Func<bool> isBreak = null, Func<T, bool> condition = null) where T : class, IOdccObject
 		{
 			if(tAction is null) return;
-			ChildObject.GetAllAction<T, ObjectBehaviour>(GetAction, isBreak, condition);
+			ChildObject.GetAllAction<T, IOdccObject>(GetAction, isBreak, condition);
 			void GetAction(T t)
 			{
 				AddInCallActionQueue(() => tAction.Invoke(t));
@@ -733,7 +732,7 @@ namespace BC.ODCC
 		public void CallActionComponent<T>(Action<T> tAction, Func<T, bool> condition = null) where T : class, IOdccComponent
 		{
 			if(tAction is null) return;
-			ComponentList.GetAction<T, ComponentBehaviour>(GetAction, condition);
+			ComponentList.GetAction<T, IOdccComponent>(GetAction, condition);
 			void GetAction(T t)
 			{
 				AddInCallActionQueue(() => tAction.Invoke(t));
@@ -742,7 +741,7 @@ namespace BC.ODCC
 		public void CallActionAllComponent<T>(Action<T> tAction, Func<bool> isBreak = null, Func<T, bool> condition = null) where T : class, IOdccComponent
 		{
 			if(tAction is null) return;
-			ComponentList.GetAllAction<T, ComponentBehaviour>(GetAction, isBreak, condition);
+			ComponentList.GetAllAction<T, IOdccComponent>(GetAction, isBreak, condition);
 			void GetAction(T t)
 			{
 				AddInCallActionQueue(() => tAction.Invoke(t));
@@ -770,11 +769,11 @@ namespace BC.ODCC
 
 		public void GetDataAction<T>(Action<T> tAction, Func<T, bool> condition = null) where T : class, IOdccData
 		{
-			DataList.GetDataAction<T, DataObject>(tAction, condition);
+			DataList.GetDataAction<T, IOdccData>(tAction, condition);
 		}
 		public void GetAllDataAction<T>(Action<T> tAction, Func<bool> isBreak = null, Func<T, bool> condition = null) where T : class, IOdccData
 		{
-			DataList.GetAllDataAction<T, DataObject>(tAction, isBreak, condition);
+			DataList.GetAllDataAction<T, IOdccData>(tAction, isBreak, condition);
 		}
 
 		public T AddChildObject<T>(bool onActive, string name = "") where T : ObjectBehaviour
@@ -788,26 +787,34 @@ namespace BC.ODCC
 			newObject.SetActive(false);
 			newObject.transform.parent = ThisObject.ThisTransform;
 
-			T child = newObject.AddComponent<T>();
+			T newTObject = newObject.AddComponent<T>();
 			if(onActive) newObject.SetActive(true);
-			else child.OdccAwake();
-			return child;
+			else OdccManager.OdccAwake(newTObject);
+			return newTObject;
 		}
 		public T AddComponent<T>(GameObject obj = null) where T : ComponentBehaviour
 		{
-			return (obj ?? ThisObject.gameObject).AddComponent<T>();
+			return (obj ?? ThisObject.GameObject).AddComponent<T>();
+		}
+		public T AddComponent<T>(Action<T> beforeAwake, GameObject obj = null) where T : ComponentBehaviour
+		{
+			return (obj ?? ThisObject.GameObject).AddComponent<T>();
 		}
 		public T AddData<T>(T data = null) where T : DataObject, new()
 		{
 			if(data == null)
 				data = new T();
 
-			ContainerNode.DataObjectListAdd(data);
+			ContainerNode.AddItem(data);
 			return data;
+		}
+		public void AddDatas(params DataObject[] datas)
+		{
+			ContainerNode.AddItems(datas);
 		}
 		public void AddData(DataObject data = null)
 		{
-			if(data != null) ContainerNode.DataObjectListAdd(data);
+			if(data != null) ContainerNode.AddItem(data);
 		}
 		[Obsolete("되도록 Destroy 사용해 직접 삭제하는걸로...", true)]
 		public void RemoveChildObject<T>(T target = null) where T : ObjectBehaviour
@@ -840,7 +847,7 @@ namespace BC.ODCC
 
 			if(target != null)
 			{
-				ContainerNode.DataObjectListRemove(target);
+				ContainerNode.RemoveItem(target);
 				return true;
 			}
 			else
@@ -858,7 +865,7 @@ namespace BC.ODCC
 		}
 		internal T _GetComponent<T>(Func<T, bool> condition = null) where T : class, IOdccItem
 		{
-			return ComponentList.Get<T, ComponentBehaviour>(condition);
+			return ComponentList.Get<T, IOdccItem>(condition);
 		}
 		internal bool _TryGetData<T>(out T t, Func<T, bool> condition = null) where T : class, IOdccItem
 		{
@@ -867,7 +874,7 @@ namespace BC.ODCC
 		}
 		internal T _GetData<T>(Func<T, bool> condition = null) where T : class, IOdccItem
 		{
-			T t = DataList.GetData<T, DataObject>(condition);
+			T t = DataList.GetData<T, IOdccItem>(condition);
 			return t;
 		}
 		internal bool _TryGetComponents<T>(out T[] t, Func<T, bool> condition = null) where T : class, IOdccItem
@@ -877,7 +884,7 @@ namespace BC.ODCC
 		}
 		internal T[] _GetComponents<T>(Func<T, bool> condition = null) where T : class, IOdccItem
 		{
-			return ComponentList.GetAll<T, ComponentBehaviour>(condition);
+			return ComponentList.GetAll<T, IOdccItem>(condition);
 		}
 		internal bool _TryGetDatas<T>(out T[] t, Func<T, bool> condition = null) where T : class, IOdccItem
 		{
@@ -886,7 +893,7 @@ namespace BC.ODCC
 		}
 		internal T[] _GetDatas<T>(Func<T, bool> condition = null) where T : class, IOdccItem
 		{
-			return DataList.GetAllData<T, DataObject>(condition);
+			return DataList.GetAllData<T, IOdccItem>(condition);
 		}
 		#endregion
 	}

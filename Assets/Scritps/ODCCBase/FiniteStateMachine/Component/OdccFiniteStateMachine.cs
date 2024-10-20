@@ -4,7 +4,7 @@ using BC.ODCC;
 
 using UnityEngine;
 
-namespace BC.ODCCBase
+namespace BC.OdccBase
 {
 	public abstract class OdccFiniteStateMachine : ComponentBehaviour, IOdccUpdate, IOdccUpdate.Late
 	{

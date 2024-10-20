@@ -23,11 +23,21 @@ namespace BC.ODCC
 		// ODCC 쿼리 컬렉터들을 관리하는 딕셔너리입니다.
 		internal static Dictionary<QuerySystem, ObjectBehaviour> OdccQueryFindCashList = new ();
 
-		// ObjectBehaviour 리스트입니다.
-		internal static List<ObjectBehaviour> objectBehaviourList = new List<ObjectBehaviour>();
+		internal static List<ObjectBehaviour> allObjectBehaviours = new List<ObjectBehaviour>();
 
-		// ComponentBehaviour 리스트입니다.
-		internal static List<ComponentBehaviour> componentBehaviourList = new List<ComponentBehaviour>();
+		// ObjectBehaviour 의 Update 리스트입니다.
+		internal static List<IOdccUpdate> objectUpdateList = new List<IOdccUpdate>();
+
+		// ComponentBehaviour 의 Update리스트입니다.
+		internal static List<IOdccUpdate> componentUpdateList = new List<IOdccUpdate>();
+
+		// ObjectBehaviour 의 Update 리스트입니다.
+		internal static List<IOdccUpdate.Late> objectLateUpdateList = new List<IOdccUpdate.Late>();
+
+		// ComponentBehaviour 의 Update리스트입니다.
+		internal static List<IOdccUpdate.Late> componentLateUpdateList = new List<IOdccUpdate.Late>();
+
+		internal static HashSet<IOCBehaviour> reservationDestroyObject = new HashSet<IOCBehaviour>();
 
 #if USING_AWAITABLE_LOOP
 		internal static SortedDictionary<int, Dictionary<OdccQueryLooper, UnityEngine.Awaitable>> ForeachQueryUpdate = new ();
@@ -54,7 +64,7 @@ namespace BC.ODCC
 		internal static void InitForeach()
 		{
 			// ObjectBehaviour 목록에 대한 쿼리 시스템을 생성하고 초기화합니다.
-			OCBehaviourListQuerySystem = QuerySystemBuilder.CreateQuery().WithAll<ObjectBehaviour>(true).Build();
+			OCBehaviourListQuerySystem = QuerySystemBuilder.CreateQuery().WithAll<ObjectBehaviour>().Build();
 			OCBehaviourList = new OdccQueryCollector(OCBehaviourListQuerySystem);
 			OdccQueryCollectors.Add(OCBehaviourListQuerySystem, OCBehaviourList);
 			OdccQueryFindCashList = new Dictionary<QuerySystem, ObjectBehaviour>();
@@ -86,7 +96,7 @@ namespace BC.ODCC
 		/// OCBehaviour 객체를 업데이트하는 메서드입니다.
 		/// </summary>
 		/// <param name="behaviour">업데이트할 OCBehaviour 객체 목록</param>
-		private static void OCBehaviourUpdate(IEnumerable<OCBehaviour> behaviour)
+		private static void OCBehaviourUpdate(IEnumerable<IOdccUpdate> behaviour)
 		{
 			if(behaviour == null) return;
 
@@ -100,7 +110,7 @@ namespace BC.ODCC
 			foreach(var _item in behaviour)
 			{
 				var item = _item;
-				if(item is IOdccUpdate update && (item.ThisBehaviour.IsEnable || item.ThisBehaviour.IsCanUpdateDisable))
+				if(item is IOdccUpdate update && update._IsCanEnterUpdate)
 				{
 					foreachAction.Enqueue(() => {
 						update.BaseUpdate();
@@ -119,7 +129,7 @@ namespace BC.ODCC
 		/// OCBehaviour 객체의 LateUpdate를 수행하는 메서드입니다.
 		/// </summary>
 		/// <param name="behaviour">LateUpdate를 수행할 OCBehaviour 객체 목록</param>
-		private static void OCBehaviourLateUpdate(IEnumerable<OCBehaviour> behaviour)
+		private static void OCBehaviourLateUpdate(IEnumerable<IOdccUpdate.Late> behaviour)
 		{
 			if(behaviour == null) return;
 
@@ -133,7 +143,7 @@ namespace BC.ODCC
 			foreach(var _item in behaviour)
 			{
 				var item = _item;
-				if(item is IOdccUpdate.Late update && (item.ThisBehaviour.IsEnable || item.ThisBehaviour.IsCanUpdateDisable))
+				if(item is IOdccUpdate.Late update && item._IsCanEnterUpdate)
 				{
 					foreachAction.Enqueue(() => {
 						update.BaseLateUpdate();
@@ -148,118 +158,93 @@ namespace BC.ODCC
 			}
 		}
 
-		/// <summary>
-		/// ODCC 컬렉터 목록에 OCBehaviour를 추가하는 메서드입니다.
-		/// </summary>
-		/// <param name="behaviour">추가할 OCBehaviour 객체</param>
-		internal static void AddOdccCollectorList(OCBehaviour behaviour)
+		internal static void UpdateOdccCollectorList(IOdccObject behaviour)
 		{
-			// Foreach 액션 큐를 비웁니다.
+			if(behaviour is not ObjectBehaviour odccObject)
+			{
+				return;
+			}
 			while(foreachAction.Count > 0)
 			{
 				foreachAction.Dequeue().Invoke();
 			}
-
-			// ObjectBehaviour인 경우 처리합니다.
-			if(behaviour is ObjectBehaviour objectBehaviour)
+			foreach(var _query in OdccQueryCollectors)
 			{
-				foreach(var _query in OdccQueryCollectors)
-				{
-					var query = _query;
-					foreachAction.Enqueue(() => {
-						if(!objectBehaviourList.Contains(objectBehaviour)) objectBehaviourList.Add(objectBehaviour);
-						OdccQueryCollector queryCollector = query.Value;
-						queryCollector.AddObject(objectBehaviour);
-					});
-				}
+				var queryCollector = _query.Value;
+				foreachAction.Enqueue(() => queryCollector.UpdateObjectInQuery(odccObject));
 			}
-			// ComponentBehaviour인 경우 처리합니다.
-			else if(behaviour is ComponentBehaviour componentBehaviour)
+			while(foreachAction.Count > 0)
 			{
-				foreach(var _query in OdccQueryCollectors)
-				{
-					var query = _query;
-					foreachAction.Enqueue(() => {
-						if(!componentBehaviourList.Contains(componentBehaviour)) componentBehaviourList.Add(componentBehaviour);
-						OdccQueryCollector queryCollector = query.Value;
-						ObjectBehaviour thisObject = componentBehaviour.ThisObject;
-						queryCollector.UpdateObjectInQuery(thisObject);
-					});
-				}
+				foreachAction.Dequeue().Invoke();
 			}
-
-			// Foreach 액션 큐를 다시 비웁니다.
+		}
+		internal static void RemoveOdccCollectorList(IOdccObject behaviour)
+		{
+			if(behaviour is not ObjectBehaviour odccObject)
+			{
+				return;
+			}
+			while(foreachAction.Count > 0)
+			{
+				foreachAction.Dequeue().Invoke();
+			}
+			foreach(var _query in OdccQueryCollectors)
+			{
+				var queryCollector = _query.Value;
+				foreachAction.Enqueue(() => {
+					queryCollector.RemoveQuerySystemTarget(odccObject);
+					queryCollector.RemoveLifeItem(odccObject);
+				});
+			}
 			while(foreachAction.Count > 0)
 			{
 				foreachAction.Dequeue().Invoke();
 			}
 		}
 
-		/// <summary>
-		/// ODCC 컬렉터 목록에서 OCBehaviour를 제거하는 메서드입니다.
-		/// </summary>
-		/// <param name="behaviour">제거할 OCBehaviour 객체</param>
-		internal static void RemoveOdccCollectorList(OCBehaviour behaviour)
+		internal static void AddUpdateBehaviour(IOdccUpdate behaviour)
 		{
-			// Foreach 액션 큐를 비웁니다.
-			while(foreachAction.Count > 0)
+			if(behaviour is IOdccObject)
 			{
-				foreachAction.Dequeue().Invoke();
+				objectUpdateList.Add(behaviour);
 			}
-
-			// ObjectBehaviour인 경우 처리합니다.
-			if(behaviour is ObjectBehaviour objectBehaviour)
+			else
 			{
-				foreach(var _query in OdccQueryCollectors)
-				{
-					var query = _query;
-					OdccQueryCollector queryCollector = query.Value;
-					foreachAction.Enqueue(() => {
-						objectBehaviourList.Remove(objectBehaviour);
-						queryCollector.RemoveObject(objectBehaviour);
-						queryCollector.RemoveQuerySystemTarget(objectBehaviour);
-					});
-				}
-				foreach(var item in OdccQueryFindCashList)
-				{
-					if(item.Value == objectBehaviour)
-					{
-						var key = item.Key;
-						foreachAction.Enqueue(() => {
-							OdccQueryFindCashList.Remove(key);
-						});
-					}
-				}
+				componentUpdateList.Add(behaviour);
 			}
-			// ComponentBehaviour인 경우 처리합니다.
-			else if(behaviour is ComponentBehaviour componentBehaviour)
+		}
+		internal static void AddLateUpdateBehaviour(IOdccUpdate.Late behaviour)
+		{
+			if(behaviour is IOdccObject)
 			{
-				foreach(var _query in OdccQueryCollectors)
-				{
-					var query = _query;
-					OdccQueryCollector queryCollector = query.Value;
-					ObjectBehaviour thisObject = componentBehaviour.ThisObject;
-					foreachAction.Enqueue(() => {
-						componentBehaviourList.Remove(componentBehaviour);
-						queryCollector.UpdateObjectInQuery(thisObject);
-					});
-				}
+				objectLateUpdateList.Add(behaviour);
 			}
-			// LifeItem에서 OCBehaviour를 제거합니다.
-			foreach(var _query in OdccQueryCollectors)
+			else
 			{
-				OdccQueryCollector queryCollector = _query.Value;
-				foreachAction.Enqueue(() => {
-					queryCollector.RemoveLifeItem(behaviour);
-				});
+				componentLateUpdateList.Add(behaviour);
 			}
-
-			// Foreach 액션 큐를 다시 비웁니다.
-			while(foreachAction.Count > 0)
+		}
+		internal static void RemoveUpdateBehaviour(IOdccUpdate behaviour)
+		{
+			if(behaviour is IOdccObject)
 			{
-				foreachAction.Dequeue().Invoke();
+				objectUpdateList.Remove(behaviour);
 			}
-
+			else
+			{
+				componentUpdateList.Remove(behaviour);
+			}
+		}
+		internal static void RemoveLateUpdateBehaviour(IOdccUpdate.Late behaviour)
+		{
+			if(behaviour is IOdccObject)
+			{
+				objectLateUpdateList.Remove(behaviour);
+			}
+			else
+			{
+				componentLateUpdateList.Remove(behaviour);
+			}
 		}
 
 		/// <summary>
@@ -310,8 +295,8 @@ namespace BC.ODCC
 				{
 					waitMainUpdate = false;
 					// ObjectBehaviour 리스트를 업데이트합니다.
-					OCBehaviourUpdate(objectBehaviourList);
-					OCBehaviourUpdate(componentBehaviourList);
+					OCBehaviourUpdate(objectUpdateList);
+					OCBehaviourUpdate(componentUpdateList);
 				}
 				foreach(var item in dictionary)
 				{
@@ -341,8 +326,8 @@ namespace BC.ODCC
 			if(waitMainUpdate)
 			{
 				// ObjectBehaviour 리스트를 업데이트합니다.
-				OCBehaviourUpdate(objectBehaviourList);
-				OCBehaviourUpdate(componentBehaviourList);
+				OCBehaviourUpdate(objectUpdateList);
+				OCBehaviourUpdate(componentUpdateList);
 			}
 
 			// 리스트를 다음으로 넘깁니다.
@@ -355,8 +340,8 @@ namespace BC.ODCC
 		internal static void ForeachLateUpdate()
 		{
 			// ObjectBehaviour 리스트의 LateUpdate를 수행합니다.
-			OCBehaviourLateUpdate(objectBehaviourList);
-			OCBehaviourLateUpdate(componentBehaviourList);
+			OCBehaviourLateUpdate(objectLateUpdateList);
+			OCBehaviourLateUpdate(componentLateUpdateList);
 		}
 
 		/// <summary>
@@ -394,9 +379,9 @@ namespace BC.ODCC
 			{
 				return true;
 			}
-			find = objectBehaviourList.Find(item => findQuery.IsSatisfiesQuery(item));
+			find = allObjectBehaviours.Find(item => findQuery.IsSatisfiesQuery(item));
 
-			if(OdccQueryFindCashList.ContainsKey(findQuery)) OdccQueryFindCashList.Add(findQuery, null);
+			if(!OdccQueryFindCashList.ContainsKey(findQuery)) OdccQueryFindCashList.Add(findQuery, null);
 			OdccQueryFindCashList[findQuery] = find;
 
 			return find != null;

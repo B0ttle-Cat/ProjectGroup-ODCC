@@ -82,8 +82,7 @@ namespace BC.ODCC
 		public void RemoveLifeItem(object lifeItem)
 		{
 			if(lifeItem == null || IsDontDestoryLifeItem) return;
-			lifeItems.Remove(lifeItem);
-			if(lifeItems.Count == 0)
+			if(lifeItems.Remove(lifeItem) && lifeItems.Count == 0)
 			{
 				DeleteQueryCollector(this);
 			}
@@ -169,12 +168,12 @@ namespace BC.ODCC
 			{
 				OdccQueryCollector newCollector = new OdccQueryCollector(querySystem);
 
-				var objectList = OdccForeach.objectBehaviourList;
+				var objectList = OdccForeach.objectUpdateList;
 				if(objectList != null)
 				{
 					foreach(var item in objectList)
 					{
-						newCollector.AddObject(item);
+						newCollector.AddObject(item as ObjectBehaviour);
 					}
 				}
 
@@ -420,11 +419,11 @@ namespace BC.ODCC
 		/// </summary>
 		/// <param name="item">추가할 ObjectBehaviour 객체</param>
 		/// <param name="passDoubleCheck">중복 확인 여부</param>
-		internal void AddObject(ObjectBehaviour item, bool passDoubleCheck = false)
+		internal bool AddObject(ObjectBehaviour item)
 		{
-			if(queryItems.Contains(item)) return;
+			if(queryItems.Contains(item)) return true;
 
-			if(passDoubleCheck || IsSatisfiesQuery(item))
+			if(IsSatisfiesQuery(item))
 			{
 				var list = queryItems.ToList();
 				list.Add(item);
@@ -444,16 +443,18 @@ namespace BC.ODCC
 				onShowQueryItems = new List<ObjectBehaviour>();
 				onShowQueryItems.AddRange(list);
 #endif
+				return true;
 			}
+			return false;
 		}
 
 		/// <summary>
 		/// ObjectBehaviour 객체를 제거하는 메서드입니다.
 		/// </summary>
 		/// <param name="item">제거할 ObjectBehaviour 객체</param>
-		internal void RemoveObject(ObjectBehaviour item)
+		internal bool RemoveObject(ObjectBehaviour item)
 		{
-			if(!queryItems.Contains(item)) return;
+			if(!queryItems.Contains(item)) return true;
 
 			var list = queryItems.ToList();
 			if(list.Remove(item))
@@ -474,7 +475,9 @@ namespace BC.ODCC
 				onShowQueryItems = new List<ObjectBehaviour>();
 				onShowQueryItems.AddRange(list);
 #endif
+				return true;
 			}
+			return false;
 		}
 		/// <summary>
 		/// 수집기의 타겟이 유효할수 있는지 검사하는 메서드입니다.
@@ -515,7 +518,7 @@ namespace BC.ODCC
 			if(!Application.isPlaying) return false;
 #endif
 			if(item == null) return false;
-			if(item.ThisBehaviour.IsCallDestroy) return false;
+			if(item.ThisBehaviour.IsDestroy) return false;
 			if(querySystem == null) return false;
 			return querySystem.IsSatisfiesQuery(item);
 		}
@@ -526,14 +529,15 @@ namespace BC.ODCC
 		/// <param name="item">업데이트할 ObjectBehaviour 객체</param>
 		internal void UpdateObjectInQuery(ObjectBehaviour item)
 		{
-			if(IsSatisfiesQuery(item))
+			if(AddObject(item))
 			{
-				AddObject(item, true);
+				// Added
 			}
-			else
+			else if(RemoveObject(item))
 			{
-				RemoveObject(item);
+				// Removed
 			}
+			// Not Work
 		}
 
 		/// <summary>

@@ -16,12 +16,29 @@ namespace BC.ODCC
 			get {
 				if(_container is null)
 				{
-					_container = new ContainerObject(this);
+					_container = new ContainerObject(new ContainerNode(this));
+				}
+				if(_container.ThisObject == null)
+				{
+					_container.ContainerNode.thisObject = this;
+					_container.ContainerNode.CurrentInit();
+					_container.ContainerNode.UpdateInit();
 				}
 				return _container;
 			}
 			private set {
 				_container = value;
+			}
+		}
+		void IOdccObject.CreateThisContainer(ContainerNode target)
+		{
+			if(_container == null)
+			{
+				_container = new ContainerObject(target);
+			}
+			else
+			{
+				_container.ContainerNode = target;
 			}
 		}
 
@@ -34,18 +51,22 @@ namespace BC.ODCC
 			{
 				if(UnityEditor.EditorApplication.isPlaying) return;
 				if(!gameObject.scene.isLoaded) return;
-				ThisTransform = transform;
 				if(ThisTransform == null) return;
 
-				_container = new ContainerObject(this);
-				_container.ContainerNode.AllRefresh();
+				_container = new ContainerObject(new ContainerNode(this));
+				_container.ContainerNode.CurrentInit();
+				_container.ContainerNode.UpdateInit();
 
 				BaseReset();
 				BaseValidate();
 
 
-				_container.ComponentList?.ForEach(item => item.Reset());
-				_container.ChildObject?.ForEach(item => item.Reset());
+				_container.ComponentList?.ForEach(item => {
+					if(item is ComponentBehaviour behaviour) behaviour.Reset();
+				});
+				_container.ChildObject?.ForEach(item => {
+					if(item is ObjectBehaviour behaviour) behaviour.Reset();
+				});
 			}
 			catch(Exception ex)
 			{
@@ -55,21 +76,31 @@ namespace BC.ODCC
 		}
 		internal override void OnValidate()
 		{
-			OnVHierarchy();
 			try
 			{
 				if(UnityEditor.EditorApplication.isPlaying) return;
 				if(!gameObject.scene.isLoaded) return;
-				ThisTransform = transform;
 				if(ThisTransform == null) return;
 
-				if(_container == null || _container.ContainerNode == null || _container.ThisObject == null) _container = new ContainerObject(this);
-				_container.ContainerNode.AllRefresh();
+				if(_container == null || _container.ContainerNode == null)
+				{
+					_container = new ContainerObject(new ContainerNode(this));
+				}
+				if(_container.ThisObject == null)
+				{
+					_container.ContainerNode.thisObject = this;
+					_container.ContainerNode.CurrentInit();
+					_container.ContainerNode.UpdateInit();
+				}
 
 				BaseValidate();
 
-				_container.ComponentList?.ForEach(item => item.OnValidate());
-				_container.ChildObject?.ForEach(item => item.OnValidate());
+				_container.ComponentList?.ForEach(item => {
+					if(item is ComponentBehaviour behaviour) behaviour.OnValidate();
+				});
+				_container.ChildObject?.ForEach(item => {
+					if(item is ObjectBehaviour behaviour) behaviour.OnValidate();
+				});
 			}
 			catch(Exception ex)
 			{
@@ -77,20 +108,7 @@ namespace BC.ODCC
 				Debug.LogException(ex);
 			}
 		}
-		private void OnVHierarchy()
-		{
-			try
-			{
-				if(this is ObjectBehaviour)
-				{
-					VHierarchy.VHierarchy.OnSetIcon(this.gameObject, "d_PreMatCube");
-				}
-			}
-			catch(Exception ex)
-			{
-				//	Debug.LogException(ex);
-			}
-		}
+
 		[ContextMenu("ContainerUpdateInEditor")]
 		public void ContainerUpdateInEditor()
 		{

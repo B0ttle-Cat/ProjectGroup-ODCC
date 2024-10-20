@@ -148,7 +148,7 @@ namespace BC.ODCC
 			}
 			return result;
 		}
-		public static int[] GetTypeToIndex(ObjectBehaviour item)
+		public static int[] GetObjectUsingTypeArray(ObjectBehaviour item)
 		{
 			return (item is null || item.ThisContainer is null) ? new int[0] : item.ThisContainer.TypeIndex;
 		}
@@ -166,10 +166,6 @@ namespace BC.ODCC
 			{
 				return new int[0];
 			}
-		}
-		public static int[] GetTypeInheritanceTable(ObjectBehaviour item)
-		{
-			return (item is null || item.ThisContainer is null) ? new int[0] : item.ThisContainer.TypeInheritanceIndex;
 		}
 		public static bool CheckIsInheritanceType(Type type, Type check)
 		{

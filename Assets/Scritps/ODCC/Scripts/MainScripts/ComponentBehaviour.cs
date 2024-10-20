@@ -21,6 +21,12 @@ namespace BC.ODCC
 				return ThisObject.ThisContainer;
 			}
 		}
+
+		void IOdccComponent.ConnectThisObject(ContainerNode target)
+		{
+			ThisObject = target.thisObject as ObjectBehaviour;
+		}
+
 #if UNITY_EDITOR
 		internal override void Reset()
 		{
@@ -29,7 +35,6 @@ namespace BC.ODCC
 				if(UnityEditor.EditorApplication.isPlaying) return;
 				if(IsEditingPrefab()) return;
 
-				ThisTransform = transform;
 				if(ThisTransform == null) return;
 				ThisObject = GetComponentInParent<ObjectBehaviour>(true);
 				BaseReset();
@@ -45,7 +50,6 @@ namespace BC.ODCC
 			if(UnityEditor.EditorApplication.isPlaying) return;
 			if(IsEditingPrefab()) return;
 
-			ThisTransform = transform;
 			if(ThisTransform == null) return;
 			ThisObject = GetComponentInParent<ObjectBehaviour>(true);
 			BaseValidate();

@@ -4,7 +4,7 @@ using Sirenix.OdinInspector;
 
 using UnityEngine;
 
-namespace BC.ODCCBase
+namespace BC.OdccBase
 {
 	public abstract class OdccStateComponent : ComponentBehaviour
 	{
