@@ -481,11 +481,7 @@ namespace BC.ODCC
 		public void Start()
 		{
 			// EndOfFrameDispose 루프를 시작합니다.
-#if USING_AWAITABLE_LOOP
 			EndOfFrameDispose();
-#else
-			StartCoroutine(EndOfFrameDispose());
-#endif
 		}
 
 		/// <summary>
@@ -541,7 +537,6 @@ namespace BC.ODCC
 			return find != null;
 		}
 
-#if USING_AWAITABLE_LOOP
 		/// <summary>
 		/// 프레임의 끝에서 실행되는 Awaitable 입니다.
 		/// </summary>
@@ -568,37 +563,6 @@ namespace BC.ODCC
 				list = null;
 			}
 		}
-#else
-		/// <summary>
-		/// 프레임의 끝에서 실행되는 코루틴입니다.
-		/// </summary>
-		/// <returns>IEnumerator</returns>
-		IEnumerator EndOfFrameDispose()
-		{
-			// 프레임 끝에서 대기하는 WaitForEndOfFrame 객체입니다.
-			var waitFrame = new WaitForEndOfFrame();
-
-			while(true)
-			{
-				yield return waitFrame;
-
-				// 예약된 파괴 오브젝트 집합의 개수를 가져옵니다.
-				int count = OdccContainerTree.reservationDestroyObject.Count;
-
-				if(count > 0)
-				{
-					// 예약된 파괴 오브젝트를 순회하며 Dispose를 호출합니다.
-					foreach(var item in OdccContainerTree.reservationDestroyObject)
-					{
-						item.Dispose();
-					}
-
-					// 예약된 파괴 오브젝트 집합을 초기화합니다.
-					OdccContainerTree.reservationDestroyObject.Clear();
-				}
-			}
-		}
-#endif
 	}
 }
 

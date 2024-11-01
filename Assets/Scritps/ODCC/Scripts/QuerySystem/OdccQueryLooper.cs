@@ -1,7 +1,4 @@
 using System;
-#if !USING_AWAITABLE_LOOP
-using System.Collections;
-#endif
 using System.Collections.Generic;
 using System.Linq;
 
@@ -97,12 +94,7 @@ namespace BC.ODCC
 			internal ObjectBehaviour key;
 			internal bool callFirstOnly = false;
 			internal bool isCallFirst = false;
-#if !USING_AWAITABLE_LOOP
-			internal abstract void Run();
-			internal abstract System.Collections.IEnumerator IRun();
-#else
 			internal abstract UnityEngine.Awaitable ARun(LoopInfo loopingInfo);
-#endif
 		}
 
 		/// <summary>
@@ -110,27 +102,13 @@ namespace BC.ODCC
 		/// </summary>
 		public class AddedForeachAction : RunForeachAction
 		{
-#if !USING_AWAITABLE_LOOP
-			internal Action action;
-			internal override void Run() => action();
-			internal Func<System.Collections.IEnumerator> iAction;
-			internal override System.Collections.IEnumerator IRun() => iAction();
-#else
 			internal Func<UnityEngine.Awaitable> aAction;
 			internal override UnityEngine.Awaitable ARun(LoopInfo loopingInfo) => aAction();
-#endif
 		}
 		public class JoinForeachAction : RunForeachAction
 		{
-#if !USING_AWAITABLE_LOOP
-			internal Action action;
-			internal override void Run() => action();
-			internal Func<System.Collections.IEnumerator> iAction;
-			internal override System.Collections.IEnumerator IRun() => iAction();
-#else
 			internal Func<UnityEngine.Awaitable> aAction;
 			internal override UnityEngine.Awaitable ARun(LoopInfo loopingInfo) => aAction();
-#endif
 		}
 
 		// 루퍼 중단 함수입니다.
@@ -138,11 +116,6 @@ namespace BC.ODCC
 
 		// 이전 업데이트 여부입니다.
 		internal int loopOrder;
-
-#if !USING_AWAITABLE_LOOP
-		// 루퍼 사용 여부입니다.
-		internal bool isUsingLooper;
-#endif
 
 		// 호출 로그 표시 여부입니다.
 		internal bool onShowCallLog;
@@ -200,20 +173,13 @@ namespace BC.ODCC
 				queryCollector = queryCollector,
 				loopOrder = loopOrder,
 				runForeachStructList = new List<RunForeachStruct>(),
-#if !USING_AWAITABLE_LOOP
-                isUsingLooper = true,
-#endif
-                onShowCallLog = false,
+				onShowCallLog = false,
 				onShowCallLogDepth = 5
 			};
 			looper.SetBreakFunction(null);
 			if(!OdccForeach.ForeachQueryUpdate.TryGetValue(loopOrder, out var loopDictionary))
 			{
-#if !USING_AWAITABLE_LOOP
-				loopDictionary = new Dictionary<OdccQueryLooper, IEnumerator>();
-#else
 				loopDictionary = new Dictionary<OdccQueryLooper, Awaitable>();
-#endif
 				OdccForeach.ForeachQueryUpdate.Add(loopOrder, loopDictionary);
 			}
 			loopDictionary.Add(looper, looper.RunLooper());
@@ -234,17 +200,13 @@ namespace BC.ODCC
 				queryCollector = queryCollector,
 				loopOrder = 0,
 				runForeachStructList = new List<RunForeachStruct>(),
-#if !USING_AWAITABLE_LOOP
-                isUsingLooper = false,
-#endif
-                onShowCallLog = false,
+				onShowCallLog = false,
 				onShowCallLogDepth = 5
 			};
 			looper.SetBreakFunction(null);
 			return looper;
 		}
 
-#if USING_AWAITABLE_LOOP
 		/// <summary>
 		/// 루퍼를 실행하는 비동기 메서드입니다.
 		/// </summary>
@@ -365,211 +327,6 @@ namespace BC.ODCC
 				Debug.LogException(ex);
 			}
 		}
-#else
-		/// <summary>
-		/// 루퍼를 실행하는 IEnumerator 메서드입니다.
-		/// </summary>
-		/// <returns>IEnumerator 객체</returns>
-		internal System.Collections.IEnumerator RunLooper()
-		{
-			// 루퍼를 사용하지 않거나 쿼리 콜렉터가 null인 경우 중단합니다.
-			if(!isUsingLooper || queryCollector is null) yield break;
-
-			// 중단 함수가 true를 반환하면 중단합니다.
-			if(onLooperBreakFunction != null && onLooperBreakFunction.Invoke())
-			{
-				yield break;
-			}
-
-			// 루프 작업에 대한 정보를 초기화합니다.
-			LoopInfo loopingInfo = new LoopInfo()
-			{
-				isLooperBreak = () => onLooperBreakFunction != null && onLooperBreakFunction.Invoke(),
-				loopStartTime = Time.timeAsDouble,
-
-				actionStartTime = 0,
-				actionIndex = 0,
-				actionTotalCount = 0,
-
-				itemStartTime = 0,
-				itemIndex = 0,
-				itemTotalCount = 0,
-			};
-
-			// 내부 루퍼를 실행하는 IEnumerator를 생성합니다.
-			var enumerator = IRunLooper();
-			while(true)
-			{
-				try
-				{
-					// 중단 함수가 true를 반환하면 중단합니다.
-					if(onLooperBreakFunction != null && onLooperBreakFunction.Invoke())
-					{
-						yield break;
-					}
-
-					// 다음 요소로 이동합니다.
-					bool next = enumerator.MoveNext();
-					if(!next) break;
-				}
-				catch(Exception ex)
-				{
-					Debug.LogException(ex);
-					break;
-				}
-
-				// 다음 프레임을 대기합니다.
-				yield return null;
-			}
-		}
-
-		/// <summary>
-		/// 루퍼를 실행하는 내부 IEnumerator 메서드입니다.
-		/// </summary>
-		/// <returns>IEnumerator 객체</returns>
-		private System.Collections.IEnumerator IRunLooper()
-		{
-			// 루퍼에 등록된 Foreach 구조체에 대해 루프를 실행합니다.
-			foreach(var item in runForeachStructList)
-			{
-				// 현재 Foreach 구조체의 액션 리스트입니다.
-				IEnumerable<RunForeachAction> actionList = item.runForeachActionList;
-				if(actionList == null) break;
-
-				// 각 Foreach 구조체의 업데이트 프레임을 설정합니다.
-				int updateFrame = item.updateFrame?.Invoke() ?? 1;
-				if(updateFrame < 1)
-				{
-					// 업데이트 프레임이 1보다 작은 경우, 프레임 단위로 대기합니다.
-					while(updateFrame >= 1)
-					{
-						yield return null;
-						// 중단 함수가 true를 반환하면 루프를 중단합니다.
-						if(onLooperBreakFunction != null && onLooperBreakFunction.Invoke())
-						{
-							yield break;
-						}
-						updateFrame = item.updateFrame?.Invoke() ?? 1;
-					}
-				}
-
-				// 각 액션 리스트를 나누어 처리합니다.
-				int totalCount = actionList.Count();
-
-				int quotient = totalCount / updateFrame; // 각 프레임에 처리할 액션 수입니다.
-				int remainder = totalCount % updateFrame; // 나머지 액션 수입니다.
-				int count = 0;
-				// 액션 리스트를 나누어 처리하기 위한 리스트입니다.
-				var ListInList = Enumerable.Range(0, updateFrame)
-			.Select(i =>
-			{
-				int skip = count;
-				int take = remainder > i ? quotient + 1 : quotient;
-				count += take;
-				return actionList.Skip(skip).Take(take).Where(act => act.key == null || act.key.isActiveAndEnabled);
-			}).ToArray();
-				bool isSplt = ListInList.Count() > 1;
-
-				// 각 나누어진 액션 리스트에 대해 루프를 실행합니다.
-				foreach(var inList in ListInList)
-				{
-					foreach(var action in inList)
-					{
-						// Foreach 구조체가 Enumerator를 사용하는 경우
-						if(item.isEnumerator)
-						{
-							System.Collections.IEnumerator enumerator = action.IRun();
-							while(true)
-							{
-								try
-								{
-									// 중단 함수가 true를 반환하면 루프를 중단합니다.
-									if(onLooperBreakFunction != null && onLooperBreakFunction.Invoke())
-									{
-										yield break;
-									}
-									// 다음 요소로 이동합니다.
-									bool next = enumerator.MoveNext();
-									if(!next) break;
-								}
-								catch(Exception ex)
-								{
-									Debug.LogException(ex);
-									break;
-								}
-								yield return null;
-							}
-						}
-						// Foreach 구조체가 Enumerator를 사용하지 않는 경우
-						else
-						{
-							try
-							{
-								// 중단 함수가 true를 반환하면 루프를 중단합니다.
-								if(onLooperBreakFunction != null && onLooperBreakFunction.Invoke())
-								{
-									yield break;
-								}
-								// 액션을 실행합니다.
-								action.Run();
-							}
-							catch(Exception ex)
-							{
-								Debug.LogException(ex);
-							}
-						}
-					}
-					if(isSplt)
-					{
-						yield return null;
-						// 중단 함수가 true를 반환하면 루프를 중단합니다.
-						if(onLooperBreakFunction != null && onLooperBreakFunction.Invoke())
-						{
-							yield break;
-						}
-					}
-				}
-			}
-		}
-
-		/// <summary>
-		/// 액션을 실행하는 메서드입니다.
-		/// </summary>
-		public void RunAction()
-		{
-			// 루퍼를 사용하지 않거나 쿼리 콜렉터가 null인 경우 중단합니다.
-			if(isUsingLooper || queryCollector is null) return;
-
-			// 중단 함수가 true를 반환하면 중단합니다.
-			if(onLooperBreakFunction != null && onLooperBreakFunction.Invoke())
-			{
-				return;
-			}
-
-			// 내부 루퍼를 실행합니다.
-			var action = IRunLooper();
-			bool moveNext = true;
-			while(moveNext)
-			{
-				try
-				{
-					// 중단 함수가 true를 반환하면 중단합니다.
-					if(onLooperBreakFunction != null && onLooperBreakFunction.Invoke())
-					{
-						return;
-					}
-
-					// 다음 요소로 이동합니다.
-					moveNext = action.MoveNext();
-				}
-				catch(Exception ex)
-				{
-					Debug.LogException(ex);
-					break;
-				}
-			}
-		}
-#endif
 
 		/// <summary>
 		/// Foreach 매개변수 규칙 상 존재하는 함수이며, 아무런 동작 하지 않음.
@@ -582,7 +339,6 @@ namespace BC.ODCC
 		}
 
 		//==============================================
-#if USING_AWAITABLE_LOOP
 		/// <summary>
 		/// 다음 액션을 호출하는 메서드입니다.
 		/// </summary>
@@ -669,37 +425,6 @@ namespace BC.ODCC
 			runForeachStructList.Add(new RunForeachStruct(action, list, true, null));
 			return this;
 		}
-#else
-		/// <summary>
-		/// 다음 액션을 호출하는 메서드입니다.
-		/// </summary>
-		/// <param name="action">호출할 액션</param>
-		/// <returns>OdccQueryLooper 객체</returns>
-		public OdccQueryLooper CallNext(Action action)
-		{
-			var list = new List<RunForeachAction>();
-			list.Add(new AddedForeachAction() {
-				action = action
-			});
-			runForeachStructList.Add(new RunForeachStruct(action, list, false, null));
-			return this;
-		}
-
-		/// <summary>
-		/// 다음 액션을 호출하는 메서드입니다.
-		/// </summary>
-		/// <param name="action">호출할 IEnumerator 액션</param>
-		/// <returns>OdccQueryLooper 객체</returns>
-		public OdccQueryLooper CallNext(Func<System.Collections.IEnumerator> action)
-		{
-			var list = new List<RunForeachAction>();
-			list.Add(new AddedForeachAction() {
-				iAction = action
-			});
-			runForeachStructList.Add(new RunForeachStruct(action, list, true, null));
-			return this;
-		}
-#endif
 
 		/// <summary>
 		/// 프레임 수를 설정하는 메서드입니다.
@@ -900,7 +625,6 @@ namespace BC.ODCC
 			return CallNext(action);
 		}
 
-#if USING_AWAITABLE_LOOP
 		[Obsolete("CallNext 사용 할 것 - 오래된 이름 규칙", true)]
 		private OdccQueryLooper Action(Func<UnityEngine.Awaitable> action)
 		{
@@ -912,18 +636,5 @@ namespace BC.ODCC
 		{
 			RunAction(completed);
 		}
-#else
-		[Obsolete("CallNext 사용 할 것 - 오래된 이름 규칙", true)]
-		private OdccQueryLooper Action(Func<System.Collections.IEnumerator> action)
-		{
-			return CallNext(action);
-		}
-
-		[Obsolete("RunAction 사용 할 것 - 오래된 이름 규칙", true)]
-		private void RunCallEvent()
-		{
-			RunAction();
-		}
-#endif
 	}
 }

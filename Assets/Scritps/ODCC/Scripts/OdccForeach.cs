@@ -39,21 +39,12 @@ namespace BC.ODCC
 
 		internal static HashSet<IOCBehaviour> reservationDestroyObject = new HashSet<IOCBehaviour>();
 
-#if USING_AWAITABLE_LOOP
 		internal static SortedDictionary<int, Dictionary<OdccQueryLooper, UnityEngine.Awaitable>> ForeachQueryUpdate = new ();
 
 		[Obsolete("Using ForeachQueryUpdate", true)]
 		internal static Dictionary<OdccQueryLooper, UnityEngine.Awaitable> ForeachQueryPrevUpdate = new ();
 		[Obsolete("Using ForeachQueryUpdate", true)]
 		internal static Dictionary<OdccQueryLooper, UnityEngine.Awaitable> ForeachQueryNextUpdate = new ();
-#else
-		internal static SortedDictionary<int, Dictionary<OdccQueryLooper, System.Collections.IEnumerator>> ForeachQueryUpdate = new ();
-		[Obsolete("Using ForeachQueryUpdate", true)]
-
-		internal static Dictionary<OdccQueryLooper, System.Collections.IEnumerator> ForeachQueryPrevUpdate  = new ();
-		[Obsolete("Using ForeachQueryUpdate", true)]
-		internal static Dictionary<OdccQueryLooper, System.Collections.IEnumerator> ForeachQueryNextUpdate  = new ();
-#endif
 
 		// Foreach 작업을 위한 액션 큐입니다.
 		private static readonly Queue<Action> foreachAction = new Queue<Action>();
@@ -304,11 +295,7 @@ namespace BC.ODCC
 					var value = item.Value;
 					if(key is not null)
 					{
-#if USING_AWAITABLE_LOOP
 						if(value is null || value.IsCompleted)
-#else
-						if(!value.MoveNext())
-#endif
 						{
 							try
 							{

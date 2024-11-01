@@ -38,45 +38,62 @@ namespace BC.ODCC
 			callActionQueue = null;
 		}
 
-		internal void AddInCallActionQueue(Action action)
+		internal void CallingActionQueue(Action action)
 		{
-			if(callActionQueue == null)
-				callActionQueue = new Queue<Action>();
+			callActionQueue ??= new Queue<Action>();
+			if(action == null) return;
 
-			if(callActionQueue is not null)
+			if(callActionQueue.Count > 0)
 			{
-				while(callActionQueue.Count > 0)
-				{
-					callActionQueue.Dequeue().Invoke();
-				}
+				/// action 진행중에 내부적으로 다시 action 이 호출 되는 경우가 있더라 하도러도 먼저 호출된 action 이 먼저 진행되도록 보장한다.
 				callActionQueue.Enqueue(action);
-				while(callActionQueue.Count > 0)
+			}
+			else
+			{
+				// action 추가 
+				callActionQueue.Enqueue(action);
+
+				// Queue 순서에 맞게 실행
+				do
 				{
-					callActionQueue.Dequeue().Invoke();
+					callActionQueue.Peek()?.Invoke();
+					callActionQueue.Dequeue();
 				}
+				while(callActionQueue.Count > 0);
 			}
 		}
-		internal void CallInActionQueue(List<Action> actions)
+		internal void CallingActionQueue(List<Action> actions)
 		{
-			if(callActionQueue == null)
-				callActionQueue = new Queue<Action>();
+			callActionQueue ??= new Queue<Action>();
+			if(actions.Count == 0) return;
 
-			if(callActionQueue is not null)
+			if(callActionQueue.Count > 0)
 			{
-				while(callActionQueue.Count > 0)
-				{
-					callActionQueue.Dequeue().Invoke();
-				}
+				/// action 진행중에 내부적으로 다시 action 이 호출 되는 경우가 있더라 하도러도 먼저 호출된 action 이 먼저 진행되도록 보장한다.
 				for(int i = 0 ; i < actions.Count ; i++)
 				{
 					callActionQueue.Enqueue(actions[i]);
 				}
-				while(callActionQueue.Count > 0)
+			}
+			else
+			{
+				// action 추가 
+				for(int i = 0 ; i < actions.Count ; i++)
 				{
-					callActionQueue.Dequeue().Invoke();
+					callActionQueue.Enqueue(actions[i]);
 				}
+
+				// Queue 순서에 맞게 실행
+				do
+				{
+					callActionQueue.Peek()?.Invoke();
+					callActionQueue.Dequeue();
+				}
+				while(callActionQueue.Count > 0);
 			}
 		}
+
+		#region GetObject OdccItem
 		public bool TryGetObject<T>(out T t, Func<T, bool> condition = null) where T : class, IOdccObject
 		{
 			t = ThisObject is T v ? v : null;
@@ -125,7 +142,6 @@ namespace BC.ODCC
 		{
 			return ChildObject.GetAll<T, IOdccObject>(condition);
 		}
-#if USING_AWAITABLE_LOOP
 		public async Awaitable<T> AwaitGetObject<T>(Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccObject
 		{
 			T t = null;
@@ -230,107 +246,8 @@ namespace BC.ODCC
 			if(t is null) return;
 			callback.Invoke(t);
 		}
-#else
-		public IEnumerator<T> AwaitGetObject<T>(Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccObject
-		{
-			T t = null;
-			cancelToken ??= ThisObject.DestroyCancelToken;
-			while(!cancelToken.Value.IsCancellationRequested && !TryGetObject(out t, condition))
-			{
-				yield return null;
-			}
-			yield return t;
-		}
-		public IEnumerator<T> AwaitGetParentObject<T>(Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccObject
-		{
-			T t = null;
-			cancelToken ??= ThisObject.DestroyCancelToken;
-			while(!cancelToken.Value.IsCancellationRequested && !TryGetParentObject(out t, condition))
-			{
-				yield return null;
-			}
-			yield return t;
-		}
-		public IEnumerator<T> AwaitGetChildObject<T>(Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccObject
-		{
-			T t = null;
-			cancelToken ??= ThisObject.DestroyCancelToken;
-			while(!cancelToken.Value.IsCancellationRequested && !TryGetChildObject(out t, condition))
-			{
-				yield return null;
-			}
-			yield return t;
-		}
-		public IEnumerator<T[]> AwaitGetChildObjectList<T>(Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccObject
-		{
-			T[] t = null;
-			cancelToken ??= ThisObject.DestroyCancelToken;
-			while(!cancelToken.Value.IsCancellationRequested && !TryGetChildObjectList(out t, condition))
-			{
-				yield return null;
-			}
-			yield return t;
-		}
-		public void NextGetObject<T>(Action<T> callback, Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccObject
-		{
-			ThisObject.StartCoroutine(Async());
-			System.Collections.IEnumerator Async()
-			{
-				if(callback is null) yield break;
-
-				var yT = AwaitGetObject<T>(condition, cancelToken);
-				while(yT.MoveNext()) yield return null;
-				var t = yT.Current;
-				if(t is null) yield break;
-				callback.Invoke(t);
-			}
-
-		}
-		public void NextGetParentObject<T>(Action<T> callback, Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccObject
-		{
-			ThisObject.StartCoroutine(Async());
-			System.Collections.IEnumerator Async()
-			{
-				if(callback is null) yield break;
-
-				var yT = AwaitGetParentObject<T>(condition, cancelToken);
-				while(yT.MoveNext()) yield return null;
-				var t = yT.Current;
-				if(t is null) yield break;
-				callback.Invoke(t);
-			}
-
-		}
-		public void NextGetChildObject<T>(Action<T> callback, Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccObject
-		{
-			ThisObject.StartCoroutine(Async());
-			System.Collections.IEnumerator Async()
-			{
-				if(callback is null) yield break;
-
-				var yT = AwaitGetChildObject<T>(condition, cancelToken);
-				while(yT.MoveNext()) yield return null;
-				var t = yT.Current;
-				if(t is null) yield break;
-				callback.Invoke(t);
-			}
-
-		}
-		public async void NextGetChildObjectList<T>(Action<T[]> callback, Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccObject
-		{
-			ThisObject.StartCoroutine(Async());
-			System.Collections.IEnumerator Async()
-			{
-				if(callback is null) yield break;
-
-				var yT = AwaitGetChildObjectList<T>(condition, cancelToken);
-				while(yT.MoveNext()) yield return null;
-				var t = yT.Current;
-				if(t is null) yield break;
-				callback.Invoke(t);
-			}
-		}
-#endif
+		#endregion
+		#region GetComponent OdccItem
 		public T GetComponent<T>(Func<T, bool> condition = null) where T : class, IOdccComponent
 		{
 			return ComponentList.Get<T, IOdccComponent>(condition);
@@ -385,7 +302,6 @@ namespace BC.ODCC
 			GetAllComponentInChild<T>(out t, condition);
 			return t is not null && t.Count > 0;
 		}
-#if USING_AWAITABLE_LOOP
 		public async Awaitable<T> AwaitGetComponent<T>(Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccComponent
 		{
 			T t = null;
@@ -490,104 +406,8 @@ namespace BC.ODCC
 			if(t is null) return;
 			callback.Invoke(t);
 		}
-#else
-		public IEnumerator<T> AwaitGetComponent<T>(Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccComponent
-		{
-			T t = null;
-			cancelToken ??= ThisObject.DestroyCancelToken;
-			while(!cancelToken.Value.IsCancellationRequested && !TryGetComponent(out t, condition))
-			{
-				yield return null;
-			}
-			yield return t;
-		}
-		public IEnumerator<T> AwaitGetComponentInChild<T>(Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccComponent
-		{
-			T t = null;
-			cancelToken ??= ThisObject.DestroyCancelToken;
-			while(!cancelToken.Value.IsCancellationRequested && !TryGetComponentInChild(out t, condition))
-			{
-				yield return null;
-			}
-			yield return t;
-		}
-		public IEnumerator<T[]> AwaitGetComponentList<T>(Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccComponent
-		{
-			T[] t = null;
-			cancelToken ??= ThisObject.DestroyCancelToken;
-			while(!cancelToken.Value.IsCancellationRequested && !TryGetComponentList(out t, condition))
-			{
-				yield return null;
-			}
-			yield return t;
-		}
-		public IEnumerator<List<T>> AwaitGetAllComponentList<T>(Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccComponent
-		{
-			List<T> t = null;
-			cancelToken ??= ThisObject.DestroyCancelToken;
-			while(!cancelToken.Value.IsCancellationRequested && !TryGetAllComponentInChild(out t, condition))
-			{
-				yield return null;
-			}
-			yield return t;
-		}
-		public void NextGetComponent<T>(Action<T> callback, Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccComponent
-		{
-			ThisObject.StartCoroutine(Async());
-			System.Collections.IEnumerator Async()
-			{
-				if(callback is null) yield break;
-
-				var yT = AwaitGetComponent<T>(condition, cancelToken);
-				while(yT.MoveNext()) yield return null;
-				var t = yT.Current;
-				if(t is null) yield break;
-				callback.Invoke(t);
-			}
-		}
-		public void NextGetComponentInChild<T>(Action<T> callback, Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccComponent
-		{
-			ThisObject.StartCoroutine(Async());
-			System.Collections.IEnumerator Async()
-			{
-				if(callback is null) yield break;
-
-				var yT = AwaitGetComponentInChild<T>(condition, cancelToken);
-				while(yT.MoveNext()) yield return null;
-				var t = yT.Current;
-				if(t is null) yield break;
-				callback.Invoke(t);
-			}
-		}
-		public void NextGetComponentList<T>(Action<T[]> callback, Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccComponent
-		{
-			ThisObject.StartCoroutine(Async());
-			System.Collections.IEnumerator Async()
-			{
-				if(callback is null) yield break;
-
-				var yT = AwaitGetComponentList<T>(condition, cancelToken);
-				while(yT.MoveNext()) yield return null;
-				var t = yT.Current;
-				if(t is null) yield break;
-				callback.Invoke(t);
-			}
-		}
-		public void NextGetAllComponentList<T>(Action<List<T>> callback, Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccComponent
-		{
-			ThisObject.StartCoroutine(Async());
-			System.Collections.IEnumerator Async()
-			{
-				if(callback is null) yield break;
-
-				var yT = AwaitGetAllComponentList<T>(condition, cancelToken);
-				while(yT.MoveNext()) yield return null;
-				var t = yT.Current;
-				if(t is null) yield break;
-				callback.Invoke(t);
-			}
-		}
-#endif
+		#endregion
+		#region GetData OdccItem 
 		public T GetData<T>(Func<T, bool> condition = null) where T : class, IOdccData
 		{
 			T t = DataList.GetData<T, IOdccData>(condition);
@@ -608,7 +428,6 @@ namespace BC.ODCC
 			t = GetAllData<T>(condition);
 			return t is not null && t.Length > 0;
 		}
-#if USING_AWAITABLE_LOOP
 		public async Awaitable<T> AwaitGetData<T>(Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccData
 		{
 			T t = null;
@@ -661,203 +480,8 @@ namespace BC.ODCC
 			if(t is null) return;
 			callback.Invoke(t);
 		}
-#else
-		public IEnumerator<T> AwaitGetData<T>(Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccData
-		{
-			T t = null;
-			cancelToken ??= ThisObject.DestroyCancelToken;
-			while(!cancelToken.Value.IsCancellationRequested && !TryGetData(out t, condition))
-			{
-				yield return null;
-			}
-			yield return t;
-		}
-		public IEnumerator<T[]> AwaitGetDataList<T>(Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccData
-		{
-			T[] t = null;
-			cancelToken ??= ThisObject.DestroyCancelToken;
-			while(!cancelToken.Value.IsCancellationRequested && !TryGetDataList(out t, condition))
-			{
-				yield return null;
-			}
-			yield return t;
-		}
-		public void NextGetData<T>(Action<T> callback, Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccData
-		{
-			ThisObject.StartCoroutine(Async());
-			System.Collections.IEnumerator Async()
-			{
-				if(callback is null) yield break;
-
-				var yT = AwaitGetData<T>(condition, cancelToken);
-				while(yT.MoveNext()) yield return null;
-				var t = yT.Current;
-				if(t is null) yield break;
-				callback.Invoke(t);
-			}
-		}
-		public void NextGetDataList<T>(Action<T[]> callback, Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccData
-		{
-			ThisObject.StartCoroutine(Async());
-			System.Collections.IEnumerator Async()
-			{
-				if(callback is null) yield break;
-
-				var yT = AwaitGetDataList<T>(condition, cancelToken);
-				while(yT.MoveNext()) yield return null;
-				var t = yT.Current;
-				if(t is null) yield break;
-				callback.Invoke(t);
-			}
-		}
-#endif
-		public void CallActionObject<T>(Action<T> tAction, Func<T, bool> condition = null) where T : class, IOdccObject
-		{
-			if(tAction is null) return;
-			ChildObject.GetAction<T, IOdccObject>(GetAction, condition);
-			void GetAction(T t)
-			{
-				AddInCallActionQueue(() => tAction.Invoke(t));
-			}
-		}
-		public void CallActionAllObject<T>(Action<T> tAction, Func<bool> isBreak = null, Func<T, bool> condition = null) where T : class, IOdccObject
-		{
-			if(tAction is null) return;
-			ChildObject.GetAllAction<T, IOdccObject>(GetAction, isBreak, condition);
-			void GetAction(T t)
-			{
-				AddInCallActionQueue(() => tAction.Invoke(t));
-			}
-		}
-		public void CallActionComponent<T>(Action<T> tAction, Func<T, bool> condition = null) where T : class, IOdccComponent
-		{
-			if(tAction is null) return;
-			ComponentList.GetAction<T, IOdccComponent>(GetAction, condition);
-			void GetAction(T t)
-			{
-				AddInCallActionQueue(() => tAction.Invoke(t));
-			}
-		}
-		public void CallActionAllComponent<T>(Action<T> tAction, Func<bool> isBreak = null, Func<T, bool> condition = null) where T : class, IOdccComponent
-		{
-			if(tAction is null) return;
-			ComponentList.GetAllAction<T, IOdccComponent>(GetAction, isBreak, condition);
-			void GetAction(T t)
-			{
-				AddInCallActionQueue(() => tAction.Invoke(t));
-			}
-		}
-		public void CallActionAllComponentInChildObject<T>(Action<T> tAction, Func<T, bool> condition = null) where T : class, IOdccComponent
-		{
-			if(tAction is not null && TryGetAllComponentInChild<T>(out List<T> tList, condition))
-			{
-				List<Action> actions = new List<Action>();
-				int Count = tList.Count;
-				for(int i = 0 ; i < Count ; i++)
-				{
-					if(tList[i] is not null)
-					{
-						int index = i;
-						actions.Add(() => {
-							tAction.Invoke(tList[index]);
-						});
-					}
-				}
-				CallInActionQueue(actions);
-			}
-		}
-
-		public void GetDataAction<T>(Action<T> tAction, Func<T, bool> condition = null) where T : class, IOdccData
-		{
-			DataList.GetDataAction<T, IOdccData>(tAction, condition);
-		}
-		public void GetAllDataAction<T>(Action<T> tAction, Func<bool> isBreak = null, Func<T, bool> condition = null) where T : class, IOdccData
-		{
-			DataList.GetAllDataAction<T, IOdccData>(tAction, isBreak, condition);
-		}
-
-		public T AddChildObject<T>(bool onActive, string name = "") where T : ObjectBehaviour
-		{
-			if(string.IsNullOrWhiteSpace(name))
-			{
-				name = $"new {typeof(T).Name}";
-			}
-
-			GameObject newObject = new GameObject(name);
-			newObject.SetActive(false);
-			newObject.transform.parent = ThisObject.ThisTransform;
-
-			T newTObject = newObject.AddComponent<T>();
-			if(onActive) newObject.SetActive(true);
-			else OdccManager.OdccAwake(newTObject);
-			return newTObject;
-		}
-		public T AddComponent<T>(GameObject obj = null) where T : ComponentBehaviour
-		{
-			return (obj ?? ThisObject.GameObject).AddComponent<T>();
-		}
-		public T AddComponent<T>(Action<T> beforeAwake, GameObject obj = null) where T : ComponentBehaviour
-		{
-			return (obj ?? ThisObject.GameObject).AddComponent<T>();
-		}
-		public T AddData<T>(T data = null) where T : DataObject, new()
-		{
-			if(data == null)
-				data = new T();
-
-			ContainerNode.AddItem(data);
-			return data;
-		}
-		public void AddDatas(params DataObject[] datas)
-		{
-			ContainerNode.AddItems(datas);
-		}
-		public void AddData(DataObject data = null)
-		{
-			if(data != null) ContainerNode.AddItem(data);
-		}
-		[Obsolete("되도록 Destroy 사용해 직접 삭제하는걸로...", true)]
-		public void RemoveChildObject<T>(T target = null) where T : ObjectBehaviour
-		{
-			if(target == null)
-				target = GetChildObject<T>();
-
-			if(target != null)
-				GameObject.Destroy(target);
-		}
-		public bool RemoveComponent<T>(T target = null) where T : ComponentBehaviour
-		{
-			if(target == null)
-				target = GetComponent<T>();
-
-			if(target != null)
-			{
-				GameObject.Destroy(target);
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
-		public bool RemoveData<T>(T target = null) where T : DataObject
-		{
-			if(target == null)
-				target = GetData<T>();
-
-			if(target != null)
-			{
-				ContainerNode.RemoveItem(target);
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
-
-
-		#region Using In Odcc Manager
+		#endregion
+		#region Get OdccItem In List
 		internal bool _TryGetComponent<T>(out T t, Func<T, bool> condition = null) where T : class, IOdccItem
 		{
 			t = _GetComponent<T>(condition);
@@ -896,15 +520,157 @@ namespace BC.ODCC
 			return DataList.GetAllData<T, IOdccItem>(condition);
 		}
 		#endregion
+
+		#region Add OdccItem
+		public T AddChildObject<T>(bool onActive, string name = "") where T : ObjectBehaviour
+		{
+			if(string.IsNullOrWhiteSpace(name))
+			{
+				name = $"new {typeof(T).Name}";
+			}
+
+			GameObject newObject = new GameObject(name);
+			newObject.SetActive(false);
+			newObject.transform.parent = ThisObject.ThisTransform;
+
+			T newTObject = newObject.AddComponent<T>();
+			if(onActive) newObject.SetActive(true);
+			else OdccManager.OdccAwake(newTObject);
+			return newTObject;
+		}
+		public T AddComponent<T>(GameObject obj = null) where T : ComponentBehaviour
+		{
+			return (obj ?? ThisObject.GameObject).AddComponent<T>();
+		}
+		public T AddData<T>(T data = null) where T : DataObject, new()
+		{
+			if(data == null)
+				data = new T();
+
+			ContainerNode.AddItem(data);
+			return data;
+		}
+		public void AddDatas(params DataObject[] datas)
+		{
+			ContainerNode.AddItems(datas);
+		}
+		public void AddData(DataObject data = null)
+		{
+			if(data != null) ContainerNode.AddItem(data);
+		}
+		#endregion
+		#region Remove OdccItem
+		[Obsolete("되도록, Object.Destroy 또는 DestroyThis 를 사용해 직접 삭제 할 것.", true)]
+		public void RemoveChildObject<T>(T target = null, bool removeThisGameObject = false) where T : ObjectBehaviour
+		{
+			if(target == null)
+				target = GetChildObject<T>();
+
+			if(target != null)
+				target.DestroyThis(removeThisGameObject);
+		}
+		public bool RemoveComponent<T>(T target = null) where T : ComponentBehaviour
+		{
+			if(target == null)
+				target = GetComponent<T>();
+
+			if(target != null)
+			{
+				GameObject.Destroy(target);
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		public bool RemoveData<T>(T target = null) where T : DataObject
+		{
+			if(target == null)
+				target = GetData<T>();
+
+			if(target != null)
+			{
+				ContainerNode.RemoveItem(target);
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		#endregion
+
+		#region CallAction OdccItem
+		public void CallActionObject<T>(Action<T> tAction, Func<T, bool> condition = null) where T : class, IOdccObject
+		{
+			if(tAction is null) return;
+			ChildObject.GetAction<T, IOdccObject>(GetAction, condition);
+			void GetAction(T t)
+			{
+				CallingActionQueue(() => tAction.Invoke(t));
+			}
+		}
+		public void CallActionAllObject<T>(Action<T> tAction, Func<bool> isBreak = null, Func<T, bool> condition = null) where T : class, IOdccObject
+		{
+			if(tAction is null) return;
+			ChildObject.GetAllAction<T, IOdccObject>(GetAction, isBreak, condition);
+			void GetAction(T t)
+			{
+				CallingActionQueue(() => tAction.Invoke(t));
+			}
+		}
+		public void CallActionComponent<T>(Action<T> tAction, Func<T, bool> condition = null) where T : class, IOdccComponent
+		{
+			if(tAction is null) return;
+			ComponentList.GetAction<T, IOdccComponent>(GetAction, condition);
+			void GetAction(T t)
+			{
+				CallingActionQueue(() => tAction.Invoke(t));
+			}
+		}
+		public void CallActionAllComponent<T>(Action<T> tAction, Func<bool> isBreak = null, Func<T, bool> condition = null) where T : class, IOdccComponent
+		{
+			if(tAction is null) return;
+			ComponentList.GetAllAction<T, IOdccComponent>(GetAction, isBreak, condition);
+			void GetAction(T t)
+			{
+				CallingActionQueue(() => tAction.Invoke(t));
+			}
+		}
+		public void CallActionAllComponentInChildObject<T>(Action<T> tAction, Func<T, bool> condition = null) where T : class, IOdccComponent
+		{
+			if(tAction is not null && TryGetAllComponentInChild<T>(out List<T> tList, condition))
+			{
+				List<Action> actions = new List<Action>();
+				int Count = tList.Count;
+				for(int i = 0 ; i < Count ; i++)
+				{
+					if(tList[i] is not null)
+					{
+						int index = i;
+						actions.Add(() => {
+							tAction.Invoke(tList[index]);
+						});
+					}
+				}
+				CallingActionQueue(actions);
+			}
+		}
+		public void CallActionData<T>(Action<T> tAction, Func<T, bool> condition = null) where T : class, IOdccData
+		{
+			DataList.GetDataAction<T, IOdccData>(tAction, condition);
+		}
+		public void CallActionAllData<T>(Action<T> tAction, Func<bool> isBreak = null, Func<T, bool> condition = null) where T : class, IOdccData
+		{
+			DataList.GetAllDataAction<T, IOdccData>(tAction, isBreak, condition);
+		}
+		#endregion
 	}
-	internal static class OdccItemList
+	internal static class WorkOdccItem
 	{
 		public static T Get<T, TT>(this TT[] thisList, Func<T, bool> condition = null) where T : class where TT : class, IOdccItem
 		{
-			//#if UNITY_EDITOR
-			//			if(typeof(T).IsSubclassOf(typeof(DataObject)))
-			//				throw new Exception($"ODCC.GetComponent 에서 {typeof(T)}에 대한 잘못된 ODCC 변환입니다.");
-			//#endif
 			int count = thisList.Length;
 			for(int i = 0 ; i < count ; i++)
 			{
@@ -918,10 +684,6 @@ namespace BC.ODCC
 		}
 		public static T[] GetAll<T, TT>(this TT[] thisList, Func<T, bool> condition = null) where T : class where TT : class, IOdccItem
 		{
-			//#if UNITY_EDITOR
-			//			if(typeof(T).IsSubclassOf(typeof(DataObject)))
-			//				throw new Exception($"ODCC.GetComponent 에서 {typeof(T)}에 대한 잘못된 ODCC 변환입니다.");
-			//#endif
 			List<T> list = new List<T>();
 			int count = thisList.Length;
 			for(int i = 0 ; i < count ; i++)
@@ -936,10 +698,6 @@ namespace BC.ODCC
 		}
 		public static T GetData<T, TT>(this TT[] thisList, Func<T, bool> condition = null) where T : class, IOdccItem
 		{
-			//#if UNITY_EDITOR
-			//			if(typeof(T).IsSubclassOf(typeof(ComponentBehaviour)))
-			//				throw new Exception($"ODCC.GetData 에서 {typeof(T)}에 대한 잘못된 ODCC 변환입니다.");
-			//#endif
 			int count = thisList.Length;
 			for(int i = 0 ; i < count ; i++)
 			{
@@ -953,10 +711,6 @@ namespace BC.ODCC
 		}
 		public static T[] GetAllData<T, TT>(this TT[] thisList, Func<T, bool> condition = null) where T : class, IOdccItem
 		{
-			//#if UNITY_EDITOR
-			//			if(typeof(T).IsSubclassOf(typeof(ComponentBehaviour)))
-			//				throw new Exception($"ODCC.GetData 에서 {typeof(T)}에 대한 잘못된 ODCC 변환입니다.");
-			//#endif
 			List<T> list = new List<T>();
 			int count = thisList.Length;
 			for(int i = 0 ; i < count ; i++)
@@ -973,10 +727,6 @@ namespace BC.ODCC
 
 		public static void GetAction<T, TT>(this TT[] thisList, Action<T> action, Func<T, bool> condition = null) where T : class where TT : class, IOdccItem
 		{
-			//#if UNITY_EDITOR
-			//			if(typeof(T).IsSubclassOf(typeof(DataObject)))
-			//				throw new Exception($"ODCC.GetComponent 에서 {typeof(T)}에 대한 잘못된 ODCC 변환입니다.");
-			//#endif
 			int count = thisList.Length;
 			for(int i = 0 ; i < count ; i++)
 			{
@@ -990,11 +740,6 @@ namespace BC.ODCC
 		}
 		public static void GetAllAction<T, TT>(this TT[] thisList, Action<T> action, Func<bool> isBreak = null, Func<T, bool> condition = null) where T : class where TT : class, IOdccItem
 		{
-			//#if UNITY_EDITOR
-			//			if(typeof(T).IsSubclassOf(typeof(DataObject)))
-			//				throw new Exception($"ODCC.GetComponent 에서 {typeof(T)}에 대한 잘못된 ODCC 변환입니다.");
-			//#endif
-			//List<T> list = new List<T>();
 			int count = thisList.Length;
 			for(int i = 0 ; i < count ; i++)
 			{
@@ -1013,10 +758,6 @@ namespace BC.ODCC
 
 		public static void GetDataAction<T, TT>(this TT[] thisList, Action<T> action, Func<T, bool> condition = null) where T : class, IOdccItem
 		{
-			//#if UNITY_EDITOR
-			//			if(!OdccManager.isProfilerEnabled && typeof(T).IsSubclassOf(typeof(ComponentBehaviour)))
-			//				throw new Exception($"ODCC.GetData 에서 {typeof(T)}에 대한 잘못된 ODCC 변환입니다.");
-			//#endif
 			int count = thisList.Length;
 			for(int i = 0 ; i < count ; i++)
 			{
@@ -1030,10 +771,6 @@ namespace BC.ODCC
 		}
 		public static void GetAllDataAction<T, TT>(this TT[] thisList, Action<T> action, Func<bool> isBreak = null, Func<T, bool> condition = null) where T : class, IOdccItem
 		{
-			//#if UNITY_EDITOR
-			//			if(!OdccManager.isProfilerEnabled && typeof(T).IsSubclassOf(typeof(ComponentBehaviour)))
-			//				throw new Exception($"ODCC.GetData 에서 {typeof(T)}에 대한 잘못된 ODCC 변환입니다.");
-			//#endif
 			int count = thisList.Length;
 			for(int i = 0 ; i < count ; i++)
 			{

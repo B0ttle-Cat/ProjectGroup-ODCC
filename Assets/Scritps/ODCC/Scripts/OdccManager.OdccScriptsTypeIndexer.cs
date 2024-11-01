@@ -118,14 +118,6 @@ namespace BC.ODCC
 		}
 		public static int[] GetTypeToIndex(params Type[] types)
 		{
-			return GetTypeToIndex((IEnumerable<Type>)types);
-		}
-		public static Type[] GetIndexToType(params int[] types)
-		{
-			return GetIndexToType((IEnumerable<int>)types);
-		}
-		public static int[] GetTypeToIndex(IEnumerable<Type> types)
-		{
 			int count1 = types.Count();
 			int[] result = new int[count1];
 
@@ -136,7 +128,7 @@ namespace BC.ODCC
 			}
 			return result;
 		}
-		public static Type[] GetIndexToType(IEnumerable<int> types)
+		public static Type[] GetIndexToType(params int[] types)
 		{
 			int count1 = types.Count();
 			Type[] result = new Type[count1];
@@ -148,14 +140,8 @@ namespace BC.ODCC
 			}
 			return result;
 		}
-		public static int[] GetObjectUsingTypeArray(ObjectBehaviour item)
-		{
-			return (item is null || item.ThisContainer is null) ? new int[0] : item.ThisContainer.TypeIndex;
-		}
-		public static int[] GetTypeInheritanceTable(Type type)
-		{
-			return GetTypeInheritanceTable(GetTypeToIndex(type));
-		}
+
+		public static int[] GetTypeInheritanceTable(Type type) => GetTypeInheritanceTable(GetTypeToIndex(type));
 		public static int[] GetTypeInheritanceTable(int type)
 		{
 			if(InheritanceTable.TryGetValue(type, out int[] inheritanceArray))
@@ -167,18 +153,10 @@ namespace BC.ODCC
 				return new int[0];
 			}
 		}
-		public static bool CheckIsInheritanceType(Type type, Type check)
-		{
-			return CheckIsInheritanceIndex(GetTypeToIndex(type), GetTypeToIndex(check));
-		}
-		public static bool CheckIsInheritanceType(Type type, int check)
-		{
-			return CheckIsInheritanceIndex(GetTypeToIndex(type), check);
-		}
-		public static bool CheckIsInheritanceType(int type, Type check)
-		{
-			return CheckIsInheritanceIndex(type, GetTypeToIndex(check));
-		}
+
+		public static bool CheckIsInheritanceType(Type type, Type check) => CheckIsInheritanceIndex(GetTypeToIndex(type), GetTypeToIndex(check));
+		public static bool CheckIsInheritanceType(Type type, int check) => CheckIsInheritanceIndex(GetTypeToIndex(type), check);
+		public static bool CheckIsInheritanceType(int type, Type check) => CheckIsInheritanceIndex(type, GetTypeToIndex(check));
 		public static bool CheckIsInheritanceIndex(int type, int check)
 		{
 			if(type >= 0 && check >= 0 && InheritanceTable.TryGetValue(type, out int[] inheritanceArray))
@@ -195,19 +173,9 @@ namespace BC.ODCC
 			}
 			return false;
 		}
-		public static bool CheckIsInheritanceType(Type type, params Type[] checkList)
-		{
-			return CheckIsInheritanceType(type, checkList);
-		}
+
+		public static bool CheckIsInheritanceType(Type type, params Type[] checkList) => CheckIsInheritanceIndex(GetTypeToIndex(type), GetTypeToIndex(checkList));
 		public static bool CheckIsInheritanceIndex(int type, params int[] checkList)
-		{
-			return CheckIsInheritanceIndex(type, checkList);
-		}
-		public static bool CheckIsInheritanceType(Type type, IEnumerable<Type> checkList)
-		{
-			return CheckIsInheritanceIndex(GetTypeToIndex(type), checkList.Select(t => GetTypeToIndex(t)));
-		}
-		public static bool CheckIsInheritanceIndex(int type, IEnumerable<int> checkList)
 		{
 			if(type < 0) return false;
 			if(checkList.Contains(type))
@@ -234,6 +202,11 @@ namespace BC.ODCC
 		public static bool CheckIsInterface(int type)
 		{
 			return interfaceList.Contains(type);
+		}
+
+		public static int[] GetObjectBehaviourUsingTypeArray(ObjectBehaviour item)
+		{
+			return (item is null || item.ThisContainer is null) ? new int[0] : item.ThisContainer.TypeIndex;
 		}
 	}
 }

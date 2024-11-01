@@ -369,7 +369,7 @@ namespace BC.ODCC
 			HashSet<int> indexs = new HashSet<int>();
 			try
 			{
-				indexs.AddRange(OdccManager.GetObjectUsingTypeArray(item));
+				indexs.AddRange(OdccManager.GetObjectBehaviourUsingTypeArray(item));
 			}
 			catch(Exception ex)
 			{
