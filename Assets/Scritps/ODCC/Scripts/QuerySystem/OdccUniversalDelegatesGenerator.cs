@@ -261,7 +261,7 @@ namespace BC.ODCC
 					+ $"\n			this.key = key;"
 					+ $"\n			this.delegateA=delegateA; {setValue};"
 					+ $"\n		}}"
-					+ $"\n		internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, {getValue});"
+					+ $"\n		internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, {getValue});"
 					+ $"\n	}}"
 					+ $"\n	public OdccQueryLooper CallForeach<{T}>({D}<{T}> t = null) {Where}"
 					+ $"\n	{{"

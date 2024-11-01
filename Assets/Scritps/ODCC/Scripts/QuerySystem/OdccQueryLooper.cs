@@ -94,7 +94,7 @@ namespace BC.ODCC
 			internal ObjectBehaviour key;
 			internal bool callFirstOnly = false;
 			internal bool isCallFirst = false;
-			internal abstract UnityEngine.Awaitable ARun(LoopInfo loopingInfo);
+			internal abstract UnityEngine.Awaitable Run(LoopInfo loopingInfo);
 		}
 
 		/// <summary>
@@ -103,12 +103,12 @@ namespace BC.ODCC
 		public class AddedForeachAction : RunForeachAction
 		{
 			internal Func<UnityEngine.Awaitable> aAction;
-			internal override UnityEngine.Awaitable ARun(LoopInfo loopingInfo) => aAction();
+			internal override UnityEngine.Awaitable Run(LoopInfo loopingInfo) => aAction();
 		}
 		public class JoinForeachAction : RunForeachAction
 		{
 			internal Func<UnityEngine.Awaitable> aAction;
-			internal override UnityEngine.Awaitable ARun(LoopInfo loopingInfo) => aAction();
+			internal override UnityEngine.Awaitable Run(LoopInfo loopingInfo) => aAction();
 		}
 
 		// 루퍼 중단 함수입니다.
@@ -278,7 +278,7 @@ namespace BC.ODCC
 					// 각 액션을 비동기적으로 실행합니다.
 					try
 					{
-						await item.ARun(loopingInfo);
+						await item.Run(loopingInfo);
 					}
 					catch(Exception ex)
 					{

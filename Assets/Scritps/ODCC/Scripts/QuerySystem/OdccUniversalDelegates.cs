@@ -385,7 +385,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0);
 		}
 		public OdccQueryLooper CallForeach<T0>(D00I00<T0> t = null) where T0 : class, IOdccItem
 		{
@@ -421,7 +421,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0);
 		}
 		public OdccQueryLooper CallForeach<T0>(D00I01<T0> t = null) where T0 : class, ICollection<IOdccAttach>, new()
 		{
@@ -457,7 +457,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1);
 		}
 		public OdccQueryLooper CallForeach<T0, T1>(D01I00<T0, T1> t = null) where T0 : class, IOdccItem where T1 : class, IOdccItem
 		{
@@ -493,7 +493,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1);
 		}
 		public OdccQueryLooper CallForeach<T0, T1>(D01I01<T0, T1> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, IOdccItem
 		{
@@ -529,7 +529,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1);
 		}
 		public OdccQueryLooper CallForeach<T0, T1>(D01I02<T0, T1> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new()
 		{
@@ -565,7 +565,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2>(D02I00<T0, T1, T2> t = null) where T0 : class, IOdccItem where T1 : class, IOdccItem where T2 : class, IOdccItem
 		{
@@ -601,7 +601,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2>(D02I01<T0, T1, T2> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, IOdccItem where T2 : class, IOdccItem
 		{
@@ -637,7 +637,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2>(D02I02<T0, T1, T2> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, IOdccItem
 		{
@@ -673,7 +673,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2>(D02I03<T0, T1, T2> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new()
 		{
@@ -709,7 +709,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3>(D03I00<T0, T1, T2, T3> t = null) where T0 : class, IOdccItem where T1 : class, IOdccItem where T2 : class, IOdccItem where T3 : class, IOdccItem
 		{
@@ -745,7 +745,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3>(D03I01<T0, T1, T2, T3> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, IOdccItem where T2 : class, IOdccItem where T3 : class, IOdccItem
 		{
@@ -781,7 +781,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3>(D03I02<T0, T1, T2, T3> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, IOdccItem where T3 : class, IOdccItem
 		{
@@ -817,7 +817,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3>(D03I03<T0, T1, T2, T3> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, IOdccItem
 		{
@@ -853,7 +853,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3>(D03I04<T0, T1, T2, T3> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new()
 		{
@@ -889,7 +889,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4>(D04I00<T0, T1, T2, T3, T4> t = null) where T0 : class, IOdccItem where T1 : class, IOdccItem where T2 : class, IOdccItem where T3 : class, IOdccItem where T4 : class, IOdccItem
 		{
@@ -925,7 +925,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4>(D04I01<T0, T1, T2, T3, T4> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, IOdccItem where T2 : class, IOdccItem where T3 : class, IOdccItem where T4 : class, IOdccItem
 		{
@@ -961,7 +961,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4>(D04I02<T0, T1, T2, T3, T4> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, IOdccItem where T3 : class, IOdccItem where T4 : class, IOdccItem
 		{
@@ -997,7 +997,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4>(D04I03<T0, T1, T2, T3, T4> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, IOdccItem where T4 : class, IOdccItem
 		{
@@ -1033,7 +1033,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4>(D04I04<T0, T1, T2, T3, T4> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, IOdccItem
 		{
@@ -1069,7 +1069,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4>(D04I05<T0, T1, T2, T3, T4> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new()
 		{
@@ -1105,7 +1105,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5>(D05I00<T0, T1, T2, T3, T4, T5> t = null) where T0 : class, IOdccItem where T1 : class, IOdccItem where T2 : class, IOdccItem where T3 : class, IOdccItem where T4 : class, IOdccItem where T5 : class, IOdccItem
 		{
@@ -1141,7 +1141,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5>(D05I01<T0, T1, T2, T3, T4, T5> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, IOdccItem where T2 : class, IOdccItem where T3 : class, IOdccItem where T4 : class, IOdccItem where T5 : class, IOdccItem
 		{
@@ -1177,7 +1177,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5>(D05I02<T0, T1, T2, T3, T4, T5> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, IOdccItem where T3 : class, IOdccItem where T4 : class, IOdccItem where T5 : class, IOdccItem
 		{
@@ -1213,7 +1213,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5>(D05I03<T0, T1, T2, T3, T4, T5> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, IOdccItem where T4 : class, IOdccItem where T5 : class, IOdccItem
 		{
@@ -1249,7 +1249,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5>(D05I04<T0, T1, T2, T3, T4, T5> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, IOdccItem where T5 : class, IOdccItem
 		{
@@ -1285,7 +1285,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5>(D05I05<T0, T1, T2, T3, T4, T5> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, IOdccItem
 		{
@@ -1321,7 +1321,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5>(D05I06<T0, T1, T2, T3, T4, T5> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, ICollection<IOdccAttach>, new()
 		{
@@ -1357,7 +1357,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6>(D06I00<T0, T1, T2, T3, T4, T5, T6> t = null) where T0 : class, IOdccItem where T1 : class, IOdccItem where T2 : class, IOdccItem where T3 : class, IOdccItem where T4 : class, IOdccItem where T5 : class, IOdccItem where T6 : class, IOdccItem
 		{
@@ -1393,7 +1393,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6>(D06I01<T0, T1, T2, T3, T4, T5, T6> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, IOdccItem where T2 : class, IOdccItem where T3 : class, IOdccItem where T4 : class, IOdccItem where T5 : class, IOdccItem where T6 : class, IOdccItem
 		{
@@ -1429,7 +1429,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6>(D06I02<T0, T1, T2, T3, T4, T5, T6> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, IOdccItem where T3 : class, IOdccItem where T4 : class, IOdccItem where T5 : class, IOdccItem where T6 : class, IOdccItem
 		{
@@ -1465,7 +1465,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6>(D06I03<T0, T1, T2, T3, T4, T5, T6> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, IOdccItem where T4 : class, IOdccItem where T5 : class, IOdccItem where T6 : class, IOdccItem
 		{
@@ -1501,7 +1501,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6>(D06I04<T0, T1, T2, T3, T4, T5, T6> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, IOdccItem where T5 : class, IOdccItem where T6 : class, IOdccItem
 		{
@@ -1537,7 +1537,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6>(D06I05<T0, T1, T2, T3, T4, T5, T6> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, IOdccItem where T6 : class, IOdccItem
 		{
@@ -1573,7 +1573,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6>(D06I06<T0, T1, T2, T3, T4, T5, T6> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, ICollection<IOdccAttach>, new() where T6 : class, IOdccItem
 		{
@@ -1609,7 +1609,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6>(D06I07<T0, T1, T2, T3, T4, T5, T6> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, ICollection<IOdccAttach>, new() where T6 : class, ICollection<IOdccAttach>, new()
 		{
@@ -1645,7 +1645,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7>(D07I00<T0, T1, T2, T3, T4, T5, T6, T7> t = null) where T0 : class, IOdccItem where T1 : class, IOdccItem where T2 : class, IOdccItem where T3 : class, IOdccItem where T4 : class, IOdccItem where T5 : class, IOdccItem where T6 : class, IOdccItem where T7 : class, IOdccItem
 		{
@@ -1681,7 +1681,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7>(D07I01<T0, T1, T2, T3, T4, T5, T6, T7> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, IOdccItem where T2 : class, IOdccItem where T3 : class, IOdccItem where T4 : class, IOdccItem where T5 : class, IOdccItem where T6 : class, IOdccItem where T7 : class, IOdccItem
 		{
@@ -1717,7 +1717,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7>(D07I02<T0, T1, T2, T3, T4, T5, T6, T7> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, IOdccItem where T3 : class, IOdccItem where T4 : class, IOdccItem where T5 : class, IOdccItem where T6 : class, IOdccItem where T7 : class, IOdccItem
 		{
@@ -1753,7 +1753,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7>(D07I03<T0, T1, T2, T3, T4, T5, T6, T7> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, IOdccItem where T4 : class, IOdccItem where T5 : class, IOdccItem where T6 : class, IOdccItem where T7 : class, IOdccItem
 		{
@@ -1789,7 +1789,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7>(D07I04<T0, T1, T2, T3, T4, T5, T6, T7> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, IOdccItem where T5 : class, IOdccItem where T6 : class, IOdccItem where T7 : class, IOdccItem
 		{
@@ -1825,7 +1825,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7>(D07I05<T0, T1, T2, T3, T4, T5, T6, T7> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, IOdccItem where T6 : class, IOdccItem where T7 : class, IOdccItem
 		{
@@ -1861,7 +1861,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7>(D07I06<T0, T1, T2, T3, T4, T5, T6, T7> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, ICollection<IOdccAttach>, new() where T6 : class, IOdccItem where T7 : class, IOdccItem
 		{
@@ -1897,7 +1897,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7>(D07I07<T0, T1, T2, T3, T4, T5, T6, T7> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, ICollection<IOdccAttach>, new() where T6 : class, ICollection<IOdccAttach>, new() where T7 : class, IOdccItem
 		{
@@ -1933,7 +1933,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7>(D07I08<T0, T1, T2, T3, T4, T5, T6, T7> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, ICollection<IOdccAttach>, new() where T6 : class, ICollection<IOdccAttach>, new() where T7 : class, ICollection<IOdccAttach>, new()
 		{
@@ -1969,7 +1969,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8>(D08I00<T0, T1, T2, T3, T4, T5, T6, T7, T8> t = null) where T0 : class, IOdccItem where T1 : class, IOdccItem where T2 : class, IOdccItem where T3 : class, IOdccItem where T4 : class, IOdccItem where T5 : class, IOdccItem where T6 : class, IOdccItem where T7 : class, IOdccItem where T8 : class, IOdccItem
 		{
@@ -2005,7 +2005,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8>(D08I01<T0, T1, T2, T3, T4, T5, T6, T7, T8> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, IOdccItem where T2 : class, IOdccItem where T3 : class, IOdccItem where T4 : class, IOdccItem where T5 : class, IOdccItem where T6 : class, IOdccItem where T7 : class, IOdccItem where T8 : class, IOdccItem
 		{
@@ -2041,7 +2041,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8>(D08I02<T0, T1, T2, T3, T4, T5, T6, T7, T8> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, IOdccItem where T3 : class, IOdccItem where T4 : class, IOdccItem where T5 : class, IOdccItem where T6 : class, IOdccItem where T7 : class, IOdccItem where T8 : class, IOdccItem
 		{
@@ -2077,7 +2077,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8>(D08I03<T0, T1, T2, T3, T4, T5, T6, T7, T8> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, IOdccItem where T4 : class, IOdccItem where T5 : class, IOdccItem where T6 : class, IOdccItem where T7 : class, IOdccItem where T8 : class, IOdccItem
 		{
@@ -2113,7 +2113,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8>(D08I04<T0, T1, T2, T3, T4, T5, T6, T7, T8> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, IOdccItem where T5 : class, IOdccItem where T6 : class, IOdccItem where T7 : class, IOdccItem where T8 : class, IOdccItem
 		{
@@ -2149,7 +2149,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8>(D08I05<T0, T1, T2, T3, T4, T5, T6, T7, T8> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, IOdccItem where T6 : class, IOdccItem where T7 : class, IOdccItem where T8 : class, IOdccItem
 		{
@@ -2185,7 +2185,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8>(D08I06<T0, T1, T2, T3, T4, T5, T6, T7, T8> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, ICollection<IOdccAttach>, new() where T6 : class, IOdccItem where T7 : class, IOdccItem where T8 : class, IOdccItem
 		{
@@ -2221,7 +2221,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8>(D08I07<T0, T1, T2, T3, T4, T5, T6, T7, T8> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, ICollection<IOdccAttach>, new() where T6 : class, ICollection<IOdccAttach>, new() where T7 : class, IOdccItem where T8 : class, IOdccItem
 		{
@@ -2257,7 +2257,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8>(D08I08<T0, T1, T2, T3, T4, T5, T6, T7, T8> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, ICollection<IOdccAttach>, new() where T6 : class, ICollection<IOdccAttach>, new() where T7 : class, ICollection<IOdccAttach>, new() where T8 : class, IOdccItem
 		{
@@ -2293,7 +2293,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8>(D08I09<T0, T1, T2, T3, T4, T5, T6, T7, T8> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, ICollection<IOdccAttach>, new() where T6 : class, ICollection<IOdccAttach>, new() where T7 : class, ICollection<IOdccAttach>, new() where T8 : class, ICollection<IOdccAttach>, new()
 		{
@@ -2329,7 +2329,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9>(D09I00<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9> t = null) where T0 : class, IOdccItem where T1 : class, IOdccItem where T2 : class, IOdccItem where T3 : class, IOdccItem where T4 : class, IOdccItem where T5 : class, IOdccItem where T6 : class, IOdccItem where T7 : class, IOdccItem where T8 : class, IOdccItem where T9 : class, IOdccItem
 		{
@@ -2365,7 +2365,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9>(D09I01<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, IOdccItem where T2 : class, IOdccItem where T3 : class, IOdccItem where T4 : class, IOdccItem where T5 : class, IOdccItem where T6 : class, IOdccItem where T7 : class, IOdccItem where T8 : class, IOdccItem where T9 : class, IOdccItem
 		{
@@ -2401,7 +2401,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9>(D09I02<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, IOdccItem where T3 : class, IOdccItem where T4 : class, IOdccItem where T5 : class, IOdccItem where T6 : class, IOdccItem where T7 : class, IOdccItem where T8 : class, IOdccItem where T9 : class, IOdccItem
 		{
@@ -2437,7 +2437,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9>(D09I03<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, IOdccItem where T4 : class, IOdccItem where T5 : class, IOdccItem where T6 : class, IOdccItem where T7 : class, IOdccItem where T8 : class, IOdccItem where T9 : class, IOdccItem
 		{
@@ -2473,7 +2473,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9>(D09I04<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, IOdccItem where T5 : class, IOdccItem where T6 : class, IOdccItem where T7 : class, IOdccItem where T8 : class, IOdccItem where T9 : class, IOdccItem
 		{
@@ -2509,7 +2509,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9>(D09I05<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, IOdccItem where T6 : class, IOdccItem where T7 : class, IOdccItem where T8 : class, IOdccItem where T9 : class, IOdccItem
 		{
@@ -2545,7 +2545,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9>(D09I06<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, ICollection<IOdccAttach>, new() where T6 : class, IOdccItem where T7 : class, IOdccItem where T8 : class, IOdccItem where T9 : class, IOdccItem
 		{
@@ -2581,7 +2581,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9>(D09I07<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, ICollection<IOdccAttach>, new() where T6 : class, ICollection<IOdccAttach>, new() where T7 : class, IOdccItem where T8 : class, IOdccItem where T9 : class, IOdccItem
 		{
@@ -2617,7 +2617,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9>(D09I08<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, ICollection<IOdccAttach>, new() where T6 : class, ICollection<IOdccAttach>, new() where T7 : class, ICollection<IOdccAttach>, new() where T8 : class, IOdccItem where T9 : class, IOdccItem
 		{
@@ -2653,7 +2653,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9>(D09I09<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, ICollection<IOdccAttach>, new() where T6 : class, ICollection<IOdccAttach>, new() where T7 : class, ICollection<IOdccAttach>, new() where T8 : class, ICollection<IOdccAttach>, new() where T9 : class, IOdccItem
 		{
@@ -2689,7 +2689,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9>(D09I10<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, ICollection<IOdccAttach>, new() where T6 : class, ICollection<IOdccAttach>, new() where T7 : class, ICollection<IOdccAttach>, new() where T8 : class, ICollection<IOdccAttach>, new() where T9 : class, ICollection<IOdccAttach>, new()
 		{
@@ -2725,7 +2725,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(D10I00<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> t = null) where T0 : class, IOdccItem where T1 : class, IOdccItem where T2 : class, IOdccItem where T3 : class, IOdccItem where T4 : class, IOdccItem where T5 : class, IOdccItem where T6 : class, IOdccItem where T7 : class, IOdccItem where T8 : class, IOdccItem where T9 : class, IOdccItem where T10 : class, IOdccItem
 		{
@@ -2761,7 +2761,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(D10I01<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, IOdccItem where T2 : class, IOdccItem where T3 : class, IOdccItem where T4 : class, IOdccItem where T5 : class, IOdccItem where T6 : class, IOdccItem where T7 : class, IOdccItem where T8 : class, IOdccItem where T9 : class, IOdccItem where T10 : class, IOdccItem
 		{
@@ -2797,7 +2797,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(D10I02<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, IOdccItem where T3 : class, IOdccItem where T4 : class, IOdccItem where T5 : class, IOdccItem where T6 : class, IOdccItem where T7 : class, IOdccItem where T8 : class, IOdccItem where T9 : class, IOdccItem where T10 : class, IOdccItem
 		{
@@ -2833,7 +2833,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(D10I03<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, IOdccItem where T4 : class, IOdccItem where T5 : class, IOdccItem where T6 : class, IOdccItem where T7 : class, IOdccItem where T8 : class, IOdccItem where T9 : class, IOdccItem where T10 : class, IOdccItem
 		{
@@ -2869,7 +2869,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(D10I04<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, IOdccItem where T5 : class, IOdccItem where T6 : class, IOdccItem where T7 : class, IOdccItem where T8 : class, IOdccItem where T9 : class, IOdccItem where T10 : class, IOdccItem
 		{
@@ -2905,7 +2905,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(D10I05<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, IOdccItem where T6 : class, IOdccItem where T7 : class, IOdccItem where T8 : class, IOdccItem where T9 : class, IOdccItem where T10 : class, IOdccItem
 		{
@@ -2941,7 +2941,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(D10I06<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, ICollection<IOdccAttach>, new() where T6 : class, IOdccItem where T7 : class, IOdccItem where T8 : class, IOdccItem where T9 : class, IOdccItem where T10 : class, IOdccItem
 		{
@@ -2977,7 +2977,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(D10I07<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, ICollection<IOdccAttach>, new() where T6 : class, ICollection<IOdccAttach>, new() where T7 : class, IOdccItem where T8 : class, IOdccItem where T9 : class, IOdccItem where T10 : class, IOdccItem
 		{
@@ -3013,7 +3013,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(D10I08<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, ICollection<IOdccAttach>, new() where T6 : class, ICollection<IOdccAttach>, new() where T7 : class, ICollection<IOdccAttach>, new() where T8 : class, IOdccItem where T9 : class, IOdccItem where T10 : class, IOdccItem
 		{
@@ -3049,7 +3049,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(D10I09<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, ICollection<IOdccAttach>, new() where T6 : class, ICollection<IOdccAttach>, new() where T7 : class, ICollection<IOdccAttach>, new() where T8 : class, ICollection<IOdccAttach>, new() where T9 : class, IOdccItem where T10 : class, IOdccItem
 		{
@@ -3085,7 +3085,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(D10I10<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, ICollection<IOdccAttach>, new() where T6 : class, ICollection<IOdccAttach>, new() where T7 : class, ICollection<IOdccAttach>, new() where T8 : class, ICollection<IOdccAttach>, new() where T9 : class, ICollection<IOdccAttach>, new() where T10 : class, IOdccItem
 		{
@@ -3121,7 +3121,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>(D10I11<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, ICollection<IOdccAttach>, new() where T6 : class, ICollection<IOdccAttach>, new() where T7 : class, ICollection<IOdccAttach>, new() where T8 : class, ICollection<IOdccAttach>, new() where T9 : class, ICollection<IOdccAttach>, new() where T10 : class, ICollection<IOdccAttach>, new()
 		{
@@ -3157,7 +3157,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>(D11I00<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11> t = null) where T0 : class, IOdccItem where T1 : class, IOdccItem where T2 : class, IOdccItem where T3 : class, IOdccItem where T4 : class, IOdccItem where T5 : class, IOdccItem where T6 : class, IOdccItem where T7 : class, IOdccItem where T8 : class, IOdccItem where T9 : class, IOdccItem where T10 : class, IOdccItem where T11 : class, IOdccItem
 		{
@@ -3193,7 +3193,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>(D11I01<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, IOdccItem where T2 : class, IOdccItem where T3 : class, IOdccItem where T4 : class, IOdccItem where T5 : class, IOdccItem where T6 : class, IOdccItem where T7 : class, IOdccItem where T8 : class, IOdccItem where T9 : class, IOdccItem where T10 : class, IOdccItem where T11 : class, IOdccItem
 		{
@@ -3229,7 +3229,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>(D11I02<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, IOdccItem where T3 : class, IOdccItem where T4 : class, IOdccItem where T5 : class, IOdccItem where T6 : class, IOdccItem where T7 : class, IOdccItem where T8 : class, IOdccItem where T9 : class, IOdccItem where T10 : class, IOdccItem where T11 : class, IOdccItem
 		{
@@ -3265,7 +3265,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>(D11I03<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, IOdccItem where T4 : class, IOdccItem where T5 : class, IOdccItem where T6 : class, IOdccItem where T7 : class, IOdccItem where T8 : class, IOdccItem where T9 : class, IOdccItem where T10 : class, IOdccItem where T11 : class, IOdccItem
 		{
@@ -3301,7 +3301,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>(D11I04<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, IOdccItem where T5 : class, IOdccItem where T6 : class, IOdccItem where T7 : class, IOdccItem where T8 : class, IOdccItem where T9 : class, IOdccItem where T10 : class, IOdccItem where T11 : class, IOdccItem
 		{
@@ -3337,7 +3337,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>(D11I05<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, IOdccItem where T6 : class, IOdccItem where T7 : class, IOdccItem where T8 : class, IOdccItem where T9 : class, IOdccItem where T10 : class, IOdccItem where T11 : class, IOdccItem
 		{
@@ -3373,7 +3373,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>(D11I06<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, ICollection<IOdccAttach>, new() where T6 : class, IOdccItem where T7 : class, IOdccItem where T8 : class, IOdccItem where T9 : class, IOdccItem where T10 : class, IOdccItem where T11 : class, IOdccItem
 		{
@@ -3409,7 +3409,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>(D11I07<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, ICollection<IOdccAttach>, new() where T6 : class, ICollection<IOdccAttach>, new() where T7 : class, IOdccItem where T8 : class, IOdccItem where T9 : class, IOdccItem where T10 : class, IOdccItem where T11 : class, IOdccItem
 		{
@@ -3445,7 +3445,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>(D11I08<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, ICollection<IOdccAttach>, new() where T6 : class, ICollection<IOdccAttach>, new() where T7 : class, ICollection<IOdccAttach>, new() where T8 : class, IOdccItem where T9 : class, IOdccItem where T10 : class, IOdccItem where T11 : class, IOdccItem
 		{
@@ -3481,7 +3481,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>(D11I09<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, ICollection<IOdccAttach>, new() where T6 : class, ICollection<IOdccAttach>, new() where T7 : class, ICollection<IOdccAttach>, new() where T8 : class, ICollection<IOdccAttach>, new() where T9 : class, IOdccItem where T10 : class, IOdccItem where T11 : class, IOdccItem
 		{
@@ -3517,7 +3517,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>(D11I10<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, ICollection<IOdccAttach>, new() where T6 : class, ICollection<IOdccAttach>, new() where T7 : class, ICollection<IOdccAttach>, new() where T8 : class, ICollection<IOdccAttach>, new() where T9 : class, ICollection<IOdccAttach>, new() where T10 : class, IOdccItem where T11 : class, IOdccItem
 		{
@@ -3553,7 +3553,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>(D11I11<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, ICollection<IOdccAttach>, new() where T6 : class, ICollection<IOdccAttach>, new() where T7 : class, ICollection<IOdccAttach>, new() where T8 : class, ICollection<IOdccAttach>, new() where T9 : class, ICollection<IOdccAttach>, new() where T10 : class, ICollection<IOdccAttach>, new() where T11 : class, IOdccItem
 		{
@@ -3589,7 +3589,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>(D11I12<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, ICollection<IOdccAttach>, new() where T6 : class, ICollection<IOdccAttach>, new() where T7 : class, ICollection<IOdccAttach>, new() where T8 : class, ICollection<IOdccAttach>, new() where T9 : class, ICollection<IOdccAttach>, new() where T10 : class, ICollection<IOdccAttach>, new() where T11 : class, ICollection<IOdccAttach>, new()
 		{
@@ -3625,7 +3625,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11; this.t12 = t12;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>(D12I00<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12> t = null) where T0 : class, IOdccItem where T1 : class, IOdccItem where T2 : class, IOdccItem where T3 : class, IOdccItem where T4 : class, IOdccItem where T5 : class, IOdccItem where T6 : class, IOdccItem where T7 : class, IOdccItem where T8 : class, IOdccItem where T9 : class, IOdccItem where T10 : class, IOdccItem where T11 : class, IOdccItem where T12 : class, IOdccItem
 		{
@@ -3661,7 +3661,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11; this.t12 = t12;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>(D12I01<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, IOdccItem where T2 : class, IOdccItem where T3 : class, IOdccItem where T4 : class, IOdccItem where T5 : class, IOdccItem where T6 : class, IOdccItem where T7 : class, IOdccItem where T8 : class, IOdccItem where T9 : class, IOdccItem where T10 : class, IOdccItem where T11 : class, IOdccItem where T12 : class, IOdccItem
 		{
@@ -3697,7 +3697,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11; this.t12 = t12;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>(D12I02<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, IOdccItem where T3 : class, IOdccItem where T4 : class, IOdccItem where T5 : class, IOdccItem where T6 : class, IOdccItem where T7 : class, IOdccItem where T8 : class, IOdccItem where T9 : class, IOdccItem where T10 : class, IOdccItem where T11 : class, IOdccItem where T12 : class, IOdccItem
 		{
@@ -3733,7 +3733,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11; this.t12 = t12;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>(D12I03<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, IOdccItem where T4 : class, IOdccItem where T5 : class, IOdccItem where T6 : class, IOdccItem where T7 : class, IOdccItem where T8 : class, IOdccItem where T9 : class, IOdccItem where T10 : class, IOdccItem where T11 : class, IOdccItem where T12 : class, IOdccItem
 		{
@@ -3769,7 +3769,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11; this.t12 = t12;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>(D12I04<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, IOdccItem where T5 : class, IOdccItem where T6 : class, IOdccItem where T7 : class, IOdccItem where T8 : class, IOdccItem where T9 : class, IOdccItem where T10 : class, IOdccItem where T11 : class, IOdccItem where T12 : class, IOdccItem
 		{
@@ -3805,7 +3805,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11; this.t12 = t12;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>(D12I05<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, IOdccItem where T6 : class, IOdccItem where T7 : class, IOdccItem where T8 : class, IOdccItem where T9 : class, IOdccItem where T10 : class, IOdccItem where T11 : class, IOdccItem where T12 : class, IOdccItem
 		{
@@ -3841,7 +3841,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11; this.t12 = t12;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>(D12I06<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, ICollection<IOdccAttach>, new() where T6 : class, IOdccItem where T7 : class, IOdccItem where T8 : class, IOdccItem where T9 : class, IOdccItem where T10 : class, IOdccItem where T11 : class, IOdccItem where T12 : class, IOdccItem
 		{
@@ -3877,7 +3877,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11; this.t12 = t12;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>(D12I07<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, ICollection<IOdccAttach>, new() where T6 : class, ICollection<IOdccAttach>, new() where T7 : class, IOdccItem where T8 : class, IOdccItem where T9 : class, IOdccItem where T10 : class, IOdccItem where T11 : class, IOdccItem where T12 : class, IOdccItem
 		{
@@ -3913,7 +3913,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11; this.t12 = t12;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>(D12I08<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, ICollection<IOdccAttach>, new() where T6 : class, ICollection<IOdccAttach>, new() where T7 : class, ICollection<IOdccAttach>, new() where T8 : class, IOdccItem where T9 : class, IOdccItem where T10 : class, IOdccItem where T11 : class, IOdccItem where T12 : class, IOdccItem
 		{
@@ -3949,7 +3949,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11; this.t12 = t12;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>(D12I09<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, ICollection<IOdccAttach>, new() where T6 : class, ICollection<IOdccAttach>, new() where T7 : class, ICollection<IOdccAttach>, new() where T8 : class, ICollection<IOdccAttach>, new() where T9 : class, IOdccItem where T10 : class, IOdccItem where T11 : class, IOdccItem where T12 : class, IOdccItem
 		{
@@ -3985,7 +3985,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11; this.t12 = t12;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>(D12I10<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, ICollection<IOdccAttach>, new() where T6 : class, ICollection<IOdccAttach>, new() where T7 : class, ICollection<IOdccAttach>, new() where T8 : class, ICollection<IOdccAttach>, new() where T9 : class, ICollection<IOdccAttach>, new() where T10 : class, IOdccItem where T11 : class, IOdccItem where T12 : class, IOdccItem
 		{
@@ -4021,7 +4021,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11; this.t12 = t12;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>(D12I11<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, ICollection<IOdccAttach>, new() where T6 : class, ICollection<IOdccAttach>, new() where T7 : class, ICollection<IOdccAttach>, new() where T8 : class, ICollection<IOdccAttach>, new() where T9 : class, ICollection<IOdccAttach>, new() where T10 : class, ICollection<IOdccAttach>, new() where T11 : class, IOdccItem where T12 : class, IOdccItem
 		{
@@ -4057,7 +4057,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11; this.t12 = t12;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>(D12I12<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, ICollection<IOdccAttach>, new() where T6 : class, ICollection<IOdccAttach>, new() where T7 : class, ICollection<IOdccAttach>, new() where T8 : class, ICollection<IOdccAttach>, new() where T9 : class, ICollection<IOdccAttach>, new() where T10 : class, ICollection<IOdccAttach>, new() where T11 : class, ICollection<IOdccAttach>, new() where T12 : class, IOdccItem
 		{
@@ -4093,7 +4093,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11; this.t12 = t12;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>(D12I13<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, ICollection<IOdccAttach>, new() where T6 : class, ICollection<IOdccAttach>, new() where T7 : class, ICollection<IOdccAttach>, new() where T8 : class, ICollection<IOdccAttach>, new() where T9 : class, ICollection<IOdccAttach>, new() where T10 : class, ICollection<IOdccAttach>, new() where T11 : class, ICollection<IOdccAttach>, new() where T12 : class, ICollection<IOdccAttach>, new()
 		{
@@ -4129,7 +4129,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11; this.t12 = t12; this.t13 = t13;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>(D13I00<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13> t = null) where T0 : class, IOdccItem where T1 : class, IOdccItem where T2 : class, IOdccItem where T3 : class, IOdccItem where T4 : class, IOdccItem where T5 : class, IOdccItem where T6 : class, IOdccItem where T7 : class, IOdccItem where T8 : class, IOdccItem where T9 : class, IOdccItem where T10 : class, IOdccItem where T11 : class, IOdccItem where T12 : class, IOdccItem where T13 : class, IOdccItem
 		{
@@ -4165,7 +4165,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11; this.t12 = t12; this.t13 = t13;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>(D13I01<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, IOdccItem where T2 : class, IOdccItem where T3 : class, IOdccItem where T4 : class, IOdccItem where T5 : class, IOdccItem where T6 : class, IOdccItem where T7 : class, IOdccItem where T8 : class, IOdccItem where T9 : class, IOdccItem where T10 : class, IOdccItem where T11 : class, IOdccItem where T12 : class, IOdccItem where T13 : class, IOdccItem
 		{
@@ -4201,7 +4201,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11; this.t12 = t12; this.t13 = t13;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>(D13I02<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, IOdccItem where T3 : class, IOdccItem where T4 : class, IOdccItem where T5 : class, IOdccItem where T6 : class, IOdccItem where T7 : class, IOdccItem where T8 : class, IOdccItem where T9 : class, IOdccItem where T10 : class, IOdccItem where T11 : class, IOdccItem where T12 : class, IOdccItem where T13 : class, IOdccItem
 		{
@@ -4237,7 +4237,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11; this.t12 = t12; this.t13 = t13;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>(D13I03<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, IOdccItem where T4 : class, IOdccItem where T5 : class, IOdccItem where T6 : class, IOdccItem where T7 : class, IOdccItem where T8 : class, IOdccItem where T9 : class, IOdccItem where T10 : class, IOdccItem where T11 : class, IOdccItem where T12 : class, IOdccItem where T13 : class, IOdccItem
 		{
@@ -4273,7 +4273,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11; this.t12 = t12; this.t13 = t13;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>(D13I04<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, IOdccItem where T5 : class, IOdccItem where T6 : class, IOdccItem where T7 : class, IOdccItem where T8 : class, IOdccItem where T9 : class, IOdccItem where T10 : class, IOdccItem where T11 : class, IOdccItem where T12 : class, IOdccItem where T13 : class, IOdccItem
 		{
@@ -4309,7 +4309,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11; this.t12 = t12; this.t13 = t13;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>(D13I05<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, IOdccItem where T6 : class, IOdccItem where T7 : class, IOdccItem where T8 : class, IOdccItem where T9 : class, IOdccItem where T10 : class, IOdccItem where T11 : class, IOdccItem where T12 : class, IOdccItem where T13 : class, IOdccItem
 		{
@@ -4345,7 +4345,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11; this.t12 = t12; this.t13 = t13;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>(D13I06<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, ICollection<IOdccAttach>, new() where T6 : class, IOdccItem where T7 : class, IOdccItem where T8 : class, IOdccItem where T9 : class, IOdccItem where T10 : class, IOdccItem where T11 : class, IOdccItem where T12 : class, IOdccItem where T13 : class, IOdccItem
 		{
@@ -4381,7 +4381,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11; this.t12 = t12; this.t13 = t13;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>(D13I07<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, ICollection<IOdccAttach>, new() where T6 : class, ICollection<IOdccAttach>, new() where T7 : class, IOdccItem where T8 : class, IOdccItem where T9 : class, IOdccItem where T10 : class, IOdccItem where T11 : class, IOdccItem where T12 : class, IOdccItem where T13 : class, IOdccItem
 		{
@@ -4417,7 +4417,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11; this.t12 = t12; this.t13 = t13;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>(D13I08<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, ICollection<IOdccAttach>, new() where T6 : class, ICollection<IOdccAttach>, new() where T7 : class, ICollection<IOdccAttach>, new() where T8 : class, IOdccItem where T9 : class, IOdccItem where T10 : class, IOdccItem where T11 : class, IOdccItem where T12 : class, IOdccItem where T13 : class, IOdccItem
 		{
@@ -4453,7 +4453,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11; this.t12 = t12; this.t13 = t13;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>(D13I09<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, ICollection<IOdccAttach>, new() where T6 : class, ICollection<IOdccAttach>, new() where T7 : class, ICollection<IOdccAttach>, new() where T8 : class, ICollection<IOdccAttach>, new() where T9 : class, IOdccItem where T10 : class, IOdccItem where T11 : class, IOdccItem where T12 : class, IOdccItem where T13 : class, IOdccItem
 		{
@@ -4489,7 +4489,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11; this.t12 = t12; this.t13 = t13;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>(D13I10<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, ICollection<IOdccAttach>, new() where T6 : class, ICollection<IOdccAttach>, new() where T7 : class, ICollection<IOdccAttach>, new() where T8 : class, ICollection<IOdccAttach>, new() where T9 : class, ICollection<IOdccAttach>, new() where T10 : class, IOdccItem where T11 : class, IOdccItem where T12 : class, IOdccItem where T13 : class, IOdccItem
 		{
@@ -4525,7 +4525,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11; this.t12 = t12; this.t13 = t13;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>(D13I11<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, ICollection<IOdccAttach>, new() where T6 : class, ICollection<IOdccAttach>, new() where T7 : class, ICollection<IOdccAttach>, new() where T8 : class, ICollection<IOdccAttach>, new() where T9 : class, ICollection<IOdccAttach>, new() where T10 : class, ICollection<IOdccAttach>, new() where T11 : class, IOdccItem where T12 : class, IOdccItem where T13 : class, IOdccItem
 		{
@@ -4561,7 +4561,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11; this.t12 = t12; this.t13 = t13;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>(D13I12<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, ICollection<IOdccAttach>, new() where T6 : class, ICollection<IOdccAttach>, new() where T7 : class, ICollection<IOdccAttach>, new() where T8 : class, ICollection<IOdccAttach>, new() where T9 : class, ICollection<IOdccAttach>, new() where T10 : class, ICollection<IOdccAttach>, new() where T11 : class, ICollection<IOdccAttach>, new() where T12 : class, IOdccItem where T13 : class, IOdccItem
 		{
@@ -4597,7 +4597,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11; this.t12 = t12; this.t13 = t13;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>(D13I13<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, ICollection<IOdccAttach>, new() where T6 : class, ICollection<IOdccAttach>, new() where T7 : class, ICollection<IOdccAttach>, new() where T8 : class, ICollection<IOdccAttach>, new() where T9 : class, ICollection<IOdccAttach>, new() where T10 : class, ICollection<IOdccAttach>, new() where T11 : class, ICollection<IOdccAttach>, new() where T12 : class, ICollection<IOdccAttach>, new() where T13 : class, IOdccItem
 		{
@@ -4633,7 +4633,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11; this.t12 = t12; this.t13 = t13;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>(D13I14<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, ICollection<IOdccAttach>, new() where T6 : class, ICollection<IOdccAttach>, new() where T7 : class, ICollection<IOdccAttach>, new() where T8 : class, ICollection<IOdccAttach>, new() where T9 : class, ICollection<IOdccAttach>, new() where T10 : class, ICollection<IOdccAttach>, new() where T11 : class, ICollection<IOdccAttach>, new() where T12 : class, ICollection<IOdccAttach>, new() where T13 : class, ICollection<IOdccAttach>, new()
 		{
@@ -4669,7 +4669,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11; this.t12 = t12; this.t13 = t13; this.t14 = t14;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>(D14I00<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14> t = null) where T0 : class, IOdccItem where T1 : class, IOdccItem where T2 : class, IOdccItem where T3 : class, IOdccItem where T4 : class, IOdccItem where T5 : class, IOdccItem where T6 : class, IOdccItem where T7 : class, IOdccItem where T8 : class, IOdccItem where T9 : class, IOdccItem where T10 : class, IOdccItem where T11 : class, IOdccItem where T12 : class, IOdccItem where T13 : class, IOdccItem where T14 : class, IOdccItem
 		{
@@ -4705,7 +4705,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11; this.t12 = t12; this.t13 = t13; this.t14 = t14;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>(D14I01<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, IOdccItem where T2 : class, IOdccItem where T3 : class, IOdccItem where T4 : class, IOdccItem where T5 : class, IOdccItem where T6 : class, IOdccItem where T7 : class, IOdccItem where T8 : class, IOdccItem where T9 : class, IOdccItem where T10 : class, IOdccItem where T11 : class, IOdccItem where T12 : class, IOdccItem where T13 : class, IOdccItem where T14 : class, IOdccItem
 		{
@@ -4741,7 +4741,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11; this.t12 = t12; this.t13 = t13; this.t14 = t14;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>(D14I02<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, IOdccItem where T3 : class, IOdccItem where T4 : class, IOdccItem where T5 : class, IOdccItem where T6 : class, IOdccItem where T7 : class, IOdccItem where T8 : class, IOdccItem where T9 : class, IOdccItem where T10 : class, IOdccItem where T11 : class, IOdccItem where T12 : class, IOdccItem where T13 : class, IOdccItem where T14 : class, IOdccItem
 		{
@@ -4777,7 +4777,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11; this.t12 = t12; this.t13 = t13; this.t14 = t14;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>(D14I03<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, IOdccItem where T4 : class, IOdccItem where T5 : class, IOdccItem where T6 : class, IOdccItem where T7 : class, IOdccItem where T8 : class, IOdccItem where T9 : class, IOdccItem where T10 : class, IOdccItem where T11 : class, IOdccItem where T12 : class, IOdccItem where T13 : class, IOdccItem where T14 : class, IOdccItem
 		{
@@ -4813,7 +4813,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11; this.t12 = t12; this.t13 = t13; this.t14 = t14;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>(D14I04<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, IOdccItem where T5 : class, IOdccItem where T6 : class, IOdccItem where T7 : class, IOdccItem where T8 : class, IOdccItem where T9 : class, IOdccItem where T10 : class, IOdccItem where T11 : class, IOdccItem where T12 : class, IOdccItem where T13 : class, IOdccItem where T14 : class, IOdccItem
 		{
@@ -4849,7 +4849,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11; this.t12 = t12; this.t13 = t13; this.t14 = t14;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>(D14I05<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, IOdccItem where T6 : class, IOdccItem where T7 : class, IOdccItem where T8 : class, IOdccItem where T9 : class, IOdccItem where T10 : class, IOdccItem where T11 : class, IOdccItem where T12 : class, IOdccItem where T13 : class, IOdccItem where T14 : class, IOdccItem
 		{
@@ -4885,7 +4885,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11; this.t12 = t12; this.t13 = t13; this.t14 = t14;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>(D14I06<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, ICollection<IOdccAttach>, new() where T6 : class, IOdccItem where T7 : class, IOdccItem where T8 : class, IOdccItem where T9 : class, IOdccItem where T10 : class, IOdccItem where T11 : class, IOdccItem where T12 : class, IOdccItem where T13 : class, IOdccItem where T14 : class, IOdccItem
 		{
@@ -4921,7 +4921,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11; this.t12 = t12; this.t13 = t13; this.t14 = t14;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>(D14I07<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, ICollection<IOdccAttach>, new() where T6 : class, ICollection<IOdccAttach>, new() where T7 : class, IOdccItem where T8 : class, IOdccItem where T9 : class, IOdccItem where T10 : class, IOdccItem where T11 : class, IOdccItem where T12 : class, IOdccItem where T13 : class, IOdccItem where T14 : class, IOdccItem
 		{
@@ -4957,7 +4957,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11; this.t12 = t12; this.t13 = t13; this.t14 = t14;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>(D14I08<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, ICollection<IOdccAttach>, new() where T6 : class, ICollection<IOdccAttach>, new() where T7 : class, ICollection<IOdccAttach>, new() where T8 : class, IOdccItem where T9 : class, IOdccItem where T10 : class, IOdccItem where T11 : class, IOdccItem where T12 : class, IOdccItem where T13 : class, IOdccItem where T14 : class, IOdccItem
 		{
@@ -4993,7 +4993,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11; this.t12 = t12; this.t13 = t13; this.t14 = t14;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>(D14I09<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, ICollection<IOdccAttach>, new() where T6 : class, ICollection<IOdccAttach>, new() where T7 : class, ICollection<IOdccAttach>, new() where T8 : class, ICollection<IOdccAttach>, new() where T9 : class, IOdccItem where T10 : class, IOdccItem where T11 : class, IOdccItem where T12 : class, IOdccItem where T13 : class, IOdccItem where T14 : class, IOdccItem
 		{
@@ -5029,7 +5029,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11; this.t12 = t12; this.t13 = t13; this.t14 = t14;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>(D14I10<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, ICollection<IOdccAttach>, new() where T6 : class, ICollection<IOdccAttach>, new() where T7 : class, ICollection<IOdccAttach>, new() where T8 : class, ICollection<IOdccAttach>, new() where T9 : class, ICollection<IOdccAttach>, new() where T10 : class, IOdccItem where T11 : class, IOdccItem where T12 : class, IOdccItem where T13 : class, IOdccItem where T14 : class, IOdccItem
 		{
@@ -5065,7 +5065,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11; this.t12 = t12; this.t13 = t13; this.t14 = t14;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>(D14I11<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, ICollection<IOdccAttach>, new() where T6 : class, ICollection<IOdccAttach>, new() where T7 : class, ICollection<IOdccAttach>, new() where T8 : class, ICollection<IOdccAttach>, new() where T9 : class, ICollection<IOdccAttach>, new() where T10 : class, ICollection<IOdccAttach>, new() where T11 : class, IOdccItem where T12 : class, IOdccItem where T13 : class, IOdccItem where T14 : class, IOdccItem
 		{
@@ -5101,7 +5101,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11; this.t12 = t12; this.t13 = t13; this.t14 = t14;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>(D14I12<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, ICollection<IOdccAttach>, new() where T6 : class, ICollection<IOdccAttach>, new() where T7 : class, ICollection<IOdccAttach>, new() where T8 : class, ICollection<IOdccAttach>, new() where T9 : class, ICollection<IOdccAttach>, new() where T10 : class, ICollection<IOdccAttach>, new() where T11 : class, ICollection<IOdccAttach>, new() where T12 : class, IOdccItem where T13 : class, IOdccItem where T14 : class, IOdccItem
 		{
@@ -5137,7 +5137,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11; this.t12 = t12; this.t13 = t13; this.t14 = t14;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>(D14I13<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, ICollection<IOdccAttach>, new() where T6 : class, ICollection<IOdccAttach>, new() where T7 : class, ICollection<IOdccAttach>, new() where T8 : class, ICollection<IOdccAttach>, new() where T9 : class, ICollection<IOdccAttach>, new() where T10 : class, ICollection<IOdccAttach>, new() where T11 : class, ICollection<IOdccAttach>, new() where T12 : class, ICollection<IOdccAttach>, new() where T13 : class, IOdccItem where T14 : class, IOdccItem
 		{
@@ -5173,7 +5173,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11; this.t12 = t12; this.t13 = t13; this.t14 = t14;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>(D14I14<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, ICollection<IOdccAttach>, new() where T6 : class, ICollection<IOdccAttach>, new() where T7 : class, ICollection<IOdccAttach>, new() where T8 : class, ICollection<IOdccAttach>, new() where T9 : class, ICollection<IOdccAttach>, new() where T10 : class, ICollection<IOdccAttach>, new() where T11 : class, ICollection<IOdccAttach>, new() where T12 : class, ICollection<IOdccAttach>, new() where T13 : class, ICollection<IOdccAttach>, new() where T14 : class, IOdccItem
 		{
@@ -5209,7 +5209,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11; this.t12 = t12; this.t13 = t13; this.t14 = t14;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>(D14I15<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, ICollection<IOdccAttach>, new() where T6 : class, ICollection<IOdccAttach>, new() where T7 : class, ICollection<IOdccAttach>, new() where T8 : class, ICollection<IOdccAttach>, new() where T9 : class, ICollection<IOdccAttach>, new() where T10 : class, ICollection<IOdccAttach>, new() where T11 : class, ICollection<IOdccAttach>, new() where T12 : class, ICollection<IOdccAttach>, new() where T13 : class, ICollection<IOdccAttach>, new() where T14 : class, ICollection<IOdccAttach>, new()
 		{
@@ -5245,7 +5245,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11; this.t12 = t12; this.t13 = t13; this.t14 = t14; this.t15 = t15;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>(D15I00<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> t = null) where T0 : class, IOdccItem where T1 : class, IOdccItem where T2 : class, IOdccItem where T3 : class, IOdccItem where T4 : class, IOdccItem where T5 : class, IOdccItem where T6 : class, IOdccItem where T7 : class, IOdccItem where T8 : class, IOdccItem where T9 : class, IOdccItem where T10 : class, IOdccItem where T11 : class, IOdccItem where T12 : class, IOdccItem where T13 : class, IOdccItem where T14 : class, IOdccItem where T15 : class, IOdccItem
 		{
@@ -5281,7 +5281,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11; this.t12 = t12; this.t13 = t13; this.t14 = t14; this.t15 = t15;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>(D15I01<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, IOdccItem where T2 : class, IOdccItem where T3 : class, IOdccItem where T4 : class, IOdccItem where T5 : class, IOdccItem where T6 : class, IOdccItem where T7 : class, IOdccItem where T8 : class, IOdccItem where T9 : class, IOdccItem where T10 : class, IOdccItem where T11 : class, IOdccItem where T12 : class, IOdccItem where T13 : class, IOdccItem where T14 : class, IOdccItem where T15 : class, IOdccItem
 		{
@@ -5317,7 +5317,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11; this.t12 = t12; this.t13 = t13; this.t14 = t14; this.t15 = t15;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>(D15I02<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, IOdccItem where T3 : class, IOdccItem where T4 : class, IOdccItem where T5 : class, IOdccItem where T6 : class, IOdccItem where T7 : class, IOdccItem where T8 : class, IOdccItem where T9 : class, IOdccItem where T10 : class, IOdccItem where T11 : class, IOdccItem where T12 : class, IOdccItem where T13 : class, IOdccItem where T14 : class, IOdccItem where T15 : class, IOdccItem
 		{
@@ -5353,7 +5353,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11; this.t12 = t12; this.t13 = t13; this.t14 = t14; this.t15 = t15;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>(D15I03<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, IOdccItem where T4 : class, IOdccItem where T5 : class, IOdccItem where T6 : class, IOdccItem where T7 : class, IOdccItem where T8 : class, IOdccItem where T9 : class, IOdccItem where T10 : class, IOdccItem where T11 : class, IOdccItem where T12 : class, IOdccItem where T13 : class, IOdccItem where T14 : class, IOdccItem where T15 : class, IOdccItem
 		{
@@ -5389,7 +5389,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11; this.t12 = t12; this.t13 = t13; this.t14 = t14; this.t15 = t15;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>(D15I04<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, IOdccItem where T5 : class, IOdccItem where T6 : class, IOdccItem where T7 : class, IOdccItem where T8 : class, IOdccItem where T9 : class, IOdccItem where T10 : class, IOdccItem where T11 : class, IOdccItem where T12 : class, IOdccItem where T13 : class, IOdccItem where T14 : class, IOdccItem where T15 : class, IOdccItem
 		{
@@ -5425,7 +5425,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11; this.t12 = t12; this.t13 = t13; this.t14 = t14; this.t15 = t15;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>(D15I05<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, IOdccItem where T6 : class, IOdccItem where T7 : class, IOdccItem where T8 : class, IOdccItem where T9 : class, IOdccItem where T10 : class, IOdccItem where T11 : class, IOdccItem where T12 : class, IOdccItem where T13 : class, IOdccItem where T14 : class, IOdccItem where T15 : class, IOdccItem
 		{
@@ -5461,7 +5461,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11; this.t12 = t12; this.t13 = t13; this.t14 = t14; this.t15 = t15;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>(D15I06<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, ICollection<IOdccAttach>, new() where T6 : class, IOdccItem where T7 : class, IOdccItem where T8 : class, IOdccItem where T9 : class, IOdccItem where T10 : class, IOdccItem where T11 : class, IOdccItem where T12 : class, IOdccItem where T13 : class, IOdccItem where T14 : class, IOdccItem where T15 : class, IOdccItem
 		{
@@ -5497,7 +5497,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11; this.t12 = t12; this.t13 = t13; this.t14 = t14; this.t15 = t15;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>(D15I07<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, ICollection<IOdccAttach>, new() where T6 : class, ICollection<IOdccAttach>, new() where T7 : class, IOdccItem where T8 : class, IOdccItem where T9 : class, IOdccItem where T10 : class, IOdccItem where T11 : class, IOdccItem where T12 : class, IOdccItem where T13 : class, IOdccItem where T14 : class, IOdccItem where T15 : class, IOdccItem
 		{
@@ -5533,7 +5533,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11; this.t12 = t12; this.t13 = t13; this.t14 = t14; this.t15 = t15;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>(D15I08<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, ICollection<IOdccAttach>, new() where T6 : class, ICollection<IOdccAttach>, new() where T7 : class, ICollection<IOdccAttach>, new() where T8 : class, IOdccItem where T9 : class, IOdccItem where T10 : class, IOdccItem where T11 : class, IOdccItem where T12 : class, IOdccItem where T13 : class, IOdccItem where T14 : class, IOdccItem where T15 : class, IOdccItem
 		{
@@ -5569,7 +5569,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11; this.t12 = t12; this.t13 = t13; this.t14 = t14; this.t15 = t15;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>(D15I09<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, ICollection<IOdccAttach>, new() where T6 : class, ICollection<IOdccAttach>, new() where T7 : class, ICollection<IOdccAttach>, new() where T8 : class, ICollection<IOdccAttach>, new() where T9 : class, IOdccItem where T10 : class, IOdccItem where T11 : class, IOdccItem where T12 : class, IOdccItem where T13 : class, IOdccItem where T14 : class, IOdccItem where T15 : class, IOdccItem
 		{
@@ -5605,7 +5605,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11; this.t12 = t12; this.t13 = t13; this.t14 = t14; this.t15 = t15;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>(D15I10<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, ICollection<IOdccAttach>, new() where T6 : class, ICollection<IOdccAttach>, new() where T7 : class, ICollection<IOdccAttach>, new() where T8 : class, ICollection<IOdccAttach>, new() where T9 : class, ICollection<IOdccAttach>, new() where T10 : class, IOdccItem where T11 : class, IOdccItem where T12 : class, IOdccItem where T13 : class, IOdccItem where T14 : class, IOdccItem where T15 : class, IOdccItem
 		{
@@ -5641,7 +5641,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11; this.t12 = t12; this.t13 = t13; this.t14 = t14; this.t15 = t15;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>(D15I11<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, ICollection<IOdccAttach>, new() where T6 : class, ICollection<IOdccAttach>, new() where T7 : class, ICollection<IOdccAttach>, new() where T8 : class, ICollection<IOdccAttach>, new() where T9 : class, ICollection<IOdccAttach>, new() where T10 : class, ICollection<IOdccAttach>, new() where T11 : class, IOdccItem where T12 : class, IOdccItem where T13 : class, IOdccItem where T14 : class, IOdccItem where T15 : class, IOdccItem
 		{
@@ -5677,7 +5677,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11; this.t12 = t12; this.t13 = t13; this.t14 = t14; this.t15 = t15;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>(D15I12<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, ICollection<IOdccAttach>, new() where T6 : class, ICollection<IOdccAttach>, new() where T7 : class, ICollection<IOdccAttach>, new() where T8 : class, ICollection<IOdccAttach>, new() where T9 : class, ICollection<IOdccAttach>, new() where T10 : class, ICollection<IOdccAttach>, new() where T11 : class, ICollection<IOdccAttach>, new() where T12 : class, IOdccItem where T13 : class, IOdccItem where T14 : class, IOdccItem where T15 : class, IOdccItem
 		{
@@ -5713,7 +5713,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11; this.t12 = t12; this.t13 = t13; this.t14 = t14; this.t15 = t15;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>(D15I13<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, ICollection<IOdccAttach>, new() where T6 : class, ICollection<IOdccAttach>, new() where T7 : class, ICollection<IOdccAttach>, new() where T8 : class, ICollection<IOdccAttach>, new() where T9 : class, ICollection<IOdccAttach>, new() where T10 : class, ICollection<IOdccAttach>, new() where T11 : class, ICollection<IOdccAttach>, new() where T12 : class, ICollection<IOdccAttach>, new() where T13 : class, IOdccItem where T14 : class, IOdccItem where T15 : class, IOdccItem
 		{
@@ -5749,7 +5749,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11; this.t12 = t12; this.t13 = t13; this.t14 = t14; this.t15 = t15;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>(D15I14<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, ICollection<IOdccAttach>, new() where T6 : class, ICollection<IOdccAttach>, new() where T7 : class, ICollection<IOdccAttach>, new() where T8 : class, ICollection<IOdccAttach>, new() where T9 : class, ICollection<IOdccAttach>, new() where T10 : class, ICollection<IOdccAttach>, new() where T11 : class, ICollection<IOdccAttach>, new() where T12 : class, ICollection<IOdccAttach>, new() where T13 : class, ICollection<IOdccAttach>, new() where T14 : class, IOdccItem where T15 : class, IOdccItem
 		{
@@ -5785,7 +5785,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11; this.t12 = t12; this.t13 = t13; this.t14 = t14; this.t15 = t15;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>(D15I15<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, ICollection<IOdccAttach>, new() where T6 : class, ICollection<IOdccAttach>, new() where T7 : class, ICollection<IOdccAttach>, new() where T8 : class, ICollection<IOdccAttach>, new() where T9 : class, ICollection<IOdccAttach>, new() where T10 : class, ICollection<IOdccAttach>, new() where T11 : class, ICollection<IOdccAttach>, new() where T12 : class, ICollection<IOdccAttach>, new() where T13 : class, ICollection<IOdccAttach>, new() where T14 : class, ICollection<IOdccAttach>, new() where T15 : class, IOdccItem
 		{
@@ -5821,7 +5821,7 @@ namespace BC.ODCC
 				this.key = key;
 				this.delegateA=delegateA; this.t0 = t0; this.t1 = t1; this.t2 = t2; this.t3 = t3; this.t4 = t4; this.t5 = t5; this.t6 = t6; this.t7 = t7; this.t8 = t8; this.t9 = t9; this.t10 = t10; this.t11 = t11; this.t12 = t12; this.t13 = t13; this.t14 = t14; this.t15 = t15;
 			}
-			internal override UnityEngine.Awaitable ARun(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15);
+			internal override UnityEngine.Awaitable Run(OdccQueryLooper.LoopInfo loopInfo) => delegateA.Invoke(loopInfo, t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15);
 		}
 		public OdccQueryLooper CallForeach<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>(D15I16<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> t = null) where T0 : class, ICollection<IOdccAttach>, new() where T1 : class, ICollection<IOdccAttach>, new() where T2 : class, ICollection<IOdccAttach>, new() where T3 : class, ICollection<IOdccAttach>, new() where T4 : class, ICollection<IOdccAttach>, new() where T5 : class, ICollection<IOdccAttach>, new() where T6 : class, ICollection<IOdccAttach>, new() where T7 : class, ICollection<IOdccAttach>, new() where T8 : class, ICollection<IOdccAttach>, new() where T9 : class, ICollection<IOdccAttach>, new() where T10 : class, ICollection<IOdccAttach>, new() where T11 : class, ICollection<IOdccAttach>, new() where T12 : class, ICollection<IOdccAttach>, new() where T13 : class, ICollection<IOdccAttach>, new() where T14 : class, ICollection<IOdccAttach>, new() where T15 : class, ICollection<IOdccAttach>, new()
 		{
