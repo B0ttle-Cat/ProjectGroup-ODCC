@@ -10,7 +10,7 @@ namespace BC.ODCC
 {
 	/// <summary>
 	/// OdccQueryLooper 클래스는 OdccQueryCollector에서 수집된 항목들을 기반으로 루프 작업을 관리합니다.
-	/// 이 클래스는 Foreach 구조를 사용하여 항목들을 처리하며, 루프 작업을 비동기적으로 실행할 수 있습니다.
+	/// 이 클래스는 CallForeach 구조를 사용하여 항목들을 처리하며, 루프 작업을 비동기적으로 실행할 수 있습니다.
 	/// </summary>
 	public sealed partial class OdccQueryLooper : IDisposable
 	{
@@ -20,18 +20,18 @@ namespace BC.ODCC
 		// 루퍼의 키입니다.
 		internal string looperKey;
 
-		/// Foreach 로 만든 액션의 개수만큼 들어있습니다.
+		/// CallForeach 로 만든 액션의 개수만큼 들어있습니다.
 		internal List<RunForeachStruct> runForeachStructList;
 
 		/// <summary>
-		/// RunForeachStruct 구조체는 Foreach 델리게이트 및 관련 작업을 관리합니다.
+		/// RunForeachStruct 구조체는 CallForeach 델리게이트 및 관련 작업을 관리합니다.
 		/// </summary>
 		public struct RunForeachStruct
 		{
-			// Foreach 에서 지정된 델리게이트입니다.
+			// CallForeach 에서 지정된 델리게이트입니다.
 			public Delegate targetDelegate;
 
-			// Foreach 에서 Enumerator 를 사용하는지 여부입니다.
+			// CallForeach 에서 Enumerator 를 사용하는지 여부입니다.
 			public bool isEnumerator;
 
 			// queryCollector 를 만족하는 오브젝트 들 만큼 있는 RunForeachAction 배열입니다.
@@ -86,7 +86,7 @@ namespace BC.ODCC
 		}
 
 		/// <summary>
-		/// RunForeachAction 추상 클래스는 Foreach 구조에서 실행될 액션을 정의합니다.
+		/// RunForeachAction 추상 클래스는 CallForeach 구조에서 실행될 액션을 정의합니다.
 		/// </summary>
 		public abstract class RunForeachAction
 		{
@@ -98,7 +98,7 @@ namespace BC.ODCC
 		}
 
 		/// <summary>
-		/// AddedForeachAction 클래스는 추가된 Foreach 액션을 정의합니다.
+		/// AddedForeachAction 클래스는 추가된 CallForeach 액션을 정의합니다.
 		/// </summary>
 		public class AddedForeachAction : RunForeachAction
 		{
@@ -237,23 +237,23 @@ namespace BC.ODCC
 				itemTotalCount = 0, // 총 항목 개수를 0으로 초기화합니다.
 			};
 
-			// 루퍼에 등록된 Foreach 구조체의 총 개수를 설정합니다.
+			// 루퍼에 등록된 CallForeach 구조체의 총 개수를 설정합니다.
 			int actionTotalCount = runForeachStructList.Count;
 			loopingInfo.actionTotalCount = actionTotalCount;
 
-			// 각 Foreach 구조체에 대해 루프를 실행합니다.
+			// 각 CallForeach 구조체에 대해 루프를 실행합니다.
 			for(loopingInfo.actionIndex = 0 ; loopingInfo.actionIndex < actionTotalCount ; loopingInfo.actionIndex++)
 			{
 				// 중단 함수가 true를 반환하면 루프를 중단합니다.
 				if(loopingInfo.isLooperBreak()) return;
 
-				// 각 Foreach 구조체의 실행 시작 시간을 설정합니다.
+				// 각 CallForeach 구조체의 실행 시작 시간을 설정합니다.
 				loopingInfo.actionStartTime = Time.timeAsDouble;
-				RunForeachStruct action = runForeachStructList[loopingInfo.actionIndex]; // 현재 실행할 Foreach 구조체입니다.
-				RunForeachAction[] itemList = action.runForeachActionList; // 현재 Foreach 구조체의 액션 리스트입니다.
+				RunForeachStruct action = runForeachStructList[loopingInfo.actionIndex]; // 현재 실행할 CallForeach 구조체입니다.
+				RunForeachAction[] itemList = action.runForeachActionList; // 현재 CallForeach 구조체의 액션 리스트입니다.
 				int itemTotalCount = itemList.Length; // 액션 리스트의 총 개수를 설정합니다.
 
-				// 각 Foreach 액션에 대해 루프를 실행합니다.
+				// 각 CallForeach 액션에 대해 루프를 실행합니다.
 				loopingInfo.itemTotalCount = itemTotalCount;
 				for(loopingInfo.itemIndex = 0 ; loopingInfo.itemIndex < itemTotalCount ; loopingInfo.itemIndex++)
 				{
@@ -262,7 +262,7 @@ namespace BC.ODCC
 
 					// 각 액션의 실행 시작 시간을 설정합니다.
 					loopingInfo.itemStartTime = Time.timeAsDouble;
-					RunForeachAction item = itemList[loopingInfo.itemIndex]; // 현재 실행할 Foreach 액션입니다.
+					RunForeachAction item = itemList[loopingInfo.itemIndex]; // 현재 실행할 CallForeach 액션입니다.
 					if(item.callFirstOnly && item.isCallFirst)
 					{
 						continue;
@@ -329,8 +329,8 @@ namespace BC.ODCC
 		}
 
 		/// <summary>
-		/// Foreach 매개변수 규칙 상 존재하는 함수이며, 아무런 동작 하지 않음.
-		/// Foreach<T...> 를 사용할 것.
+		/// CallForeach 매개변수 규칙 상 존재하는 함수이며, 아무런 동작 하지 않음.
+		/// CallForeach<T...> 를 사용할 것.
 		/// </summary>
 		/// <returns>OdccQueryLooper 객체</returns>
 		public OdccQueryLooper Foreach()
@@ -345,21 +345,20 @@ namespace BC.ODCC
 		/// <param name="action">호출할 액션</param>
 		/// <param name="callFirstOnly"> 루프 안에서 한번만 호출될지 결정</param>
 		/// <returns>OdccQueryLooper 객체</returns>
-		public OdccQueryLooper CallNext(Action action)
+		public OdccQueryLooper CallAction(Action action)
 		{
-			return CallNext(async () => Call());
+			return CallAction(async () => Call());
 			void Call()
 			{
 				action?.Invoke();
 			}
 		}
-
 		/// <summary>
 		/// 다음 액션을 호출하는 비동기 메서드입니다.
 		/// </summary>
 		/// <param name="action">호출할 비동기 액션</param>
 		/// <returns>OdccQueryLooper 객체</returns>
-		public OdccQueryLooper CallNext(Func<UnityEngine.Awaitable> action)
+		public OdccQueryLooper CallAction(Func<UnityEngine.Awaitable> action)
 		{
 			var list = new List<RunForeachAction>();
 			list.Add(new AddedForeachAction() {
@@ -369,6 +368,16 @@ namespace BC.ODCC
 			});
 			runForeachStructList.Add(new RunForeachStruct(action, list, true, null));
 			return this;
+		}
+		[Obsolete("대신 CallAction 사용하기")]
+		public OdccQueryLooper CallNext(Action action)
+		{
+			return CallAction(action);
+		}
+		[Obsolete("대신 CallAction 사용하기")]
+		public OdccQueryLooper CallNext(Func<UnityEngine.Awaitable> action)
+		{
+			return CallAction(action);
 		}
 		/// <summary>
 		/// 다음 액션을 호출하는 메서드입니다.
@@ -383,7 +392,6 @@ namespace BC.ODCC
 				action?.Invoke();
 			}
 		}
-
 		/// <summary>
 		/// 다음 액션을 호출하는 비동기 메서드입니다.
 		/// </summary>
@@ -405,7 +413,7 @@ namespace BC.ODCC
 		/// </summary>
 		/// <param name="join">호출할 Looper</param>
 		/// <returns>OdccQueryLooper 객체</returns>
-		public OdccQueryLooper JoinNext(OdccQueryLooper join)
+		public OdccQueryLooper CallLooper(OdccQueryLooper join)
 		{
 			if(join == null) return this;
 			Func<Awaitable> action = async () =>
@@ -425,7 +433,11 @@ namespace BC.ODCC
 			runForeachStructList.Add(new RunForeachStruct(action, list, true, null));
 			return this;
 		}
-
+		[Obsolete("대신 CallLooper 사용하기", true)]
+		public OdccQueryLooper JoinNext(OdccQueryLooper join)
+		{
+			return CallLooper(join);
+		}
 		/// <summary>
 		/// 프레임 수를 설정하는 메서드입니다.
 		/// </summary>
@@ -462,7 +474,7 @@ namespace BC.ODCC
 		}
 
 		/// <summary>
-		/// Foreach 항목을 설정하는 제네릭 메서드입니다.
+		/// CallForeach 항목을 설정하는 제네릭 메서드입니다.
 		/// </summary>
 		/// <typeparam name="T">항목의 타입</typeparam>
 		/// <param name="item">설정할 ObjectBehaviour 항목</param>
@@ -495,32 +507,36 @@ namespace BC.ODCC
 			}
 		}
 
-		internal T[] SetForeachItems<T>(ObjectBehaviour item) where T : class, IOdccItem
+		internal T SetForeachItems<T>(ObjectBehaviour item) where T : class, ICollection<IOdccAttach>, new()
 		{
-			if(typeof(T).IsSubclassOf(typeof(ComponentBehaviour)) && item.ThisContainer._TryGetComponents<T>(out T[] t))
+			Type elementType = typeof(T).GetGenericArguments()[0];
+			int elementTypeID = OdccManager.GetTypeToIndex(elementType);
+			//
+			if(typeof(T).IsSubclassOf(typeof(ComponentBehaviour)) && item.ThisContainer._TryGetComponents<T>(elementTypeID, out var t))
 			{
 				return t;
 			}
-			else if(typeof(T).IsSubclassOf(typeof(DataObject)) && item.ThisContainer._TryGetDatas<T>(out T[] tt))
+			else if(typeof(T).IsSubclassOf(typeof(DataObject)) && item.ThisContainer._TryGetDatas<T>(elementTypeID, out var tt))
 			{
 				return tt;
 			}
-			else if(typeof(T).IsSubclassOf(typeof(ObjectBehaviour)))
-			{
-				return new T[1] { item as T };
-			}
-			else if(item.ThisContainer._TryGetComponents<T>(out T[] component))
-			{
-				return component;
-			}
-			else if(item.ThisContainer._TryGetDatas<T>(out T[] data))
-			{
-				return data;
-			}
-			else
-			{
-				return item.GetComponents<T>();
-			}
+			////else if(typeof(T).IsSubclassOf(typeof(ObjectBehaviour)))
+			////{
+			////	return item as T;
+			////}
+			////else if(item.ThisContainer._TryGetComponent<T>(out T component))
+			////{
+			////	return component;
+			////}
+			////else if(item.ThisContainer._TryGetData<T>(out T data))
+			////{
+			////	return data;
+			////}
+			//else
+			//{
+			//	return item.GetComponents<T>();
+			//}
+			return null;
 		}
 
 		/// <summary>
@@ -619,16 +635,16 @@ namespace BC.ODCC
 
 		/////////////////////////// Obsolete //////////////////////////
 
-		[Obsolete("CallNext 사용 할 것 - 오래된 이름 규칙", true)]
+		[Obsolete("CallAction 사용 할 것 - 오래된 이름 규칙", true)]
 		private OdccQueryLooper Action(Action action)
 		{
-			return CallNext(action);
+			return CallAction(action);
 		}
 
-		[Obsolete("CallNext 사용 할 것 - 오래된 이름 규칙", true)]
+		[Obsolete("CallAction 사용 할 것 - 오래된 이름 규칙", true)]
 		private OdccQueryLooper Action(Func<UnityEngine.Awaitable> action)
 		{
-			return CallNext(action);
+			return CallAction(action);
 		}
 
 		[Obsolete("RunLooper 사용 할 것 - 오래된 이름 규칙", true)]

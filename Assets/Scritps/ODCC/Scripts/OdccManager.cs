@@ -36,7 +36,7 @@ namespace BC.ODCC
 			// 씬이 언로드될 때 호출되는 이벤트 핸들러를 등록합니다.
 			SceneManager.sceneUnloaded += Instance.SceneManager_sceneUnloaded;
 
-			// ODCC 컨테이너 트리와 Foreach 시스템을 초기화합니다.
+			// ODCC 컨테이너 트리와 CallForeach 시스템을 초기화합니다.
 			OdccContainerTree.InitTree();
 			OdccForeach.InitForeach();
 		}
@@ -46,7 +46,7 @@ namespace BC.ODCC
 			// 씬이 언로드될 때 호출되는 이벤트 핸들러를 해제합니다.
 			SceneManager.sceneUnloaded -= SceneManager_sceneUnloaded;
 
-			// ODCC 컨테이너 트리와 Foreach 시스템을 해제합니다.
+			// ODCC 컨테이너 트리와 CallForeach 시스템을 해제합니다.
 			OdccContainerTree.ReleaseTree();
 			OdccForeach.ReleaseForeach();
 
@@ -60,7 +60,7 @@ namespace BC.ODCC
 		/// <param name="scene">언로드된 씬</param>
 		private void SceneManager_sceneUnloaded(Scene scene)
 		{
-			// 언로드된 씬의 아이템을 ODCC Foreach 시스템에서 제거합니다.
+			// 언로드된 씬의 아이템을 ODCC CallForeach 시스템에서 제거합니다.
 			OdccForeach.RemoveLifeItemOdccCollectorList(scene);
 		}
 
@@ -468,7 +468,7 @@ namespace BC.ODCC
 		/// <param name="updateObject">데이터가 업데이트될 ObjectBehaviour</param>
 		internal static void UpdateData(ObjectBehaviour updateObject)
 		{
-			// Foreach 시스템에서 객체를 업데이트합니다.
+			// CallForeach 시스템에서 객체를 업데이트합니다.
 			OdccForeach.UpdateObjectInQuery(updateObject);
 		}
 
@@ -496,7 +496,7 @@ namespace BC.ODCC
             // 빌드 환경에서는 프로파일러를 비활성화합니다.
             isProfilerEnabled = false;
 #endif
-			// ODCC Foreach 시스템의 업데이트 메서드를 호출합니다.
+			// ODCC CallForeach 시스템의 업데이트 메서드를 호출합니다.
 			OdccForeach.ForeachUpdate();
 		}
 
@@ -505,7 +505,7 @@ namespace BC.ODCC
 		/// </summary>
 		public void LateUpdate()
 		{
-			// ODCC Foreach 시스템의 LateUpdate 메서드를 호출합니다.
+			// ODCC CallForeach 시스템의 LateUpdate 메서드를 호출합니다.
 			OdccForeach.ForeachLateUpdate();
 		}
 

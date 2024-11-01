@@ -1,6 +1,6 @@
 using System;
-
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 
 using Sirenix.OdinInspector;
@@ -481,7 +481,7 @@ namespace BC.ODCC
 			callback.Invoke(t);
 		}
 		#endregion
-		#region Get OdccItem In List
+		#region Get OdccItemInList
 		internal bool _TryGetComponent<T>(out T t, Func<T, bool> condition = null) where T : class, IOdccItem
 		{
 			t = _GetComponent<T>(condition);
@@ -501,26 +501,45 @@ namespace BC.ODCC
 			T t = DataList.GetData<T, IOdccItem>(condition);
 			return t;
 		}
-		internal bool _TryGetComponents<T>(out T[] t, Func<T, bool> condition = null) where T : class, IOdccItem
+		internal bool _TryGetComponents<T>(out T[] t, Func<T, bool> condition = null) where T : class, IOdccAttach
 		{
 			t = _GetComponents<T>(condition);
 			return t is not null && t.Length >0;
+		}
+		internal bool _TryGetComponents<T>(int typeID, out T t, Func<IOdccAttach, bool> condition = null) where T : class, ICollection<IOdccAttach>, new()
+		{
+			t = _GetComponents<T>(typeID, condition);
+			return t is not null;
 		}
 		internal T[] _GetComponents<T>(Func<T, bool> condition = null) where T : class, IOdccItem
 		{
 			return ComponentList.GetAll<T, IOdccItem>(condition);
 		}
+		internal T _GetComponents<T>(int typeID, Func<IOdccAttach, bool> condition = null) where T : class, ICollection<IOdccAttach>, new()
+		{
+			return ComponentList.GetAll<T, IOdccAttach>(typeID, condition);
+		}
+
+
 		internal bool _TryGetDatas<T>(out T[] t, Func<T, bool> condition = null) where T : class, IOdccItem
 		{
 			t = _GetDatas<T>(condition);
-			return t is not null && t.Length >0; ;
+			return t is not null && t.Length >0;
+		}
+		internal bool _TryGetDatas<T>(int typeID, out T t, Func<IOdccAttach, bool> condition = null) where T : class, ICollection<IOdccAttach>, new()
+		{
+			t = _GetDatas<T>(typeID, condition);
+			return t is not null;
 		}
 		internal T[] _GetDatas<T>(Func<T, bool> condition = null) where T : class, IOdccItem
 		{
 			return DataList.GetAllData<T, IOdccItem>(condition);
 		}
+		internal T _GetDatas<T>(int typeID, Func<IOdccAttach, bool> condition = null) where T : class, ICollection<IOdccAttach>, new()
+		{
+			return DataList.GetAllData<T, IOdccAttach>(typeID, condition);
+		}
 		#endregion
-
 		#region Add OdccItem
 		public T AddChildObject<T>(bool onActive, string name = "") where T : ObjectBehaviour
 		{
@@ -675,7 +694,7 @@ namespace BC.ODCC
 			for(int i = 0 ; i < count ; i++)
 			{
 				var item = thisList[i];
-				if(item is T tt && (condition is null || condition.Invoke(tt)))
+				if(item is T tt && (condition is null || condition(tt)))
 				{
 					return tt;
 				}
@@ -689,14 +708,33 @@ namespace BC.ODCC
 			for(int i = 0 ; i < count ; i++)
 			{
 				var item = thisList[i];
-				if(item is T tt && (condition is null || condition.Invoke(tt)))
+				if(item is T tt && (condition is null || condition(tt)))
 				{
 					list.Add(tt);
 				}
 			}
 			return list.ToArray();
 		}
-		public static T GetData<T, TT>(this TT[] thisList, Func<T, bool> condition = null) where T : class, IOdccItem
+		public static T GetAll<T, TT>(this TT[] thisList, int typeID, Func<IOdccAttach, bool> condition = null) where T : class, ICollection<IOdccAttach>, new() where TT : class, IOdccAttach
+		{
+			T result = new T();
+
+			// 기본 필터링 조건
+			var find = thisList.Where(item =>
+				(item.OdccTypeIndex == typeID || item.OdccTypeInheritanceIndex.Contains(typeID)) && (condition is null  || condition(item))
+			);
+
+			// 결과를 반환 타입 T에 추가
+			foreach(var item in find)
+			{
+				result.Add(item);
+			}
+
+			return result;
+		}
+
+
+		public static T GetData<T, TT>(this TT[] thisList, Func<T, bool> condition = null) where T : class where TT : class, IOdccItem
 		{
 			int count = thisList.Length;
 			for(int i = 0 ; i < count ; i++)
@@ -709,7 +747,7 @@ namespace BC.ODCC
 			}
 			return default;
 		}
-		public static T[] GetAllData<T, TT>(this TT[] thisList, Func<T, bool> condition = null) where T : class, IOdccItem
+		public static T[] GetAllData<T, TT>(this TT[] thisList, Func<T, bool> condition = null) where T : class where TT : class, IOdccItem
 		{
 			List<T> list = new List<T>();
 			int count = thisList.Length;
@@ -723,7 +761,23 @@ namespace BC.ODCC
 			}
 			return list.ToArray();
 		}
+		public static T GetAllData<T, TT>(this TT[] thisList, int typeID, Func<IOdccAttach, bool> condition = null) where T : class, ICollection<IOdccAttach>, new() where TT : class, IOdccAttach
+		{
+			T result = new T();
 
+			// 기본 필터링 조건
+			var find = thisList.Where(item =>
+				(item.OdccTypeIndex == typeID || item.OdccTypeInheritanceIndex.Contains(typeID)) && (condition is null  || condition(item))
+			);
+
+			// 결과를 반환 타입 T에 추가
+			foreach(var item in find)
+			{
+				result.Add(item);
+			}
+
+			return result;
+		}
 
 		public static void GetAction<T, TT>(this TT[] thisList, Action<T> action, Func<T, bool> condition = null) where T : class where TT : class, IOdccItem
 		{

@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 namespace BC.ODCC
 {
 	/// <summary>
-	/// OdccForeach 클래스는 ODCC 시스템의 Foreach 기능을 관리하는 정적 클래스입니다.
+	/// OdccForeach 클래스는 ODCC 시스템의 CallForeach 기능을 관리하는 정적 클래스입니다.
 	/// </summary>
 	internal static class OdccForeach
 	{
@@ -46,11 +46,11 @@ namespace BC.ODCC
 		[Obsolete("Using ForeachQueryUpdate", true)]
 		internal static Dictionary<OdccQueryLooper, UnityEngine.Awaitable> ForeachQueryNextUpdate = new ();
 
-		// Foreach 작업을 위한 액션 큐입니다.
+		// CallForeach 작업을 위한 액션 큐입니다.
 		private static readonly Queue<Action> foreachAction = new Queue<Action>();
 
 		/// <summary>
-		/// Foreach 시스템을 초기화하는 메서드입니다.
+		/// CallForeach 시스템을 초기화하는 메서드입니다.
 		/// </summary>
 		internal static void InitForeach()
 		{
@@ -64,7 +64,7 @@ namespace BC.ODCC
 		}
 
 		/// <summary>
-		/// Foreach 시스템을 해제하는 메서드입니다.
+		/// CallForeach 시스템을 해제하는 메서드입니다.
 		/// </summary>
 		internal static void ReleaseForeach()
 		{
@@ -91,7 +91,7 @@ namespace BC.ODCC
 		{
 			if(behaviour == null) return;
 
-			// Foreach 액션 큐를 비웁니다.
+			// CallForeach 액션 큐를 비웁니다.
 			while(foreachAction.Count > 0)
 			{
 				foreachAction.Dequeue().Invoke();
@@ -109,7 +109,7 @@ namespace BC.ODCC
 				}
 			}
 
-			// Foreach 액션 큐를 다시 비웁니다.
+			// CallForeach 액션 큐를 다시 비웁니다.
 			while(foreachAction.Count > 0)
 			{
 				foreachAction.Dequeue().Invoke();
@@ -124,7 +124,7 @@ namespace BC.ODCC
 		{
 			if(behaviour == null) return;
 
-			// Foreach 액션 큐를 비웁니다.
+			// CallForeach 액션 큐를 비웁니다.
 			while(foreachAction.Count > 0)
 			{
 				foreachAction.Dequeue().Invoke();
@@ -142,7 +142,7 @@ namespace BC.ODCC
 				}
 			}
 
-			// Foreach 액션 큐를 다시 비웁니다.
+			// CallForeach 액션 큐를 다시 비웁니다.
 			while(foreachAction.Count > 0)
 			{
 				foreachAction.Dequeue().Invoke();
@@ -246,7 +246,7 @@ namespace BC.ODCC
 		{
 			if(updateObject is null) return;
 
-			// Foreach 액션 큐를 비웁니다.
+			// CallForeach 액션 큐를 비웁니다.
 			while(foreachAction.Count > 0)
 			{
 				foreachAction.Dequeue().Invoke();
@@ -262,7 +262,7 @@ namespace BC.ODCC
 				});
 			}
 
-			// Foreach 액션 큐를 다시 비웁니다.
+			// CallForeach 액션 큐를 다시 비웁니다.
 			while(foreachAction.Count > 0)
 			{
 				foreachAction.Dequeue().Invoke();
@@ -270,7 +270,7 @@ namespace BC.ODCC
 		}
 
 		/// <summary>
-		/// Foreach 시스템의 업데이트를 수행하는 메서드입니다.
+		/// CallForeach 시스템의 업데이트를 수행하는 메서드입니다.
 		/// </summary>
 		internal static void ForeachUpdate()
 		{
@@ -322,7 +322,7 @@ namespace BC.ODCC
 		}
 
 		/// <summary>
-		/// Foreach 시스템의 LateUpdate를 수행하는 메서드입니다.
+		/// CallForeach 시스템의 LateUpdate를 수행하는 메서드입니다.
 		/// </summary>
 		internal static void ForeachLateUpdate()
 		{
@@ -337,7 +337,7 @@ namespace BC.ODCC
 		/// <param name="scene">제거할 씬</param>
 		internal static void RemoveLifeItemOdccCollectorList(Scene scene)
 		{
-			// Foreach 액션 큐를 비웁니다.
+			// CallForeach 액션 큐를 비웁니다.
 			while(foreachAction.Count > 0)
 			{
 				foreachAction.Dequeue().Invoke();
@@ -353,7 +353,7 @@ namespace BC.ODCC
 				});
 			}
 
-			// Foreach 액션 큐를 비웁니다.
+			// CallForeach 액션 큐를 비웁니다.
 			while(foreachAction.Count > 0)
 			{
 				foreachAction.Dequeue().Invoke();

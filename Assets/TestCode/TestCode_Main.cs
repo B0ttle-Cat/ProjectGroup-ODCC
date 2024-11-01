@@ -25,24 +25,24 @@ public class TestCode_Main : ObjectBehaviour
 			.CreateChangeListEvent(InitTestCode, UpdateTestCode)                    // 쿼리를 만족하는 객체의 변동 사항을 감시 하는 이벤트 생성
 
 			.CreateActionEvent("TempCallEvent")                                     // 수동으로 호출 가능한 이벤트 생성
-				.Foreach<TestCodeObject>(CallEventTestSync)                         // 호출될 이벤트 등록방식 1-1 : 대기 없는 함수 등록
-				.Foreach<TestCodeObject>((_, _) => { })          // 호출될 이벤트 등록방식 1-2 : 대기 없는 함수 등록
-				.Foreach<TestCodeObject>(CallEventTestAsync)                        // 호출될 이벤트 등록방식 2-1 : 대기하는 함수 등록
-				.Foreach<TestCodeObject, TestCodeComponentA>(async (_, _, _) => {
+				.CallForeach<TestCodeObject>(CallEventTestSync)                         // 호출될 이벤트 등록방식 1-1 : 대기 없는 함수 등록
+				.CallForeach<TestCodeObject>((_, _) => { })          // 호출될 이벤트 등록방식 1-2 : 대기 없는 함수 등록
+				.CallForeach<TestCodeObject>(CallEventTestAsync)                        // 호출될 이벤트 등록방식 2-1 : 대기하는 함수 등록
+				.CallForeach<TestCodeObject, TestCodeComponentA>(async (_, _, _) => {
 					await Awaitable.NextFrameAsync();                               // 호출될 이벤트 등록방식 2-2 : 대기하는 함수 등록	
 				})
-				.CallNext(() => { })                                                // Foreach로 탐색 외 다른 이벤트를 수행해야 하는경우. 
+				.CallAction(() => { })                                                // Foreach로 탐색 외 다른 이벤트를 수행해야 하는경우. 
 				.ShowCallLog(true)                                                  // 호출 로그를 출력할지 여부
 			.GetCollector()
 
 			.CreateLooperEvent("TempLoopEvent")                                     // 자동으로 호출되는 Update Loop 생성
-				.Foreach<TestCodeObject>(CallEventTestSync)                         // 호출될 이벤트 등록방식 1-1 : 대기 없는 함수 등록
-				.Foreach<TestCodeObject>((_, _) => { })          // 호출될 이벤트 등록방식 1-2 : 대기 없는 함수 등록
-				.Foreach<TestCodeObject>(CallEventTestAsync)                        // 호출될 이벤트 등록방식 2-1 : 대기하는 함수 등록
-				.Foreach<TestCodeObject, TestCodeComponentA>(async (_, _, _) => {
+				.CallForeach<TestCodeObject>(CallEventTestSync)                         // 호출될 이벤트 등록방식 1-1 : 대기 없는 함수 등록
+				.CallForeach<TestCodeObject>((_, _) => { })          // 호출될 이벤트 등록방식 1-2 : 대기 없는 함수 등록
+				.CallForeach<TestCodeObject>(CallEventTestAsync)                        // 호출될 이벤트 등록방식 2-1 : 대기하는 함수 등록
+				.CallForeach<TestCodeObject, TestCodeComponentA>(async (_, _, _) => {
 					await Awaitable.NextFrameAsync();                               // 호출될 이벤트 등록방식 2-2 : 대기하는 함수 등록	
 				})
-				.CallNext(() => { })                                                // Foreach로 탐색 외 다른 이벤트를 수행해야 하는경우.
+				.CallAction(() => { })                                                // Foreach로 탐색 외 다른 이벤트를 수행해야 하는경우.
 				.ShowCallLog(true)                                                  // 호출 로그를 출력할지 여부
 			.GetCollector();
 	}

@@ -593,9 +593,9 @@ namespace BC.ODCC
 			return DeleteActionEvent(key);
 		}
 
-		public OdccQueryCollector CreateLooperEvent(object onUnitTargetCollectorUpdate)
-		{
-			throw new NotImplementedException();
-		}
+		//public OdccQueryCollector CreateLooperEvent(object onUnitTargetCollectorUpdate)
+		//{
+		//	throw new NotImplementedException();
+		//}
 	}
 }

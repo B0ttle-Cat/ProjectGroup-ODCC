@@ -13,6 +13,9 @@ namespace BC.ODCC
 		public int OdccTypeIndex => odccTypeIndex == 0 ? odccTypeIndex = OdccManager.GetTypeToIndex(GetType()) : odccTypeIndex;
 		public int[] OdccTypeInheritanceIndex => (odccTypeInheritanceIndex == null || odccTypeInheritanceIndex.Length == 0) ? OdccManager.GetTypeInheritanceTable(OdccTypeIndex) : odccTypeInheritanceIndex;
 	}
+	public interface IOdccAttach : IOdccItem
+	{
+	}
 	public interface IOCBehaviour : IOdccItem, IDisposable
 	{
 		public GameObject GameObject { get; }
@@ -65,19 +68,17 @@ DestroyState : {DestroyState}
 		}
 		internal void CreateThisContainer(ContainerNode target);
 	}
-	public interface IOdccComponent : IOCBehaviour
+	public interface IOdccComponent : IOCBehaviour, IOdccAttach
 	{
 		public ObjectBehaviour ThisObject { get; }
 		public ContainerObject ThisContainer { get; }
 
 		internal void ConnectThisObject(ContainerNode target);
 	}
-
-	public interface IOdccData : IOdccItem, IDisposable
+	public interface IOdccData : IOdccItem, IDisposable, IOdccAttach
 	{
 		internal bool IsData { get; }
 	}
-
 	public interface IOdccUpdate : IOCBehaviour
 	{
 		public void BaseUpdate();
