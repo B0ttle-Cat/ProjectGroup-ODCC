@@ -31,6 +31,7 @@ namespace BC.ODCC
 		static void InitOdccManager()
 		{
 			Instance = new GameObject().AddComponent<OdccManager>();
+			Instance.gameObject.name = "[ODCC Manager]";
 			DontDestroyOnLoad(Instance.gameObject);
 
 			// 씬이 언로드될 때 호출되는 이벤트 핸들러를 등록합니다.

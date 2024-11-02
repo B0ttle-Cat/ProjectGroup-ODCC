@@ -79,7 +79,7 @@ namespace BC.Base
 
 						if(Application.isPlaying)
 						{
-							instance.name = $"[{typeof(T).Name}] Bace";
+							instance.name = $"[{typeof(T).Name}]";
 							Object.DontDestroyOnLoad(instance.gameObject);
 						}
 						else
