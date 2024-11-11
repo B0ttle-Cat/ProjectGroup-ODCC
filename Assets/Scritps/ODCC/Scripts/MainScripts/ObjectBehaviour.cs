@@ -7,7 +7,6 @@ using UnityEngine;
 
 namespace BC.ODCC
 {
-	[DefaultExecutionOrder(0)]
 	public class ObjectBehaviour : OCBehaviour, IOdccObject
 	{
 		[HideLabel, InlineProperty, SerializeField, PropertyOrder(-5)]

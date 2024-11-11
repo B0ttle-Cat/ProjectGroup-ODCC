@@ -6,7 +6,6 @@ using UnityEngine;
 
 namespace BC.ODCC
 {
-	[DefaultExecutionOrder(1)]
 	public class ComponentBehaviour : OCBehaviour, IOdccComponent
 	{
 		[ReadOnly, ShowInInspector]

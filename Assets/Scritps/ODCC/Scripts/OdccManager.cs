@@ -14,7 +14,7 @@ namespace BC.ODCC
 	/// <summary>
 	/// OdccManager 클래스는 ODCC 시스템의 핵심 관리 클래스로, 싱글톤 패턴을 사용하여 인스턴스를 관리합니다.
 	/// </summary>
-	[DefaultExecutionOrder(-1)]
+	[DefaultExecutionOrder(-2)]
 	public sealed partial class OdccManager : MonoBehaviour
 	{
 		public static OdccManager Instance;
