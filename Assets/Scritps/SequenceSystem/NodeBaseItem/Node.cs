@@ -15,6 +15,7 @@ namespace BC.Sequence
 
 		}
 
+		SequencePlayer player;
 		protected Node parent;
 		protected Node next;
 
@@ -39,8 +40,9 @@ namespace BC.Sequence
 		}
 		public State CurrentState { get; set; }
 		private bool isNext;
-		internal void NodeInit(NodeGraph nodeGraph, NodeGraph nextGraph)
+		internal void NodeInit(SequencePlayer player, NodeGraph nodeGraph, NodeGraph nextGraph)
 		{
+			this.player = player;
 			if(CurrentState is State.Uninitialized)
 			{
 				try
@@ -83,7 +85,7 @@ namespace BC.Sequence
 
 				if(CurrentState is not (State.Success or State.Failure))
 				{
-					SequenceManager.Instance.NodeStart(this);
+					player.AddUpdateNode(this);
 				}
 			}
 			NodeNext();

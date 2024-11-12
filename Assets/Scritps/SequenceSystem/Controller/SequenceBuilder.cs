@@ -21,10 +21,12 @@ namespace BC.Sequence
 			if(nodeGraph == null) return new SequencePlayer(null);
 			var root = nodeGraph.Return();
 
+			var player =  new SequencePlayer(root.node);
+
 			Init(root, null);
 			void Init(NodeGraph initNode, NodeGraph nextNode)
 			{
-				initNode.Build(nextNode);
+				initNode.Build(player, nextNode);
 				int length = initNode.children.Count;
 				for(int i = 0 ; i < length ; i++)
 				{
@@ -42,8 +44,6 @@ namespace BC.Sequence
 				}
 			}
 
-
-			var player =  new SequencePlayer(root.node);
 			return player;
 		}
 	}
@@ -92,9 +92,9 @@ namespace BC.Sequence
 		}
 
 
-		internal void Build(NodeGraph nextGraph)
+		internal void Build(SequencePlayer player, NodeGraph nextGraph)
 		{
-			node?.NodeInit(this, nextGraph);
+			node?.NodeInit(player, this, nextGraph);
 		}
 	}
 	public class ModifierGraph : NodeGraph

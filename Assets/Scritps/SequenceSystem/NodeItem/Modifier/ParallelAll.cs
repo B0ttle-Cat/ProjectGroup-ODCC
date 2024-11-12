@@ -2,19 +2,19 @@ namespace BC.Sequence
 {
 	public static partial class NodeBuilder
 	{
-		internal static ParallelAllGraphBuilder _ParallelAny(NodeGraph parent)
+		internal static ParallelAllGraphBuilder _ParallelAll(NodeGraph parent)
 		{
 			var newBuilder = new ParallelAllGraphBuilder(new ParallelAll());
 			newBuilder.SetParent(parent);
 			return newBuilder;
 		}
-		public static ParallelAllGraphBuilder ParallelAny()
+		public static ParallelAllGraphBuilder ParallelAll()
 		{
-			return _ParallelAny(null);
+			return _ParallelAll(null);
 		}
-		public static ParallelAllGraphBuilder ParallelAny(this NodeGraph parent)
+		public static ParallelAllGraphBuilder ParallelAll(this NodeGraph parent)
 		{
-			return _ParallelAny(parent);
+			return _ParallelAll(parent);
 		}
 		public class ParallelAllGraphBuilder : ModifierGraph
 		{

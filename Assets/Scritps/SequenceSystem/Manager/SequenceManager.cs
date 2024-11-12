@@ -70,6 +70,13 @@ namespace BC.Sequence
 					.False(NodeBuilder.Logger("False"))
 					.Break()
 				.Logger("Hello Action Node3")
+				.ParallelAll()
+					.Parallel(NodeBuilder.Logger("Parallel 1"))
+					.Parallel(NodeBuilder.Logger("Parallel 2"))
+					.Parallel(NodeBuilder.Logger("Parallel 3"))
+					.Parallel(NodeBuilder.Logger("Parallel 4"))
+					.Parallel(NodeBuilder.Logger("Parallel 5"))
+					.Break()
 				.Break()
 			.Return();
 
@@ -78,6 +85,5 @@ namespace BC.Sequence
 
 			Play(player);
 		}
-
 	}
 }
