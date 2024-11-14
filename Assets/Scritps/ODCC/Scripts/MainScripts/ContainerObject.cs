@@ -120,7 +120,7 @@ namespace BC.ODCC
 		}
 		public T GetObject<T>() where T : class, IOdccObject
 		{
-			return ThisObject as T;
+			return ThisObject is T t ? t : null;
 		}
 		public T GetParentObject<T>(Func<T, bool> condition = null) where T : class, IOdccObject
 		{
