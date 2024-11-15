@@ -25,8 +25,8 @@ namespace BC.ODCC
 		[Flags, DefaultValue(StateFlag.Off)]
 		internal enum StateFlag
 		{
-			Off, // ºñÈ°¼º
-			On,  // È°¼º
+			Off, // ë¹„í™œì„±
+			On,  // í™œì„±
 		}
 		internal StateFlag AwakeState { get; set; }
 		internal StateFlag EnableState { get; set; }
@@ -35,9 +35,9 @@ namespace BC.ODCC
 		internal bool _IsCanEnterAwake => AwakeState == StateFlag.Off && DestroyState == StateFlag.Off;
 		internal bool _IsCanEnterUpdate => AwakeState == StateFlag.On && EnableState == StateFlag.On && StartState == StateFlag.On && DestroyState == StateFlag.Off;
 		internal bool _IsCanEnterDestroy => DestroyState == StateFlag.Off;
-		internal bool IsAwake => AwakeState == StateFlag.On && DestroyState == StateFlag.Off;
-		internal bool IsEnable => IsAwake && EnableState == StateFlag.On;
-		internal bool IsDestroy => DestroyState == StateFlag.On;
+		public bool IsAwake => AwakeState == StateFlag.On && DestroyState == StateFlag.Off;
+		public bool IsEnable => IsAwake && EnableState == StateFlag.On;
+		public bool IsDestroy => DestroyState == StateFlag.On;
 		public CancellationToken DestroyCancelToken { get; }
 		public CancellationToken DisableCancelToken { get; }
 		public void DestroyThis(bool removeThisGameObject = false);
@@ -53,8 +53,8 @@ namespace BC.ODCC
 		public ContainerObject ThisContainer { get; }
 		string DetailLog()
 		{
-			string log = @$"
-IOdccObject : {GameObject.name}
+			string log
+= @$"IOdccObject : {GameObject.name}
 Type : {GetType().Name}
 Is IOCBehaviour : {this is IOCBehaviour}
 Is IOdccObject : {this is IOdccObject}

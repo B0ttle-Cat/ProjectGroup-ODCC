@@ -6,7 +6,6 @@ using UnityEngine.SceneManagement;
 
 namespace BC.ODCC
 {
-
 	public abstract class OCBehaviour : MonoBehaviour, IOCBehaviour, IDisposable
 	{
 		public Transform ThisTransform => transform;
