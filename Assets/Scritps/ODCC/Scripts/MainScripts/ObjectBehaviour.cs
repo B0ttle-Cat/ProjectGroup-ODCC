@@ -9,7 +9,7 @@ namespace BC.ODCC
 {
 	public class ObjectBehaviour : OCBehaviour, IOdccObject
 	{
-		[HideLabel, InlineProperty, SerializeField, PropertyOrder(-5)]
+		[HideLabel, InlineProperty, SerializeField, PropertyOrder(-5), PropertySpace(0, 10)]
 		private ContainerObject _container;
 		public ContainerObject ThisContainer {
 			get {
@@ -42,7 +42,7 @@ namespace BC.ODCC
 		}
 
 #if UNITY_EDITOR
-		[Obsolete("'ThisContainer'ë¥¼ ëŒ€ì‹  ì‚¬ìš©í•˜ì„¸ìš”.", true)]
+		[Obsolete("'ThisContainer'¸¦ ´ë½Å »ç¿ëÇÏ¼¼¿ä.", true)]
 		public ContainerObject Container => ThisContainer;
 		internal override void Reset()
 		{
