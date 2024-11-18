@@ -74,16 +74,32 @@ namespace BC.ODCC
 #endif
 		internal void Awake()
 		{
-			Debug.Log($"Awake| {gameObject.name}({GetType()})");
+			if(ThisScene.buildIndex == -1) return;
+
+			Debug.Log($"Awake|{ThisScene}| {gameObject.name}({GetType()})");
 
 			if(IOdccItem.odccTypeIndex == 0) IOdccItem.odccTypeIndex = OdccManager.GetTypeToIndex(GetType());
 
-			OdccManager.OdccAwake(this);
+			try
+			{
+				OdccManager.OdccAwake(this);
+			}
+			catch(Exception ex)
+			{
+				Debug.LogException(ex);
+			}
 		}
 		protected void OnDestroy()
 		{
 			Debug.Log($"Destroy| {gameObject.name}({GetType()})");
-			OdccManager.OdccDestroy(this);
+			try
+			{
+				OdccManager.OdccDestroy(this);
+			}
+			catch(Exception ex)
+			{
+				Debug.LogException(ex);
+			}
 
 			if(disableCancellationSource != null)
 			{
@@ -94,14 +110,29 @@ namespace BC.ODCC
 		}
 		protected void OnEnable()
 		{
+			Debug.Log($"OnEnable| {gameObject.name}({GetType()})");
 			if(disableCancellationSource == null)
 				disableCancellationSource = new CancellationTokenSource();
 
-			OdccManager.OdccEnable(this);
+			try
+			{
+				OdccManager.OdccEnable(this);
+			}
+			catch(Exception ex)
+			{
+				Debug.LogException(ex);
+			}
 		}
 		protected void OnDisable()
 		{
-			OdccManager.OdccDisable(this);
+			try
+			{
+				OdccManager.OdccDisable(this);
+			}
+			catch(Exception ex)
+			{
+				Debug.LogException(ex);
+			}
 
 			if(disableCancellationSource != null)
 			{
@@ -112,7 +143,14 @@ namespace BC.ODCC
 		}
 		protected void Start()
 		{
-			OdccManager.OdccStart(this);
+			try
+			{
+				OdccManager.OdccStart(this);
+			}
+			catch(Exception ex)
+			{
+				Debug.LogException(ex);
+			}
 		}
 		protected virtual void OnTransformParentChanged()
 		{
@@ -135,6 +173,8 @@ namespace BC.ODCC
 				name = (this is ObjectBehaviour ? $"[O] {name}" : name);
 			}
 #endif
+
+			Debug.Log($"BaseAwake| {gameObject.name}({GetType()})");
 			BaseAwake();
 		}
 		void IOCBehaviour.OdccDestroy()
@@ -143,6 +183,7 @@ namespace BC.ODCC
 		}
 		void IOCBehaviour.OdcnEnable()
 		{
+			Debug.Log($"BaseEnable| {gameObject.name}({GetType()})");
 			BaseEnable();
 		}
 		void IOCBehaviour.OdccDisable()

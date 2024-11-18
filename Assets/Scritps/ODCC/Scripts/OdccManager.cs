@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -65,21 +65,24 @@ namespace BC.ODCC
 			OdccForeach.RemoveLifeItemOdccCollectorList(scene);
 		}
 
-		Action beforeAwake;
 		internal static void OdccAwake(OCBehaviour ocBehaviour)
 		{
 			if(ocBehaviour == null) return;
 
 			_OdccAwake(ocBehaviour);
-			void _OdccAwake(IOCBehaviour target)
+			static void _OdccAwake(IOCBehaviour target)
 			{
-				/// Awake 가 처음인지 검사.
+				// Awake 가 처음인지 검사.
 				if(!target._IsCanEnterAwake) return;
 
-				/// 부모가 있을경우 부모가 Awake 한적 있는지 검사 
+				// 부모가 있을경우 부모가 Awake 한적 있는지 검사 
 				Transform parentTr = target.ThisTransform.parent;
 				IOCBehaviour parent = parentTr == null ? null : parentTr.gameObject.GetComponentInParent<IOCBehaviour>(true);
-				if(parent != null && parent._IsCanEnterAwake) return;
+				if(parent != null && parent._IsCanEnterAwake)
+				{
+					// 부모의 Awake 가 안되어 있으면 부모 먼저 Awake 실행
+					_OdccAwake(parent);
+				}
 
 				// 기본 리스트 구성하기
 				List<IOCBehaviour> awakeList = CreateAwakeList();
@@ -111,17 +114,17 @@ namespace BC.ODCC
 					List<IOCBehaviour> awakeList = new List<IOCBehaviour>();
 
 					// 순서 중요.
-					if(ocBehaviour is ObjectBehaviour)
+					if(target is ObjectBehaviour)
 					{
-						awakeList.Add(ocBehaviour);
-						awakeList.AddRange(ocBehaviour.gameObject.GetComponentsInChildren<ObjectBehaviour>(true));
-						awakeList.AddRange(ocBehaviour.gameObject.GetComponentsInChildren<ComponentBehaviour>(true));
+						awakeList.Add(target);
+						awakeList.AddRange(target.GameObject.GetComponentsInChildren<ObjectBehaviour>(true));
+						awakeList.AddRange(target.GameObject.GetComponentsInChildren<ComponentBehaviour>(true));
 					}
 					else
 					{
-						awakeList.AddRange(ocBehaviour.gameObject.GetComponentsInChildren<ObjectBehaviour>(true));
-						awakeList.Add(ocBehaviour);
-						awakeList.AddRange(ocBehaviour.gameObject.GetComponentsInChildren<ComponentBehaviour>(true));
+						awakeList.AddRange(target.GameObject.GetComponentsInChildren<ObjectBehaviour>(true));
+						awakeList.Add(target);
+						awakeList.AddRange(target.GameObject.GetComponentsInChildren<ComponentBehaviour>(true));
 					}
 
 					/// Awake 된 객체 제거.
@@ -289,7 +292,7 @@ namespace BC.ODCC
 			if(ocBehaviour == null) return;
 
 			_OdccDestroy(ocBehaviour);
-			void _OdccDestroy(IOCBehaviour target)
+			static void _OdccDestroy(IOCBehaviour target)
 			{
 				/// Destroy 가 처음인지 검사.
 				if(!target._IsCanEnterDestroy) return;

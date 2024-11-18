@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 using UnityEngine;
 
@@ -43,7 +43,6 @@ namespace BC.Base
 
 		public static async Awaitable ParallelWaitAll(params Awaitable[] awaitables)
 		{
-			Debug.Log("In - ParallelWaitAll");
 			int waitParallel = awaitables.Length;
 			foreach(var awaitable in awaitables)
 			{
@@ -54,7 +53,6 @@ namespace BC.Base
 			{
 				await Awaitable.NextFrameAsync();
 			}
-			Debug.Log("Out - ParallelWaitAll");
 			async void ParallelUpdate(Awaitable awaitable)
 			{
 				await awaitable;
