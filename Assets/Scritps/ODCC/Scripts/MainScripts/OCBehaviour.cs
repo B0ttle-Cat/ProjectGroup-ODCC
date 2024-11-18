@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Threading;
 
 using UnityEngine;
@@ -161,9 +161,13 @@ namespace BC.ODCC
 		protected virtual void BaseEnable() { }
 		protected virtual void BaseDisable() { }
 		protected virtual void BaseStart() { }
-		//public virtual void BaseUpdate() { }
-		//public virtual void BaseLateUpdate() { }
 
+#if UNITY_EDITOR
+		[Obsolete("Use IOdccUpdate.BaseUpdate", true)]
+		protected virtual void BaseUpdate() { }
+		[Obsolete("Use IOdccUpdate.Late.BaseUpdate", true)]
+		protected virtual void BaseLateUpdate() { }
+#endif
 
 		private bool disposedValue;
 		protected virtual void Disposing()

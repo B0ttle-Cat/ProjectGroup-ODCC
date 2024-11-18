@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+ï»¿using System.Collections.Generic;
 
 using BC.ODCC;
 
@@ -71,8 +71,8 @@ namespace BC.OdccBase
 		sealed protected override void BaseEnable() { FSMEnable(); }
 		sealed protected override void BaseDisable() { FSMDisable(); }
 		sealed protected override void BaseStart() { FSMStart(); }
-		public void BaseUpdate() { FSMChangeBeforeUpdate(); FSMUpdate(); }
-		public void BaseLateUpdate() { FSMLateUpdate(); }
+		void IOdccUpdate.BaseUpdate() { FSMChangeBeforeUpdate(); FSMUpdate(); }
+		void IOdccUpdate.Late.BaseLateUpdate() { FSMLateUpdate(); }
 
 		protected abstract void FSMAwake();
 		protected abstract void FSMDestroy();
@@ -119,8 +119,8 @@ namespace BC.OdccBase
 		}
 
 		/// <summary>
-		/// <code>¸·Áö´Â ¾ÊÁö¸¸, ¿ÜºÎ¿¡¼­ ÀÌ ÇÔ¼ö¸¦ »ç¿ëÇÏ´Â°Ç ÁÁÀº »ı°¢ÀÌ ¾Æ´Õ´Ï´Ù.
-		/// ´ë½Å, »ç¿ëÁßÀÎ <see cref="OdccStateData"/>ÀÇ °ªÀ» º¯°æÇÏ¿© <see cref="OdccStateComponent.StateChangeInHere"/>¿¡¼­ ½º½º·Î »óÅÂ¸¦ ÀüÀÌ ÇÒ ¼ö ÀÖµµ·Ï ÇØÁÖ¼¼¿ä.</code>
+		/// <code>ë§‰ì§€ëŠ” ì•Šì§€ë§Œ, ì™¸ë¶€ì—ì„œ ì´ í•¨ìˆ˜ë¥¼ ì‚¬ìš©í•˜ëŠ”ê±´ ì¢‹ì€ ìƒê°ì´ ì•„ë‹™ë‹ˆë‹¤.
+		/// ëŒ€ì‹ , ì‚¬ìš©ì¤‘ì¸ <see cref="OdccStateData"/>ì˜ ê°’ì„ ë³€ê²½í•˜ì—¬ <see cref="OdccStateComponent.StateChangeInHere"/>ì—ì„œ ìŠ¤ìŠ¤ë¡œ ìƒíƒœë¥¼ ì „ì´ í•  ìˆ˜ ìˆë„ë¡ í•´ì£¼ì„¸ìš”.</code>
 		/// </summary>
 		public void OnTransitionState<T>(int? canNewStateinThisGroup = null) where T : OdccStateComponent
 		{
@@ -134,8 +134,8 @@ namespace BC.OdccBase
 			}
 		}
 		/// <summary>
-		/// <code>¸·Áö´Â ¾ÊÁö¸¸, ¿ÜºÎ¿¡¼­ ÀÌ ÇÔ¼ö¸¦ »ç¿ëÇÏ´Â°Ç ÁÁÀº »ı°¢ÀÌ ¾Æ´Õ´Ï´Ù.
-		/// ´ë½Å, »ç¿ëÁßÀÎ <see cref="OdccStateData"/>ÀÇ °ªÀ» º¯°æÇÏ¿© <see cref="OdccStateComponent.StateChangeInHere"/>¿¡¼­ ½º½º·Î »óÅÂ¸¦ ÀüÀÌ ÇÒ ¼ö ÀÖµµ·Ï ÇØÁÖ¼¼¿ä.</code>
+		/// <code>ë§‰ì§€ëŠ” ì•Šì§€ë§Œ, ì™¸ë¶€ì—ì„œ ì´ í•¨ìˆ˜ë¥¼ ì‚¬ìš©í•˜ëŠ”ê±´ ì¢‹ì€ ìƒê°ì´ ì•„ë‹™ë‹ˆë‹¤.
+		/// ëŒ€ì‹ , ì‚¬ìš©ì¤‘ì¸ <see cref="OdccStateData"/>ì˜ ê°’ì„ ë³€ê²½í•˜ì—¬ <see cref="OdccStateComponent.StateChangeInHere"/>ì—ì„œ ìŠ¤ìŠ¤ë¡œ ìƒíƒœë¥¼ ì „ì´ í•  ìˆ˜ ìˆë„ë¡ í•´ì£¼ì„¸ìš”.</code>
 		/// </summary>
 		public void OnTransitionState(OdccStateComponent enableState)
 		{
@@ -145,9 +145,9 @@ namespace BC.OdccBase
 			{
 				if(warningStateChange && Application.isEditor)
 				{
-					Debug.LogWarning("\"Update()\" ¶Ç´Â \"LateUpdate()\" µ¿ÀÛ Áß¿¡ State °¡ º¯°æ µÇ¾ú½À´Ï´Ù.\n" +
-						"ÀÌ·¯ÇÑ µ¿ÀÛÀ» ¸·Áö´Â ¾ÊÁö¸¸, °¡´ÉÇÑ \"ChangeBeforeUpdate()\" ¿¡¼­ º¯°æ µÇµµ·Ï ÇØÁÖ¼¼¿ä.\n" +
-						"(ÀÌ ·Î±×´Â Editor ¿¡¼­¸¸ ³ª¿É´Ï´Ù.)");
+					Debug.LogWarning("\"Update()\" ë˜ëŠ” \"LateUpdate()\" ë™ì‘ ì¤‘ì— State ê°€ ë³€ê²½ ë˜ì—ˆìŠµë‹ˆë‹¤.\n" +
+						"ì´ëŸ¬í•œ ë™ì‘ì„ ë§‰ì§€ëŠ” ì•Šì§€ë§Œ, ê°€ëŠ¥í•œ \"ChangeBeforeUpdate()\" ì—ì„œ ë³€ê²½ ë˜ë„ë¡ í•´ì£¼ì„¸ìš”.\n" +
+						"(ì´ ë¡œê·¸ëŠ” Editor ì—ì„œë§Œ ë‚˜ì˜µë‹ˆë‹¤.)");
 				}
 
 				if(OnDebugLog)
