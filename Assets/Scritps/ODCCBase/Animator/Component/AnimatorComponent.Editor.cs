@@ -39,7 +39,7 @@ namespace BC.OdccBase
 			}
 		}
 
-		public override void BaseValidate()
+		protected override void BaseValidate()
 		{
 			base.BaseValidate();
 

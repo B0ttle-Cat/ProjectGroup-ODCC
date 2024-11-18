@@ -17,7 +17,7 @@ namespace BC.OdccBase
 		public abstract OdccStateData ThisStateData { get; }
 
 		private bool warningStateChange;
-		public override void BaseValidate()
+		protected override void BaseValidate()
 		{
 			base.BaseValidate();
 			if(enableStateList == null)
@@ -46,7 +46,7 @@ namespace BC.OdccBase
 				enableStateList[i].enabled = true;
 			}
 		}
-		sealed public override void BaseAwake()
+		sealed protected override void BaseAwake()
 		{
 			FSMAwake();
 
@@ -62,15 +62,15 @@ namespace BC.OdccBase
 			initList.Clear();
 			initList = null;
 		}
-		sealed public override void BaseDestroy()
+		sealed protected override void BaseDestroy()
 		{
 			base.BaseDestroy();
 			FSMDestroy();
 			enableStateList = null;
 		}
-		sealed public override void BaseEnable() { FSMEnable(); }
-		sealed public override void BaseDisable() { FSMDisable(); }
-		sealed public override void BaseStart() { FSMStart(); }
+		sealed protected override void BaseEnable() { FSMEnable(); }
+		sealed protected override void BaseDisable() { FSMDisable(); }
+		sealed protected override void BaseStart() { FSMStart(); }
 		public void BaseUpdate() { FSMChangeBeforeUpdate(); FSMUpdate(); }
 		public void BaseLateUpdate() { FSMLateUpdate(); }
 

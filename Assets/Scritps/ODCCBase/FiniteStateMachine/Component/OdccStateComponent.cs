@@ -27,7 +27,7 @@ namespace BC.OdccBase
 		/// </summary>
 		public OdccStateComponent ChangeState { get; set; }
 
-		public override void BaseValidate()
+		protected override void BaseValidate()
 		{
 			ThisStateMachine = ThisContainer.GetComponent<OdccFiniteStateMachine>();
 		}
@@ -38,7 +38,7 @@ namespace BC.OdccBase
 			ChangeState = null;
 		}
 
-		sealed public override void BaseAwake()
+		sealed protected override void BaseAwake()
 		{
 			ThisStateMachine = ThisContainer.GetComponent<OdccFiniteStateMachine>();
 			if(ThisStateMachine != null && ThisStateMachine.OnDebugLog)
@@ -47,7 +47,7 @@ namespace BC.OdccBase
 			}
 			StateAwake();
 		}
-		sealed public override void BaseDestroy()
+		sealed protected override void BaseDestroy()
 		{
 			if(ThisStateMachine != null && ThisStateMachine.OnDebugLog)
 			{
@@ -55,9 +55,9 @@ namespace BC.OdccBase
 			}
 			StateDestroy();
 		}
-		sealed public override void BaseEnable() { }
-		sealed public override void BaseDisable() { }
-		sealed public override void BaseStart()
+		sealed protected override void BaseEnable() { }
+		sealed protected override void BaseDisable() { }
+		sealed protected override void BaseStart()
 		{
 			if(ThisStateMachine != null && ThisStateMachine.OnDebugLog)
 			{

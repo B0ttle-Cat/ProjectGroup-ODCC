@@ -154,13 +154,13 @@ namespace BC.ODCC
 			BaseStart();
 		}
 
-		public virtual void BaseReset() { }
-		public virtual void BaseValidate() { }
-		public virtual void BaseAwake() { }
-		public virtual void BaseDestroy() { }
-		public virtual void BaseEnable() { }
-		public virtual void BaseDisable() { }
-		public virtual void BaseStart() { }
+		protected virtual void BaseReset() { }
+		protected virtual void BaseValidate() { }
+		protected virtual void BaseAwake() { }
+		protected virtual void BaseDestroy() { }
+		protected virtual void BaseEnable() { }
+		protected virtual void BaseDisable() { }
+		protected virtual void BaseStart() { }
 		//public virtual void BaseUpdate() { }
 		//public virtual void BaseLateUpdate() { }
 

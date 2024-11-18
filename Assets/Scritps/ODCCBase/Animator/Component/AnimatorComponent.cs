@@ -46,7 +46,7 @@ namespace BC.OdccBase
 		internal AnimatorStateChangeListener StateChangeListener { get; set; }
 		internal List<AnimatorStateInfo> AnimatorStateStack { get; set; }
 		private List<IAnimatorStateChangeListener> StateChangeListeners { get; set; }
-		public override void BaseAwake()
+		protected override void BaseAwake()
 		{
 			ThisAnimator = GetComponent<Animator>();
 			if(ThisAnimator != null && animatorData != null)
@@ -65,7 +65,7 @@ namespace BC.OdccBase
 				allStateList[i].Component = this;
 			}
 		}
-		public override void BaseDestroy()
+		protected override void BaseDestroy()
 		{
 			ThisAnimator = null;
 			StateChangeListener = null;
