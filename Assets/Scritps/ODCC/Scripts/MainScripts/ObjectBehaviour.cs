@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 
 using Sirenix.OdinInspector;
 using Sirenix.Utilities;
@@ -42,7 +42,7 @@ namespace BC.ODCC
 		}
 
 #if UNITY_EDITOR
-		[Obsolete("'ThisContainer'¸¦ ´ë½Å »ç¿ëÇÏ¼¼¿ä.", true)]
+		[Obsolete("'ThisContainer'ë¥¼ ëŒ€ì‹  ì‚¬ìš©í•˜ì„¸ìš”.", true)]
 		public ContainerObject Container => ThisContainer;
 		internal override void Reset()
 		{
@@ -114,7 +114,8 @@ namespace BC.ODCC
 			if(_container != null && _container.ContainerNode != null)
 			{
 				_container.ContainerNode.thisObject = this;
-				_container.ContainerNode.AllRefresh();
+				_container.ContainerNode.CurrentInit();
+				_container.ContainerNode.UpdateInit();
 			}
 		}
 #endif
