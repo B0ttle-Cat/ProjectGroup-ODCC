@@ -196,9 +196,9 @@ public class PlayerHealthOther : PlayerHealth
     }
 }
 ```
-실제 사용 예제
-- [ProjectGroup-GamePlayer](https://github.com/B0ttle-Cat/ProjectGroup-GamePlayer/tree/master) 는 ODCC를 기반으로 만들어지고 있는 프로젝트 입니다.
+실제 사용 방식 (아래 ODCC를 기반으로 만들어지고 있는 프로젝트 입니다.)
+- [ProjectGroup-GamePlayer](https://github.com/B0ttle-Cat/ProjectGroup-GamePlayer/tree/master) 
   - Assets/Scripts 에서 ODCC의 사용 방식을 확인해 보실 수 있습니다.
   - 실험적인 기능이 많아서 다소 난잡할 수 있습니다.
-- [Project-TF](https://github.com/B0ttle-Cat/Project-TF) 보다
+- [Project-TF](https://github.com/B0ttle-Cat/Project-TF)
   - 동일하게 ODCC를 사용하며, 좀더 정형화된 사용법을 가진 프로젝트입니다.
