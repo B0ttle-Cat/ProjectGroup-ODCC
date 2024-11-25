@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Threading;
 
@@ -75,6 +75,7 @@ DestroyState : {DestroyState}
 
 		internal void ConnectThisObject(ContainerNode target);
 	}
+
 	public interface IOdccData : IOdccItem, IDisposable, IOdccAttach
 	{
 		internal bool IsData { get; }

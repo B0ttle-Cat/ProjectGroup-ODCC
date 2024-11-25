@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -33,34 +33,34 @@ namespace BC.ODCC
 #endif
 		private List<IOdccItem> initOdccItem;
 
-		// ÇöÀç ¿ÀºêÁ§Æ®
+		// í˜„ì¬ ì˜¤ë¸Œì íŠ¸
 		[ReadOnly, ShowIf("@ShowObject")]
 		public IOdccObject thisObject;
-		// ºÎ¸ğ ¿ÀºêÁ§Æ®
+		// ë¶€ëª¨ ì˜¤ë¸Œì íŠ¸
 		[ReadOnly, ShowIf("@ShowObject")]
 		public IOdccObject parent;
-		// ÀÚ½Ä ¿ÀºêÁ§Æ® ¹è¿­
+		// ìì‹ ì˜¤ë¸Œì íŠ¸ ë°°ì—´
 
 		[ReadOnly, ShowInInspector, ShowIf("@ShowObject")]
 		public IOdccObject[] children = new IOdccObject[0];
 
-		// ÄÄÆ÷³ÍÆ® ¸®½ºÆ® ¹è¿­
+		// ì»´í¬ë„ŒíŠ¸ ë¦¬ìŠ¤íŠ¸ ë°°ì—´
 		[ReadOnly, ShowInInspector, ShowIf("@ShowComponent")]
 		public IOdccComponent[] components = new IOdccComponent[0];
 
-		// µ¥ÀÌÅÍ ¸®½ºÆ® ¹è¿­
+		// ë°ì´í„° ë¦¬ìŠ¤íŠ¸ ë°°ì—´
 		[SerializeReference, ShowIf("@ShowData")]
 		public IOdccData[] datas = new IOdccData[0];
 
-		// Å¸ÀÔ ÀÎµ¦½º ¹è¿­
+		// íƒ€ì… ì¸ë±ìŠ¤ ë°°ì—´
 		[ReadOnly, ShowInInspector, ShowIf("@ShowType")]
 		[ValueDropdown("ShowTypeText")]
 		internal int[] typeIndex = new int[0];
 
 		/// <summary>
-		/// »ı¼ºÀÚ
+		/// ìƒì„±ì
 		/// </summary>
-		/// <param name="thisObject">ÇöÀç ¿ÀºêÁ§Æ®</param>
+		/// <param name="thisObject">í˜„ì¬ ì˜¤ë¸Œì íŠ¸</param>
 		public ContainerNode(IOdccObject thisObject)
 		{
 			this.thisObject = thisObject;
@@ -74,7 +74,7 @@ namespace BC.ODCC
 		}
 
 		/// <summary>
-		/// IDisposable ÀÎÅÍÆäÀÌ½º ±¸Çö
+		/// IDisposable ì¸í„°í˜ì´ìŠ¤ êµ¬í˜„
 		/// </summary>
 		void IDisposable.Dispose()
 		{
@@ -352,7 +352,7 @@ namespace BC.ODCC
 			return true;
 		}
 
-		[Obsolete("Á¦°ÅµÊ")]
+		[Obsolete("ì œê±°ë¨")]
 		public void AllRefresh()
 		{
 
