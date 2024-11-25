@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 using UnityEngine;
 
@@ -60,7 +60,7 @@ namespace BC.Sequence
 			this.node = node;
 		}
 
-		internal void SetParent(NodeGraph _parent)
+		public void SetParent(NodeGraph _parent)
 		{
 			if(parent != null)
 			{

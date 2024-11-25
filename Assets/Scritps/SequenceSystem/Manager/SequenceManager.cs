@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+ï»¿using System.Collections.Generic;
 
 using Sirenix.OdinInspector;
 
@@ -12,7 +12,7 @@ namespace BC.Sequence
 		public static SequenceManager Instance;
 		private List<Node> updateNodes = new List<Node>();
 		/// <summary>
-		/// ODCC ¸Å´ÏÀú¸¦ ÃÊ±âÈ­ÇÏ´Â ¸Ş¼­µåÀÔ´Ï´Ù. ¾ÀÀÌ ·ÎµåµÇ±â Àü¿¡ ½ÇÇàµË´Ï´Ù.
+		/// ODCC ë§¤ë‹ˆì €ë¥¼ ì´ˆê¸°í™”í•˜ëŠ” ë©”ì„œë“œì…ë‹ˆë‹¤. ì”¬ì´ ë¡œë“œë˜ê¸° ì „ì— ì‹¤í–‰ë©ë‹ˆë‹¤.
 		/// </summary>
 		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
 		static void InitOdccManager()
