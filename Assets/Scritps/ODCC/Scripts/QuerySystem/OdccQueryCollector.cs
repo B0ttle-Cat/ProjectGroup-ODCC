@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -168,12 +168,12 @@ namespace BC.ODCC
 			{
 				OdccQueryCollector newCollector = new OdccQueryCollector(querySystem);
 
-				var objectList = OdccForeach.objectUpdateList;
+				var objectList = OdccForeach.OCBehaviourList.GetQueryItems();
 				if(objectList != null)
 				{
 					foreach(var item in objectList)
 					{
-						newCollector.AddObject(item as ObjectBehaviour);
+						newCollector.AddObject(item);
 					}
 				}
 
@@ -186,7 +186,7 @@ namespace BC.ODCC
 		/// QuerySystem을 기반으로 OdccQueryCollector를 삭제하는 메서드입니다.
 		/// </summary>
 		/// <param name="querySystem">QuerySystem 객체</param>
-		/// <param name="lifeItem">라이프 아이템</param>
+		/// <param name="lifeItem">라이프 아이템 (string 외 다른 항목은 자동으로 체크함)</param>
 		public static void DeleteQueryCollector(QuerySystem querySystem, string lifeItem)
 		{
 			if(querySystem != null && OdccForeach.OdccQueryCollectors.ContainsKey(querySystem))
