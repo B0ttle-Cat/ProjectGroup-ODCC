@@ -1,4 +1,4 @@
-namespace BC.Sequence
+﻿namespace BC.Sequence
 {
 	public static partial class NodeBuilder
 	{
@@ -8,21 +8,25 @@ namespace BC.Sequence
 			newBuilder.SetParent(parent);
 			return newBuilder;
 		}
-		public static RandomGraphBuilder Random()
+		public static IRandomNodeGraph Random()
 		{
 			return _Random(null);
 		}
-		public static RandomGraphBuilder Random(this NodeGraph parent)
+		public static IRandomNodeGraph Random(this NodeGraph parent)
 		{
 			return _Random(parent);
 		}
-		public class RandomGraphBuilder : ModifierGraph
+		public interface IRandomNodeGraph : INodeGraph
+		{
+			public IRandomNodeGraph Item(NodeGraph itemNode);
+		}
+		public class RandomGraphBuilder : ModifierGraph, IRandomNodeGraph
 		{
 			public RandomGraphBuilder(Random node) : base(node)
 			{
 			}
 
-			public RandomGraphBuilder Item(NodeGraph itemNode)
+			public IRandomNodeGraph Item(NodeGraph itemNode)
 			{
 				modifierList.Add(itemNode);
 				itemNode.SetParent(this);

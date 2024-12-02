@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 using UnityEngine;
 
@@ -42,6 +42,7 @@ namespace BC.Sequence
 			{
 				updateNodes[i].NodeStop();
 			}
+			updateNodes.Clear();
 		}
 
 		internal async void Update()
@@ -57,6 +58,11 @@ namespace BC.Sequence
 					if(state is Node.State.Success or Node.State.Failure)
 					{
 						updateNodes.RemoveAt(i);
+					}
+					else if(state is Node.State.ExitAll)
+					{
+						updateNodes.Clear();
+						break;
 					}
 				}
 				if(updateNodes.Count == 0) break;

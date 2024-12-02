@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace BC.Sequence
@@ -11,16 +11,25 @@ namespace BC.Sequence
 			builder.SetParent(parent);
 			return builder;
 		}
-		public static ConditionGraphBuilder Condition(Func<bool> condition)
+		public static IConditionNodeGraph Condition(Func<bool> condition)
 		{
 			return _Condition(null, condition);
 		}
-		public static ConditionGraphBuilder Condition(this NodeGraph parent, Func<bool> condition)
+		public static IConditionNodeGraph Condition(this NodeGraph parent, Func<bool> condition)
 		{
 			return _Condition(parent, condition);
 		}
 
-		public class ConditionGraphBuilder : ModifierGraph
+		public interface IConditionNodeGraph : INodeGraph
+		{
+			public IConditionNodeGraph True(NodeGraph trueNode);
+			public IConditionNodeGraph True(Func<NodeGraph, NodeGraph> trueNode);
+			public IConditionNodeGraph False(NodeGraph falseNode);
+			public IConditionNodeGraph False(Func<NodeGraph, NodeGraph> falseNode);
+			public IConditionNodeGraph ElseIf(Func<bool> condition, NodeGraph falseNode);
+			public IConditionNodeGraph ElseIf(Func<bool> condition, Func<NodeGraph, NodeGraph> falseNode);
+		}
+		public class ConditionGraphBuilder : ModifierGraph, IConditionNodeGraph
 		{
 			internal NodeGraph trueGraph;
 			internal NodeGraph falseGraph;
@@ -33,23 +42,37 @@ namespace BC.Sequence
 				falseGraph = null;
 				elifCondition = new List<Func<bool>>();
 			}
-			public ConditionGraphBuilder True(NodeGraph trueNode)
+			public IConditionNodeGraph True(NodeGraph trueNode)
 			{
 				this.trueGraph = trueNode;
-				trueNode.SetParent(this);
+				this.trueGraph.SetParent(this);
 				return this;
 			}
-			public ConditionGraphBuilder False(NodeGraph falseNode)
+			public IConditionNodeGraph True(Func<NodeGraph, NodeGraph> trueNode)
+			{
+				this.trueGraph = trueNode(this);
+				return this;
+			}
+			public IConditionNodeGraph False(NodeGraph falseNode)
 			{
 				this.falseGraph = falseNode;
-				trueGraph.SetParent(this);
+				this.trueGraph.SetParent(this);
 				return this;
 			}
-			public ConditionGraphBuilder ElseIf(Func<bool> condition, NodeGraph falseNode)
+			public IConditionNodeGraph False(Func<NodeGraph, NodeGraph> falseNode)
+			{
+				this.trueGraph = falseNode(this);
+				return this;
+			}
+			public IConditionNodeGraph ElseIf(Func<bool> condition, NodeGraph falseNode)
 			{
 				elifCondition.Add(condition);
 				modifierList.Add(falseNode);
-				falseNode.SetParent(this);
+				return this;
+			}
+			public IConditionNodeGraph ElseIf(Func<bool> condition, Func<NodeGraph, NodeGraph> falseNode)
+			{
+				this.trueGraph = falseNode(this);
 				return this;
 			}
 		}
@@ -74,8 +97,8 @@ namespace BC.Sequence
 		{
 			if(nodeBuilder is NodeBuilder.ConditionGraphBuilder conditionGraphBuilder)
 			{
-				trueNode = conditionGraphBuilder.trueGraph.node;
-				falseNode = conditionGraphBuilder.falseGraph.node;
+				trueNode = conditionGraphBuilder.trueGraph?.node;
+				falseNode = conditionGraphBuilder.falseGraph?.node;
 				elifCondition = conditionGraphBuilder.elifCondition;
 			}
 		}

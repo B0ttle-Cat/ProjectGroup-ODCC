@@ -1,4 +1,4 @@
-namespace BC.Sequence
+﻿namespace BC.Sequence
 {
 	public static partial class NodeBuilder
 	{
@@ -8,20 +8,25 @@ namespace BC.Sequence
 			newBuilder.SetParent(parent);
 			return newBuilder;
 		}
-		public static SequenceGraph Sequence(string sequenceName)
+		public static ISequenceGraph Sequence(string sequenceName)
 		{
 			return _Sequence(null, sequenceName);
 		}
-		public static SequenceGraph Sequence(this NodeGraph parent, string sequenceName)
+		public static ISequenceGraph Sequence(this NodeGraph parent, string sequenceName)
 		{
 			return _Sequence(parent, sequenceName);
 		}
-		public class SequenceGraph : ModifierGraph
+
+		public interface ISequenceGraph : INodeGraph
+		{
+			public ISequenceGraph Next(NodeGraph nodeBuilder);
+		}
+		public class SequenceGraph : ModifierGraph, ISequenceGraph
 		{
 			public SequenceGraph(Sequence node) : base(node)
 			{
 			}
-			public SequenceGraph Next(NodeGraph nodeBuilder)
+			public ISequenceGraph Next(NodeGraph nodeBuilder)
 			{
 				modifierList.Add(nodeBuilder);
 				nodeBuilder.SetParent(this);

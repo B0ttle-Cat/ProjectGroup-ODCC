@@ -1,4 +1,4 @@
-using System.Linq;
+ï»¿using System.Linq;
 
 using UnityEngine;
 
@@ -31,12 +31,13 @@ namespace BC.Sequence
 
 		public enum State
 		{
-			Uninitialized = 0,  // ³ëµå°¡ ÃÊ±â È­µÇÁö ¾Ê¾Ò½À´Ï´Ù.
-			Initialized = 0,    // ³ëµå°¡ ½ÃÀÛµÇÁö ¾Ê¾Ò½À´Ï´Ù.
-			Running = 2,        // ÇöÀç ³ëµå°¡ ½ÇÇà ÁßÀÔ´Ï´Ù.
-			Waiting = 1,        // ³ëµå´Â ÇöÀç ÇÏÀ§ ³ëµå°¡ ¿Ï·áµÉ ¶§±îÁö ±â´Ù¸®°í ÀÖ½À´Ï´Ù
-			Success = 3,        // ³ëµå°¡ ¼º°øÇß½À´Ï´Ù.
-			Failure = 4,        // ³ëµå¿¡ ½ÇÆĞÇß½À´Ï´Ù.
+			Uninitialized = 0,  // ë…¸ë“œê°€ ì´ˆê¸° í™”ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.
+			Initialized = 0,    // ë…¸ë“œê°€ ì‹œì‘ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.
+			Running = 2,        // í˜„ì¬ ë…¸ë“œê°€ ì‹¤í–‰ ì¤‘ì…ë‹ˆë‹¤.
+			Waiting = 1,        // ë…¸ë“œëŠ” í˜„ì¬ í•˜ìœ„ ë…¸ë“œê°€ ì™„ë£Œë  ë•Œê¹Œì§€ ê¸°ë‹¤ë¦¬ê³  ìˆìŠµë‹ˆë‹¤
+			Success = 3,        // ë…¸ë“œê°€ ì„±ê³µí–ˆìŠµë‹ˆë‹¤.
+			Failure = 4,        // ë…¸ë“œì— ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤.
+			ExitAll = 5,        // Playerì˜ ëª¨ë“  ë…¸ë“œì˜ ì‹¤í–‰ì„ ì¢…ë£Œí•©ë‹ˆë‹¤.
 		}
 		public State CurrentState { get; set; }
 		private bool isNext;

@@ -1,4 +1,4 @@
-namespace BC.Sequence
+﻿namespace BC.Sequence
 {
 	public static partial class NodeBuilder
 	{
@@ -8,20 +8,24 @@ namespace BC.Sequence
 			newBuilder.SetParent(parent);
 			return newBuilder;
 		}
-		public static ParallelAnyGraph ParallelAny(bool stopAnySuccess)
+		public static IParallelAnyGraph ParallelAny(bool stopAnySuccess)
 		{
 			return _ParallelAny(null, stopAnySuccess);
 		}
-		public static ParallelAnyGraph ParallelAny(this NodeGraph parent, bool stopAnySuccess)
+		public static IParallelAnyGraph ParallelAny(this NodeGraph parent, bool stopAnySuccess)
 		{
 			return _ParallelAny(parent, stopAnySuccess);
 		}
-		public class ParallelAnyGraph : ModifierGraph
+		public interface IParallelAnyGraph : INodeGraph
+		{
+			public IParallelAnyGraph Parallel(NodeGraph nodeBuilder);
+		}
+		public class ParallelAnyGraph : ModifierGraph, IParallelAnyGraph
 		{
 			public ParallelAnyGraph(ParallelAny node) : base(node)
 			{
 			}
-			public ParallelAnyGraph Parallel(NodeGraph nodeBuilder)
+			public IParallelAnyGraph Parallel(NodeGraph nodeBuilder)
 			{
 				modifierList.Add(nodeBuilder);
 				nodeBuilder.SetParent(this);

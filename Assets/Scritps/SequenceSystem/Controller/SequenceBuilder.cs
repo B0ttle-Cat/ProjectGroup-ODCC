@@ -13,7 +13,7 @@ namespace BC.Sequence
 			{
 				Debug.LogError("newBuilder Is Null");
 			}
-			return newBuilder;
+			return newBuilder as NodeGraph;
 		}
 
 		public static SequencePlayer Build(NodeGraph nodeGraph)
@@ -48,7 +48,13 @@ namespace BC.Sequence
 		}
 	}
 
-	public class NodeGraph
+	public interface INodeGraph
+	{
+		public void SetParent(NodeGraph _parent);
+		public NodeGraph Break();
+		public NodeGraph Return();
+	}
+	public class NodeGraph : INodeGraph
 	{
 		internal Node node;
 		internal NodeGraph parent;
@@ -81,7 +87,7 @@ namespace BC.Sequence
 		}
 		public NodeGraph Return()
 		{
-			if(parent == null)
+			if(parent == null || parent == this)
 			{
 				return this;
 			}
