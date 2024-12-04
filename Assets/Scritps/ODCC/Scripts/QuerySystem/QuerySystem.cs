@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -138,11 +138,11 @@ namespace BC.ODCC
 		[Flags]
 		public enum RangeType : int
 		{
-			World  = 0,         // Àü¿ª ¹üÀ§ °Ë»ö
-			Scene  = 0b_0001,   // ÀÌ ¾À¿¡¼­¸¸ °Ë»ö
-			Object = 0b_0010,   // ÀÌ ¿ÀºêÁ§Æ®¿¡¼­ °Ë»ö
-			Parent = 0b_0100,   // ÀÌ ºÎ¸ğ¿¡¼¼ °Ë»ö
-			Child  = 0b_1000,   // ÀÌ ÀÚ½Ä°´Ã¼¿¡¼­ °Ë»ö
+			World  = 0,         // ì „ì—­ ë²”ìœ„ ê²€ìƒ‰
+			Scene  = 0b_0001,   // ì´ ì”¬ì—ì„œë§Œ ê²€ìƒ‰
+			Object = 0b_0010,   // ì´ ì˜¤ë¸Œì íŠ¸ì—ì„œ ê²€ìƒ‰
+			Parent = 0b_0100,   // ì´ ë¶€ëª¨ì—ì„¸ ê²€ìƒ‰
+			Child  = 0b_1000,   // ì´ ìì‹ê°ì²´ì—ì„œ ê²€ìƒ‰
 
 			CheckInFamilyTree = 0b_0001_0000,
 
@@ -364,7 +364,7 @@ namespace BC.ODCC
 
 		internal bool IsSatisfiesQuery(ObjectBehaviour item)
 		{
-			Debug.Log($"item:{item}{item.name}");
+			//Debug.Log($"item:{item}{item.name}");
 
 			HashSet<int> indexs = new HashSet<int>();
 			try

@@ -76,7 +76,7 @@ namespace BC.ODCC
 		{
 			if(ThisScene.buildIndex == -1) return;
 
-			Debug.Log($"Awake|{ThisScene}| {gameObject.name}({GetType()})");
+			//Debug.Log($"Awake|{ThisScene}| {gameObject.name}({GetType()})");//
 
 			if(IOdccItem.odccTypeIndex == 0) IOdccItem.odccTypeIndex = OdccManager.GetTypeToIndex(GetType());
 
@@ -91,7 +91,7 @@ namespace BC.ODCC
 		}
 		protected void OnDestroy()
 		{
-			Debug.Log($"Destroy| {gameObject.name}({GetType()})");
+			//Debug.Log($"Destroy| {gameObject.name}({GetType()})");
 			try
 			{
 				OdccManager.OdccDestroy(this);
@@ -110,7 +110,7 @@ namespace BC.ODCC
 		}
 		protected void OnEnable()
 		{
-			Debug.Log($"OnEnable| {gameObject.name}({GetType()})");
+			//Debug.Log($"OnEnable| {gameObject.name}({GetType()})");
 			if(disableCancellationSource == null)
 				disableCancellationSource = new CancellationTokenSource();
 
@@ -154,27 +154,27 @@ namespace BC.ODCC
 		}
 		protected virtual void OnTransformParentChanged()
 		{
-			Debug.Log($"{gameObject.name} : OnTransformParentChanged");
+			//Debug.Log($"{gameObject.name} : OnTransformParentChanged");
 		}
 		protected virtual void OnTransformChildrenChanged()
 		{
-			Debug.Log($"{gameObject.name} : OnTransformChildrenChanged");
+			//Debug.Log($"{gameObject.name} : OnTransformChildrenChanged");
 		}
 		protected virtual void OnBeforeTransformParentChanged()
 		{
-			Debug.Log($"{gameObject.name} : OnBeforeTransformParentChanged");
+			//Debug.Log($"{gameObject.name} : OnBeforeTransformParentChanged");
 		}
 
 		void IOCBehaviour.OdccAwake()
 		{
 #if UNITY_EDITOR
-			if(!gameObject.name.StartsWith("[O]"))
-			{
-				name = (this is ObjectBehaviour ? $"[O] {name}" : name);
-			}
+			//if(!gameObject.name.StartsWith("[O]"))
+			//{
+			//	name = (this is ObjectBehaviour ? $"[O] {name}" : name);
+			//}
 #endif
 
-			Debug.Log($"BaseAwake| {gameObject.name}({GetType()})");
+			//Debug.Log($"BaseAwake| {gameObject.name}({GetType()})");
 			BaseAwake();
 		}
 		void IOCBehaviour.OdccDestroy()
@@ -183,7 +183,7 @@ namespace BC.ODCC
 		}
 		void IOCBehaviour.OdcnEnable()
 		{
-			Debug.Log($"BaseEnable| {gameObject.name}({GetType()})");
+			//Debug.Log($"BaseEnable| {gameObject.name}({GetType()})");
 			BaseEnable();
 		}
 		void IOCBehaviour.OdccDisable()
