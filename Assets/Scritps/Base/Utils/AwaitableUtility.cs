@@ -6,6 +6,41 @@ namespace BC.Base
 {
 	public static class AwaitableUtility
 	{
+		public static async Awaitable WaitTrue(Func<bool> condition)
+		{
+			if(condition == null) return;
+			while(true)
+			{
+				try
+				{
+					if(condition()) return;
+					await Awaitable.NextFrameAsync();
+				}
+				catch(Exception ex)
+				{
+					Debug.LogException(ex);
+					return;
+				}
+			}
+		}
+		public static async Awaitable WaitFalse(Func<bool> condition)
+		{
+			if(condition == null) return;
+			while(true)
+			{
+				try
+				{
+					if(!condition()) return;
+					await Awaitable.NextFrameAsync();
+				}
+				catch(Exception ex)
+				{
+					Debug.LogException(ex);
+					return;
+				}
+			}
+		}
+
 		public static async Awaitable WaitAll(params Awaitable[] awaitables)
 		{
 			foreach(var awaitable in awaitables)
