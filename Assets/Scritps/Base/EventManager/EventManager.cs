@@ -1,4 +1,4 @@
-using System;
+Ôªøusing System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -12,26 +12,26 @@ namespace BC.Base
 	//[DefaultExecutionOrder(ConstInt.ODCC_MAIN_UPDATE)]
 	public class EventManager : MonoSingleton<EventManager>
 	{
-		private static EventManager Instance;
+		private static EventManager _Instance;
 
 		public bool showLog = false;
 		public bool showCallLog = false;
-		private List<Component> listenerList;
+		private List<object> listenerList;
 		private Dictionary<Type, IEnumerable<object>> cashListenerList = new Dictionary<Type, IEnumerable<object>>();
-		public List<Component> ManagedList {
+		public List<object> ManagedList {
 			get {
 				return listenerList;
 			}
 		}
 		/// <summary>
-		/// ODCC ∏≈¥œ¿˙∏¶ √ ±‚»≠«œ¥¬ ∏ﬁº≠µÂ¿‘¥œ¥Ÿ. æ¿¿Ã ∑ŒµÂµ«±‚ ¿¸ø° Ω««‡µÀ¥œ¥Ÿ.
+		/// ODCC Îß§ÎãàÏ†ÄÎ•º Ï¥àÍ∏∞ÌôîÌïòÎäî Î©îÏÑúÎìúÏûÖÎãàÎã§. Ïî¨Ïù¥ Î°úÎìúÎêòÍ∏∞ Ï†ÑÏóê Ïã§ÌñâÎê©ÎãàÎã§.
 		/// </summary>
 		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
 		static void InitManager()
 		{
-			// ODCC ∏≈¥œ¿˙ ¿ŒΩ∫≈œΩ∫∏¶ √ ±‚»≠«œ∞Ì ∑Œ±◊∏¶ √‚∑¬«’¥œ¥Ÿ.
+			// ODCC Îß§ÎãàÏ†Ä Ïù∏Ïä§ÌÑ¥Ïä§Î•º Ï¥àÍ∏∞ÌôîÌïòÍ≥† Î°úÍ∑∏Î•º Ï∂úÎ†•Ìï©ÎãàÎã§.
 			EventManager.Instance(ins => {
-				Instance = ins;
+				_Instance = ins;
 			});
 		}
 
@@ -47,7 +47,7 @@ namespace BC.Base
 		}
 		private void New()
 		{
-			listenerList ??= new List<Component>();
+			listenerList ??= new List<object>();
 			cashListenerList = new Dictionary<Type, IEnumerable<object>>();
 		}
 		private void Clear()
@@ -58,7 +58,7 @@ namespace BC.Base
 			}
 			else
 			{
-				listenerList = new List<Component>();
+				listenerList = new List<object>();
 			}
 			if(cashListenerList != null)
 			{
@@ -70,9 +70,9 @@ namespace BC.Base
 			}
 		}
 
-		private void _AddEventActor(Component actor)
+		private void _AddEventActor(object actor)
 		{
-			if(actor == null || actor == this || Contains(actor)) return;
+			if(actor == null || actor is EventManager || Contains(actor)) return;
 
 			ShowLog($"AddListener {actor.GetType().Name}");
 			ManagedList.Add(actor);
@@ -100,9 +100,9 @@ namespace BC.Base
 			}
 			modify?.Invoke();
 		}
-		private void _RemoveEventActor(Component actor)
+		private void _RemoveEventActor(object actor)
 		{
-			if(actor == null || actor == this) return;
+			if(actor == null || actor is EventManager) return;
 
 			if(Contains(actor, out int findIndex))
 			{
@@ -265,11 +265,11 @@ namespace BC.Base
 			cashListenerList[type] = resultList.Cast<object>();
 			return resultList;
 		}
-		private bool _Contains(Component actor)
+		private bool _Contains(object actor)
 		{
 			return Contains(actor, out _);
 		}
-		private bool _Contains(Component actor, out int findIndex)
+		private bool _Contains(object actor, out int findIndex)
 		{
 			findIndex = (actor == null) ? -1 : ManagedList.FindIndex(item => item == actor);
 			return findIndex >= 0;
@@ -288,7 +288,7 @@ namespace BC.Base
 		{
 			if(action == null) return default;
 			TR result = defaultValue;
-			if(Instance._CallActionEvent<T, TR>(null, action, out TR _result))
+			if(_Instance._CallActionEvent<T, TR>(null, action, out TR _result))
 			{
 				result = _result;
 			}
@@ -307,17 +307,17 @@ namespace BC.Base
 		public static void Call<T>(Action<T> action) where T : class
 		{
 			if(action == null) return;
-			Instance._CallActionEvent<T>(null, action);
+			_Instance._CallActionEvent<T>(null, action);
 		}
 		public static void Call<T>(Func<T, bool> condition, Action<T> action) where T : class
 		{
 			if(action == null) return;
-			Instance._CallActionEvent<T>(condition, action);
+			_Instance._CallActionEvent<T>(condition, action);
 		}
 		public static void Call<T, TR>(IEnumerable<T> enumerable, Action<TR> action) where T : class where TR : class
 		{
 			if(action == null) return;
-			Instance._CallActionEvent<T, TR>(enumerable, action);
+			_Instance._CallActionEvent<T, TR>(enumerable, action);
 		}
 		public static void Call<T>(Component order, Action<T> action) where T : Component
 		{
@@ -334,7 +334,7 @@ namespace BC.Base
 		{
 			if(action == null) return default;
 			TR result = defaultValue;
-			(bool isTry, TR result) item = await Instance._AwaitCallActionEvent<T, TR>(null, action);
+			(bool isTry, TR result) item = await _Instance._AwaitCallActionEvent<T, TR>(null, action);
 			if(item.isTry)
 			{
 				result = item.result;
@@ -354,12 +354,12 @@ namespace BC.Base
 		public static async Awaitable Call<T>(Func<T, Awaitable> action) where T : class
 		{
 			if(action == null) return;
-			await Instance._AwaitCallActionEvent<T>(null, action);
+			await _Instance._AwaitCallActionEvent<T>(null, action);
 		}
 		public static async Awaitable Call<T>(Func<T, bool> condition, Func<T, Awaitable> action) where T : class
 		{
 			if(action == null) return;
-			await Instance._AwaitCallActionEvent<T>(condition, action);
+			await _Instance._AwaitCallActionEvent<T>(condition, action);
 		}
 		public static async Awaitable Call<T>(Component order, Func<T, Awaitable> action) where T : Component
 		{
@@ -393,19 +393,19 @@ namespace BC.Base
 				}
 			});
 		}
-		public static void AddListener(Component actor)
+		public static void AddListener(object actor)
 		{
 			Instance(instance => instance._AddEventActor(actor));
 		}
-		public static void RemoveListener(Component actor)
+		public static void RemoveListener(object actor)
 		{
 			Instance(instance => instance._RemoveEventActor(actor));
 		}
-		public static bool Contains(Component actor)
+		public static bool Contains(object actor)
 		{
 			return Instance(instance => instance._Contains(actor));
 		}
-		public static bool Contains(Component actor, out int findIndex)
+		public static bool Contains(object actor, out int findIndex)
 		{
 			Instance<int>(Instance => {
 				Instance._Contains(actor, out int _findIndex);
