@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -543,6 +543,14 @@ namespace BC.ODCC
 		#region Add OdccItem
 		public T AddChildObject<T>(bool onActive, string name = "") where T : ObjectBehaviour
 		{
+			return AddChildObject<T>(ThisObject.ThisTransform, onActive, name);
+		}
+		public T AddChildObject<T>(ComponentBehaviour parent, bool onActive, string name = "") where T : ObjectBehaviour
+		{
+			return AddChildObject<T>(parent.ThisTransform, onActive, name);
+		}
+		public T AddChildObject<T>(Transform parent, bool onActive, string name = "") where T : ObjectBehaviour
+		{
 			if(string.IsNullOrWhiteSpace(name))
 			{
 				name = $"new {typeof(T).Name}";
@@ -550,7 +558,7 @@ namespace BC.ODCC
 
 			GameObject newObject = new GameObject(name);
 			newObject.SetActive(false);
-			newObject.transform.parent = ThisObject.ThisTransform;
+			newObject.transform.parent = parent;
 
 			T newTObject = newObject.AddComponent<T>();
 			if(onActive) newObject.SetActive(true);

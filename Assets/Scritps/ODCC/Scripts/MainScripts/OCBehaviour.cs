@@ -14,6 +14,7 @@ namespace BC.ODCC
 		public Scene ThisScene => gameObject.scene;
 		public int ComponentIndex => GetComponentIndex();
 		public IOCBehaviour ThisBehaviour => this;
+		private bool callDestroy;
 
 		IOCBehaviour.StateFlag IOCBehaviour.AwakeState { get; set; }
 		IOCBehaviour.StateFlag IOCBehaviour.EnableState { get; set; }
@@ -74,6 +75,7 @@ namespace BC.ODCC
 #endif
 		internal void Awake()
 		{
+			callDestroy = false;
 			if(ThisScene.buildIndex == -1) return;
 
 			//Debug.Log($"Awake|{ThisScene}| {gameObject.name}({GetType()})");//
@@ -91,6 +93,8 @@ namespace BC.ODCC
 		}
 		protected void OnDestroy()
 		{
+			if(callDestroy) return;
+			callDestroy = true;
 			//Debug.Log($"Destroy| {gameObject.name}({GetType()})");
 			try
 			{
@@ -226,6 +230,8 @@ namespace BC.ODCC
 		}
 		public void DestroyThis(bool removeThisGameObject = false)
 		{
+			if(callDestroy) return;
+
 			if(removeThisGameObject)
 			{
 				Destroy(gameObject);
