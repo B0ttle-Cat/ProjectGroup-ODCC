@@ -290,17 +290,24 @@ namespace BC.ODCC
 		internal static void OdccDestroy(OCBehaviour ocBehaviour)
 		{
 			if(ocBehaviour == null) return;
+			if(ocBehaviour is not IOCBehaviour target) return;
 
-			_OdccDestroy(ocBehaviour);
-			static void _OdccDestroy(IOCBehaviour target)
+			if(!target._IsCanEnterDestroy) return;
+			target.DestroyState = IOCBehaviour.StateFlag.On;
+
+			if(ocBehaviour is IOdccObject @object)
 			{
-				/// Destroy 가 처음인지 검사.
-				if(!target._IsCanEnterDestroy) return;
-				target.DestroyState = IOCBehaviour.StateFlag.On;
-
-				//// 삭제 예정 목록에 추가.
-				reservationDestroyObject.Add(target);
-				awaitReservationDestroyObject = false;
+				var deleteList = ocBehaviour.GetComponentsInChildren<IOCBehaviour>(true);
+				int length = deleteList.Length;
+				for(int i = 0 ; i < length ; i++)
+				{
+					deleteList[i].DestroyState = IOCBehaviour.StateFlag.On;
+				}
+				_OdccDestroy(ocBehaviour.GetComponentsInChildren<IOCBehaviour>(true));
+			}
+			else if(ocBehaviour is IOdccComponent component)
+			{
+				_OdccDestroy(new IOCBehaviour[1] { ocBehaviour });
 			}
 		}
 		private static void _OdccDestroy(IOCBehaviour[] deleteList)
@@ -338,6 +345,7 @@ namespace BC.ODCC
 					else if(item is IOdccComponent component)
 					{
 						var node = OdccContainerTree.GetContainerNode(component);
+						if(node == null) continue;
 						if(!nodeComponentList.TryGetValue(node, out var list))
 						{
 							list = new List<IOdccComponent>();
@@ -386,7 +394,9 @@ namespace BC.ODCC
 				int length = objectList.Count;
 				for(int i = 0 ; i < length ; i++)
 				{
-					OdccForeach.RemoveOdccCollectorList(objectList[i]);
+					var @object = objectList[i];
+					OdccForeach.RemoveOdccCollectorList(@object);
+					OdccForeach.UpdateOdccCollectorList(@object);
 				}
 				foreach(var item in nodeComponentList)
 				{
@@ -470,10 +480,10 @@ namespace BC.ODCC
 		/// 특정 ObjectBehaviour의 데이터를 업데이트하는 메서드입니다.
 		/// </summary>
 		/// <param name="updateObject">데이터가 업데이트될 ObjectBehaviour</param>
-		internal static void UpdateData(ObjectBehaviour updateObject)
+		internal static void UpdateQuery(IOdccObject updateObject)
 		{
 			// CallForeach 시스템에서 객체를 업데이트합니다.
-			OdccForeach.UpdateObjectInQuery(updateObject);
+			OdccForeach.UpdateObjectInQuery(updateObject as ObjectBehaviour);
 		}
 
 		// 프로파일러 활성화 여부를 나타내는 변수입니다.

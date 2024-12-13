@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 
 using UnityEngine;
 
@@ -6,15 +7,16 @@ namespace BC.Base
 {
 	public static class AwaitableUtility
 	{
-		public static async Awaitable WaitTrue(Func<bool> condition)
+		public static async Awaitable WaitTrue(Func<bool> condition, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			if(condition == null) return;
 			while(true)
 			{
 				try
 				{
+					cancellationToken.ThrowIfCancellationRequested();
 					if(condition()) return;
-					await Awaitable.NextFrameAsync();
+					await Awaitable.NextFrameAsync(cancellationToken);
 				}
 				catch(Exception ex)
 				{
@@ -23,15 +25,16 @@ namespace BC.Base
 				}
 			}
 		}
-		public static async Awaitable WaitFalse(Func<bool> condition)
+		public static async Awaitable WaitFalse(Func<bool> condition, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			if(condition == null) return;
 			while(true)
 			{
 				try
 				{
+					cancellationToken.ThrowIfCancellationRequested();
 					if(!condition()) return;
-					await Awaitable.NextFrameAsync();
+					await Awaitable.NextFrameAsync(cancellationToken);
 				}
 				catch(Exception ex)
 				{
@@ -40,7 +43,44 @@ namespace BC.Base
 				}
 			}
 		}
-
+		public static async Awaitable<T> WaitNotNull<T>(Func<T> checkT, CancellationToken cancellationToken = default(CancellationToken)) where T : class
+		{
+			if(checkT == null) return null;
+			while(true)
+			{
+				try
+				{
+					cancellationToken.ThrowIfCancellationRequested();
+					var t = checkT();
+					if(t != null) return t;
+					await Awaitable.NextFrameAsync(cancellationToken);
+				}
+				catch(Exception ex)
+				{
+					Debug.LogException(ex);
+					return null;
+				}
+			}
+		}
+		public static async Awaitable<T> WaitIsNull<T>(Func<T> checkT, CancellationToken cancellationToken = default(CancellationToken)) where T : class
+		{
+			if(checkT == null) return null;
+			while(true)
+			{
+				try
+				{
+					cancellationToken.ThrowIfCancellationRequested();
+					var t = checkT();
+					if(t == null) return t;
+					await Awaitable.NextFrameAsync(cancellationToken);
+				}
+				catch(Exception ex)
+				{
+					Debug.LogException(ex);
+					return null;
+				}
+			}
+		}
 		public static async Awaitable WaitAll(params Awaitable[] awaitables)
 		{
 			foreach(var awaitable in awaitables)

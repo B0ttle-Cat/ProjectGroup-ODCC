@@ -200,18 +200,22 @@ namespace BC.ODCC
 		internal void AddItem(IOdccData target)
 		{
 			AddItem(ref datas, target);
+			OdccManager.UpdateQuery(thisObject);
 		}
 		internal void AddItems(IOdccData[] targets)
 		{
 			AddItems(ref datas, targets);
+			OdccManager.UpdateQuery(thisObject);
 		}
 		internal void RemoveItem(IOdccData target)
 		{
 			RemoveItem(ref datas, target);
+			OdccManager.UpdateQuery(thisObject);
 		}
 		internal void RemoveItems(IOdccData[] targets)
 		{
 			RemoveItems(ref datas, targets);
+			OdccManager.UpdateQuery(thisObject);
 		}
 
 		private void AddItem<T>(ref T[] tList, T target) where T : IOdccItem
