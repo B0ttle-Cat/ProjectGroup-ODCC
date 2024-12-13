@@ -1,4 +1,4 @@
-#if UNITY_EDITOR && USING_AWAITABLE_LOOP
+ï»¿#if UNITY_EDITOR && USING_AWAITABLE_LOOP
 using System.Collections.Generic;
 
 using BC.ODCC;
@@ -12,42 +12,42 @@ public class TestCode_Main : ObjectBehaviour
 	QuerySystem querySystem;
 	OdccQueryCollector queryCollector;
 
-	public override void BaseAwake()
+	protected override void BaseAwake()
 	{
 		base.BaseAwake();
 		querySystem = QuerySystemBuilder.CreateQuery()
-				.WithAll<TestCodeObject>()                                          // <T,> ÀÇ ¸ğµç Ç×¸ñÀÌ ¹İµå½Ã Æ÷ÇÔÇØ¾ß ÇÔ.
-				.WithAny<TestCodeComponentA, TestCodeComponentB>()                  // <T,> Áß¿¡ ÇÏ³ª¶óµµ Æ÷ÇÔÇÏ¸é µÊ.
-				.WithNone<TestCodeData>()                                           // <T,> Áß¿¡ ÇÏ³ª¶óµµ Æ÷ÇÔÇÏ¸é ¾ÈµÊ
-			.Build();                                                               // À§ Á¶°ÇÀ¸·Î Äõ¸® »ı¼º.
+				.WithAll<TestCodeObject>()                                          // <T,> ì˜ ëª¨ë“  í•­ëª©ì´ ë°˜ë“œì‹œ í¬í•¨í•´ì•¼ í•¨.
+				.WithAny<TestCodeComponentA, TestCodeComponentB>()                  // <T,> ì¤‘ì— í•˜ë‚˜ë¼ë„ í¬í•¨í•˜ë©´ ë¨.
+				.WithNone<TestCodeData>()                                           // <T,> ì¤‘ì— í•˜ë‚˜ë¼ë„ í¬í•¨í•˜ë©´ ì•ˆë¨
+			.Build();                                                               // ìœ„ ì¡°ê±´ìœ¼ë¡œ ì¿¼ë¦¬ ìƒì„±.
 
-		queryCollector = OdccQueryCollector.CreateQueryCollector(querySystem)       // ÇØ´ç Äõ¸®¸¦ »ç¿ëÇÏ´Â ¼öÁı±â »ı¼º
-			.CreateChangeListEvent(InitTestCode, UpdateTestCode)                    // Äõ¸®¸¦ ¸¸Á·ÇÏ´Â °´Ã¼ÀÇ º¯µ¿ »çÇ×À» °¨½Ã ÇÏ´Â ÀÌº¥Æ® »ı¼º
+		queryCollector = OdccQueryCollector.CreateQueryCollector(querySystem)       // í•´ë‹¹ ì¿¼ë¦¬ë¥¼ ì‚¬ìš©í•˜ëŠ” ìˆ˜ì§‘ê¸° ìƒì„±
+			.CreateChangeListEvent(InitTestCode, UpdateTestCode)                    // ì¿¼ë¦¬ë¥¼ ë§Œì¡±í•˜ëŠ” ê°ì²´ì˜ ë³€ë™ ì‚¬í•­ì„ ê°ì‹œ í•˜ëŠ” ì´ë²¤íŠ¸ ìƒì„±
 
-			.CreateActionEvent("TempCallEvent")                                     // ¼öµ¿À¸·Î È£Ãâ °¡´ÉÇÑ ÀÌº¥Æ® »ı¼º
-				.CallForeach<TestCodeObject>(CallEventTestSync)                         // È£ÃâµÉ ÀÌº¥Æ® µî·Ï¹æ½Ä 1-1 : ´ë±â ¾ø´Â ÇÔ¼ö µî·Ï
-				.CallForeach<TestCodeObject>((_, _) => { })          // È£ÃâµÉ ÀÌº¥Æ® µî·Ï¹æ½Ä 1-2 : ´ë±â ¾ø´Â ÇÔ¼ö µî·Ï
-				.CallForeach<TestCodeObject>(CallEventTestAsync)                        // È£ÃâµÉ ÀÌº¥Æ® µî·Ï¹æ½Ä 2-1 : ´ë±âÇÏ´Â ÇÔ¼ö µî·Ï
+			.CreateActionEvent("TempCallEvent")                                     // ìˆ˜ë™ìœ¼ë¡œ í˜¸ì¶œ ê°€ëŠ¥í•œ ì´ë²¤íŠ¸ ìƒì„±
+				.CallForeach<TestCodeObject>(CallEventTestSync)                         // í˜¸ì¶œë  ì´ë²¤íŠ¸ ë“±ë¡ë°©ì‹ 1-1 : ëŒ€ê¸° ì—†ëŠ” í•¨ìˆ˜ ë“±ë¡
+				.CallForeach<TestCodeObject>((_, _) => { })          // í˜¸ì¶œë  ì´ë²¤íŠ¸ ë“±ë¡ë°©ì‹ 1-2 : ëŒ€ê¸° ì—†ëŠ” í•¨ìˆ˜ ë“±ë¡
+				.CallForeach<TestCodeObject>(CallEventTestAsync)                        // í˜¸ì¶œë  ì´ë²¤íŠ¸ ë“±ë¡ë°©ì‹ 2-1 : ëŒ€ê¸°í•˜ëŠ” í•¨ìˆ˜ ë“±ë¡
 				.CallForeach<TestCodeObject, TestCodeComponentA>(async (_, _, _) => {
-					await Awaitable.NextFrameAsync();                               // È£ÃâµÉ ÀÌº¥Æ® µî·Ï¹æ½Ä 2-2 : ´ë±âÇÏ´Â ÇÔ¼ö µî·Ï	
+					await Awaitable.NextFrameAsync();                               // í˜¸ì¶œë  ì´ë²¤íŠ¸ ë“±ë¡ë°©ì‹ 2-2 : ëŒ€ê¸°í•˜ëŠ” í•¨ìˆ˜ ë“±ë¡	
 				})
-				.CallAction(() => { })                                                // Foreach·Î Å½»ö ¿Ü ´Ù¸¥ ÀÌº¥Æ®¸¦ ¼öÇàÇØ¾ß ÇÏ´Â°æ¿ì. 
-				.ShowCallLog(true)                                                  // È£Ãâ ·Î±×¸¦ Ãâ·ÂÇÒÁö ¿©ºÎ
+				.CallAction(() => { })                                                // Foreachë¡œ íƒìƒ‰ ì™¸ ë‹¤ë¥¸ ì´ë²¤íŠ¸ë¥¼ ìˆ˜í–‰í•´ì•¼ í•˜ëŠ”ê²½ìš°. 
+				.ShowCallLog(true)                                                  // í˜¸ì¶œ ë¡œê·¸ë¥¼ ì¶œë ¥í• ì§€ ì—¬ë¶€
 			.GetCollector()
 
-			.CreateLooperEvent("TempLoopEvent")                                     // ÀÚµ¿À¸·Î È£ÃâµÇ´Â Update Loop »ı¼º
-				.CallForeach<TestCodeObject>(CallEventTestSync)                         // È£ÃâµÉ ÀÌº¥Æ® µî·Ï¹æ½Ä 1-1 : ´ë±â ¾ø´Â ÇÔ¼ö µî·Ï
-				.CallForeach<TestCodeObject>((_, _) => { })          // È£ÃâµÉ ÀÌº¥Æ® µî·Ï¹æ½Ä 1-2 : ´ë±â ¾ø´Â ÇÔ¼ö µî·Ï
-				.CallForeach<TestCodeObject>(CallEventTestAsync)                        // È£ÃâµÉ ÀÌº¥Æ® µî·Ï¹æ½Ä 2-1 : ´ë±âÇÏ´Â ÇÔ¼ö µî·Ï
+			.CreateLooperEvent("TempLoopEvent")                                     // ìë™ìœ¼ë¡œ í˜¸ì¶œë˜ëŠ” Update Loop ìƒì„±
+				.CallForeach<TestCodeObject>(CallEventTestSync)                         // í˜¸ì¶œë  ì´ë²¤íŠ¸ ë“±ë¡ë°©ì‹ 1-1 : ëŒ€ê¸° ì—†ëŠ” í•¨ìˆ˜ ë“±ë¡
+				.CallForeach<TestCodeObject>((_, _) => { })          // í˜¸ì¶œë  ì´ë²¤íŠ¸ ë“±ë¡ë°©ì‹ 1-2 : ëŒ€ê¸° ì—†ëŠ” í•¨ìˆ˜ ë“±ë¡
+				.CallForeach<TestCodeObject>(CallEventTestAsync)                        // í˜¸ì¶œë  ì´ë²¤íŠ¸ ë“±ë¡ë°©ì‹ 2-1 : ëŒ€ê¸°í•˜ëŠ” í•¨ìˆ˜ ë“±ë¡
 				.CallForeach<TestCodeObject, TestCodeComponentA>(async (_, _, _) => {
-					await Awaitable.NextFrameAsync();                               // È£ÃâµÉ ÀÌº¥Æ® µî·Ï¹æ½Ä 2-2 : ´ë±âÇÏ´Â ÇÔ¼ö µî·Ï	
+					await Awaitable.NextFrameAsync();                               // í˜¸ì¶œë  ì´ë²¤íŠ¸ ë“±ë¡ë°©ì‹ 2-2 : ëŒ€ê¸°í•˜ëŠ” í•¨ìˆ˜ ë“±ë¡	
 				})
-				.CallAction(() => { })                                                // Foreach·Î Å½»ö ¿Ü ´Ù¸¥ ÀÌº¥Æ®¸¦ ¼öÇàÇØ¾ß ÇÏ´Â°æ¿ì.
-				.ShowCallLog(true)                                                  // È£Ãâ ·Î±×¸¦ Ãâ·ÂÇÒÁö ¿©ºÎ
+				.CallAction(() => { })                                                // Foreachë¡œ íƒìƒ‰ ì™¸ ë‹¤ë¥¸ ì´ë²¤íŠ¸ë¥¼ ìˆ˜í–‰í•´ì•¼ í•˜ëŠ”ê²½ìš°.
+				.ShowCallLog(true)                                                  // í˜¸ì¶œ ë¡œê·¸ë¥¼ ì¶œë ¥í• ì§€ ì—¬ë¶€
 			.GetCollector();
 	}
 
-	public override void BaseStart()
+	protected override void BaseStart()
 	{
 		queryCollector.CreateActionEvent("TempCallEvent").RunAction();
 	}
