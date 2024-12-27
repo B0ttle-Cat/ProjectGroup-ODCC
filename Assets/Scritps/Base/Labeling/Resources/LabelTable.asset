@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff72046f15fbe1d438b9d972962e508f, type: 3}
+  m_Name: LabelTable
+  m_EditorClassIdentifier: 
+  List:
+  - name: Prop/Item
+    guid: e36a0734-b14e-4c0b-9fd0-d91bff9049bc
+  - name: Prop/Table
+    guid: effbad9e-6a68-4106-81d8-e877ba546413
+  - name: Attach/Floor
+    guid: a8651682-85df-41a1-9eae-88145cbd2c2a
+  - name: Attach/Wall
+    guid: c84b507c-1c0f-4a45-849b-eee2345b81eb
+  - name: Attach/Table
+    guid: ec33694e-23ed-4873-a1b2-8b2ec07aa041

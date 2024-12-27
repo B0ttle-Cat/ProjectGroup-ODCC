@@ -142,5 +142,10 @@ namespace BC.ODCC
 		{
 			return true;
 		}
+
+		public override void DestroyThis(bool removeThisGameObject = false)
+		{
+			base.DestroyThis(true);
+		}
 	}
 }

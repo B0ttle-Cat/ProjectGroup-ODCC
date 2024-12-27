@@ -1,9 +1,42 @@
-﻿using UnityEngine;
+﻿using System;
+
+using UnityEngine;
 
 namespace BC.Base
 {
 	public static partial class VectorUtility
 	{
+		public static void ForeachXY(this Vector2Int vector2, Action<int, int> @foreach)
+		{
+			if(@foreach == null) return;
+			int xLength = vector2.x;
+			int yLength = vector2.y;
+			for(int x = 0 ; x < xLength ; x++)
+			{
+				for(int y = 0 ; y < yLength ; y++)
+				{
+					@foreach(x, y);
+				}
+			}
+		}
+		public static void ForeachXYZ(this Vector3Int vector3, Action<int, int, int> @foreach)
+		{
+			if(@foreach == null) return;
+			int xLength = vector3.x;
+			int yLength = vector3.y;
+			int zLength = vector3.z;
+			for(int x = 0 ; x < xLength ; x++)
+			{
+				for(int y = 0 ; y < yLength ; y++)
+				{
+					for(int z = 0 ; z < zLength ; z++)
+					{
+						@foreach(x, y, z);
+					}
+				}
+			}
+		}
+
 		#region Vector2 <=> Vector3
 		public static Vector3 XY(this Vector2 vector, float z = 0f)
 		{

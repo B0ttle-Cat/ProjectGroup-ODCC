@@ -228,7 +228,7 @@ namespace BC.ODCC
 			}
 			GC.SuppressFinalize(this);
 		}
-		public void DestroyThis(bool removeThisGameObject = false)
+		public virtual void DestroyThis(bool removeThisGameObject = false)
 		{
 			if(callDestroy) return;
 

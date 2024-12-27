@@ -98,14 +98,15 @@ namespace BC.Base
 			}
 		}
 
-		public static async Awaitable<T> WaitAll<T>(params Awaitable<T>[] awaitables)
+		public static async Awaitable<T[]> WaitAll<T>(params Awaitable<T>[] awaitables)
 		{
-			T result = default;
-			foreach(var awaitable in awaitables)
+			int length = awaitables.Length;
+			T[] result = new T[length];
+			for(int i = 0 ; i<length ; i++)
 			{
 				try
 				{
-					result = await awaitable;
+					result[i] = await awaitables[i];
 				}
 				catch(Exception ex)
 				{
@@ -135,13 +136,15 @@ namespace BC.Base
 			}
 		}
 
-		public static async Awaitable<T> ParallelWaitAll<T>(params Awaitable<T>[] awaitables)
+		public static async Awaitable<T[]> ParallelWaitAll<T>(params Awaitable<T>[] awaitables)
 		{
-			T result = default;
-			int waitParallel = awaitables.Length;
-			foreach(var awaitable in awaitables)
+			int length = awaitables.Length;
+			T[] result = new T[length];
+			int waitParallel = length;
+			for(int i = 0 ; i<length ; i++)
 			{
-				ParallelUpdate(awaitable);
+				Awaitable<T> awaitable = awaitables[i];
+				ParallelUpdate(i, awaitable);
 			}
 
 			while(waitParallel > 0)
@@ -150,9 +153,9 @@ namespace BC.Base
 			}
 
 			return result;
-			async void ParallelUpdate(Awaitable<T> awaitable)
+			async void ParallelUpdate(int index, Awaitable<T> awaitable)
 			{
-				result = await awaitable;
+				result[index] = await awaitable;
 				waitParallel--;
 			}
 		}
