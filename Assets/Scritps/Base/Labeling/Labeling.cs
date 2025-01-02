@@ -6,6 +6,7 @@ namespace BC.Base
 {
 	public class Labeling : MonoBehaviour
 	{
+		public string function = "Labeling";
 		[SerializeField]
 		[ValueDropdown("ValueDropdownList",IsUniqueList = true)]
 		private string[] labels;

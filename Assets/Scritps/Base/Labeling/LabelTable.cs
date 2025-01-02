@@ -9,12 +9,12 @@ namespace BC.Base
 	[CreateAssetMenu(fileName = "LabelTable", menuName = "BC/Base/LabelTable")]
 	public class LabelTable : ScriptableObject
 	{
-		[ListDrawerSettings(CustomAddFunction = "CustomAddFunction", ShowFoldout = false, ShowPaging = false)]
-		public Value[] List;
+		[ListDrawerSettings(CustomAddFunction = "CustomAddLabel", ShowPaging = false)]
+		public Label[] List;
 
 		[Serializable]
 		[InlineProperty]
-		public struct Value
+		public struct Label
 		{
 			[HideLabel]
 			public string name;
@@ -22,25 +22,39 @@ namespace BC.Base
 			public string guid;
 		}
 
-		Value CustomAddFunction()
+#if UNITY_EDITOR
+		Label CustomAddLabel()
 		{
-			Value value = new Value();
+			Label value = new Label();
 			value.guid = Guid.NewGuid().ToString();
 			value.name = "New Label";
 			return value;
 		}
-
+		internal Label EditorAddLabel(string label)
+		{
+			Label value = new Label();
+			value.guid = Guid.NewGuid().ToString();
+			value.name = label;
+			return value;
+		}
 
 		private void OnValidate()
 		{
 			int length = List.Length;
 			for(int i = 0 ; i < length ; i++)
 			{
-				Value item = List[i];
+				Label item = List[i];
 				if(string.IsNullOrWhiteSpace(item.guid)) item.guid = Guid.NewGuid().ToString();
 				item.name = item.name.Trim();
 				List[i] = item;
 			}
+
+			if(keywordExtractor == null) keywordExtractor = new KeywordExtractor();
 		}
+
+		[SerializeField, FoldoutGroup("키워드 추출기"), InlineProperty, HideLabel]
+		[HideReferenceObjectPicker]
+		private KeywordExtractor keywordExtractor;
+#endif
 	}
 }
