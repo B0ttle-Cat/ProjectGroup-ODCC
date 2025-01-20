@@ -5,6 +5,7 @@ using System.Linq;
 using BC.Base;
 
 using UnityEngine;
+using UnityEngine.LowLevel;
 using UnityEngine.SceneManagement;
 
 using Debug = UnityEngine.Debug;
@@ -254,6 +255,10 @@ namespace BC.ODCC
 					for(int i = 0 ; i < length ; i++)
 					{
 						var target = awakeList[i];
+						if(target is IOdccUpdate.Fast odccUpdateFast)
+						{
+							OdccForeach.AddFastUpdateBehaviour(odccUpdateFast);
+						}
 						if(target is IOdccUpdate odccUpdate)
 						{
 							OdccForeach.AddUpdateBehaviour(odccUpdate);
@@ -368,6 +373,10 @@ namespace BC.ODCC
 				for(int i = 0 ; i < length ; i++)
 				{
 					var target = deleteList[i];
+					if(target is IOdccUpdate.Fast odccUpdateFast)
+					{
+						OdccForeach.RemoveFastUpdateBehaviour(odccUpdateFast);
+					}
 					if(target is IOdccUpdate odccUpdate)
 					{
 						OdccForeach.RemoveUpdateBehaviour(odccUpdate);
@@ -489,6 +498,36 @@ namespace BC.ODCC
 		// 프로파일러 활성화 여부를 나타내는 변수입니다.
 		static public bool isProfilerEnabled = false;
 
+		public void OnEnable()
+		{
+			var currentPlayerLoop = PlayerLoop.GetCurrentPlayerLoop();
+
+			// 새로운 PlayerLoopSystem 생성
+			var customLoopSystem = new PlayerLoopSystem
+			{
+				type = typeof(OdccManager),
+				updateDelegate = PreUpdate
+			};
+
+			for(int i = 0 ; i < currentPlayerLoop.subSystemList.Length ; i++)
+			{
+				if(currentPlayerLoop.subSystemList[i].type == typeof(UnityEngine.PlayerLoop.PreUpdate))
+				{
+					var subsystems = currentPlayerLoop.subSystemList[i].subSystemList;
+					Array.Resize(ref subsystems, subsystems.Length + 1);
+					subsystems[^1] = customLoopSystem;
+					currentPlayerLoop.subSystemList[i].subSystemList = subsystems;
+					break;
+				}
+			}
+
+			PlayerLoop.SetPlayerLoop(currentPlayerLoop);
+		}
+		public void OnDisable()
+		{
+			PlayerLoop.SetPlayerLoop(PlayerLoop.GetDefaultPlayerLoop());
+		}
+
 		/// <summary>
 		/// MonoBehaviour의 Start 메서드를 오버라이드합니다.
 		/// </summary>
@@ -496,6 +535,11 @@ namespace BC.ODCC
 		{
 			// EndOfFrameDispose 루프를 시작합니다.
 			EndOfFrameDispose();
+		}
+
+		private void PreUpdate()
+		{
+			OdccForeach.ForeachFastUpdate();
 		}
 
 		/// <summary>

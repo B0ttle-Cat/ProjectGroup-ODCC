@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -182,7 +182,7 @@ namespace BC.ODCC
 				loopDictionary = new Dictionary<OdccQueryLooper, Awaitable>();
 				OdccForeach.ForeachQueryUpdate.Add(loopOrder, loopDictionary);
 			}
-			loopDictionary.Add(looper, looper.RunLooper());
+			loopDictionary.Add(looper, looper.RunAwaitable());
 			return looper;
 		}
 
@@ -211,7 +211,7 @@ namespace BC.ODCC
 		/// 루퍼를 실행하는 비동기 메서드입니다.
 		/// </summary>
 		/// <returns>UnityEngine.Awaitable 객체</returns>
-		internal async Awaitable RunLooper()
+		public async Awaitable RunAwaitable()
 		{
 			// 쿼리 콜렉터가 null인 경우 중단합니다.
 			if(queryCollector is null) return;
@@ -302,22 +302,8 @@ namespace BC.ODCC
 		/// <param name="completed">완료 후 호출될 액션</param>
 		public async void RunAction(Action completed = null)
 		{
-			// 로그를 표시하는 경우 시작 로그를 출력합니다.
-			//if(onShowCallLog)
-			//{
-			//	Debug.Log($"Start: RunCallEvent : {looperKey}", onShowCallLogDepth);
-			//}
+			await RunAwaitable();
 
-			// 루퍼를 실행합니다.
-			await RunLooper();
-
-			// 로그를 표시하는 경우 종료 로그를 출력합니다.
-			//if(onShowCallLog)
-			//{
-			//	Debug.Log($"Ended: RunCallEvent : {looperKey}");
-			//}
-
-			// 완료 후 호출될 액션을 실행합니다.
 			try
 			{
 				completed?.Invoke();
@@ -369,16 +355,6 @@ namespace BC.ODCC
 			runForeachStructList.Add(new RunForeachStruct(action, list, true, null));
 			return this;
 		}
-		[Obsolete("대신 CallAction 사용하기")]
-		public OdccQueryLooper CallNext(Action action)
-		{
-			return CallAction(action);
-		}
-		[Obsolete("대신 CallAction 사용하기")]
-		public OdccQueryLooper CallNext(Func<UnityEngine.Awaitable> action)
-		{
-			return CallAction(action);
-		}
 		/// <summary>
 		/// 다음 액션을 호출하는 메서드입니다.
 		/// </summary>
@@ -420,7 +396,7 @@ namespace BC.ODCC
 			{
 				if(join.queryCollector != null)
 				{
-					await join.RunLooper();
+					await join.RunAwaitable();
 				}
 			};
 
@@ -432,11 +408,6 @@ namespace BC.ODCC
 			});
 			runForeachStructList.Add(new RunForeachStruct(action, list, true, null));
 			return this;
-		}
-		[Obsolete("대신 CallLooper 사용하기", true)]
-		public OdccQueryLooper JoinNext(OdccQueryLooper join)
-		{
-			return CallLooper(join);
 		}
 		/// <summary>
 		/// 프레임 수를 설정하는 메서드입니다.
@@ -631,26 +602,6 @@ namespace BC.ODCC
 					OdccForeach.ForeachQueryUpdate.Remove(loopOrder);
 				}
 			}
-		}
-
-		/////////////////////////// Obsolete //////////////////////////
-
-		[Obsolete("CallAction 사용 할 것 - 오래된 이름 규칙", true)]
-		private OdccQueryLooper Action(Action action)
-		{
-			return CallAction(action);
-		}
-
-		[Obsolete("CallAction 사용 할 것 - 오래된 이름 규칙", true)]
-		private OdccQueryLooper Action(Func<UnityEngine.Awaitable> action)
-		{
-			return CallAction(action);
-		}
-
-		[Obsolete("RunLooper 사용 할 것 - 오래된 이름 규칙", true)]
-		private void RunCallEvent(Action completed = null)
-		{
-			RunAction(completed);
 		}
 	}
 }

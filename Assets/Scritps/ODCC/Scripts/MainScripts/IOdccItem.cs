@@ -79,10 +79,15 @@ DestroyState : {DestroyState}
 	public interface IOdccData : IOdccItem, IDisposable, IOdccAttach
 	{
 		internal bool IsData { get; }
+		public ContainerObject ThisContainer { get; }
 	}
 	public interface IOdccUpdate : IOCBehaviour
 	{
 		public void BaseUpdate();
+		public interface Fast : IOCBehaviour
+		{
+			public void BaseFastUpdate();
+		}
 		public interface Late : IOCBehaviour
 		{
 			public void BaseLateUpdate();

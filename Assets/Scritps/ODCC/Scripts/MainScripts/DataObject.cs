@@ -77,16 +77,15 @@ namespace BC.ODCC
 		internal IOdccItem IOdccItem => this;
 		int IOdccItem.odccTypeIndex { get; set; }
 		int[] IOdccItem.odccTypeInheritanceIndex { get; set; }
+		public ContainerObject ThisContainer { get; set; }
 #if UNITY_EDITOR
 		protected bool IsMustNotNull(params object[] objects) => Array.TrueForAll(objects, obj => obj != null);
 #endif
 		private bool disposedValue;
-
 		protected virtual void Disposing()
 		{
 
 		}
-
 		public void Dispose()
 		{
 			if(!disposedValue)

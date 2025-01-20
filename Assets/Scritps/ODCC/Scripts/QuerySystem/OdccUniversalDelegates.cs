@@ -1,4 +1,4 @@
-/// ÀÌ ÄÚµå´Â <see cref=\"BC.ODCC.OdccUniversalDelegatesGenerator\"/>¿¡¼­ ÀÚµ¿¿Ï¼º µË´Ï´Ù.
+ï»¿/// ì´ ì½”ë“œëŠ” <see cref=\"BC.ODCC.OdccUniversalDelegatesGenerator\"/>ì—ì„œ ìë™ì™„ì„± ë©ë‹ˆë‹¤.
 namespace BC.ODCC
 {
 	using System.Collections.Generic;
@@ -317,7 +317,7 @@ namespace BC.ODCC
 	#endregion
 
 	#region QuerySystemBuilder
-	/// ÀÌ ÄÚµå´Â <see cref=\"BC.ODCC.QuerySystemBuilder\"/>¸¦ È®ÀåÇÕ´Ï´Ù.
+	/// ì´ ì½”ë“œëŠ” <see cref=\"BC.ODCC.QuerySystemBuilder\"/>ë¥¼ í™•ì¥í•©ë‹ˆë‹¤.
 	public partial class QuerySystemBuilder
 	{
 		public QuerySystemBuilder WithAny<T0>() where T0 : class, IOdccItem => WithAny(OdccManager.GetTypeToIndex(typeof(T0)));
@@ -372,7 +372,7 @@ namespace BC.ODCC
 	#endregion
 
 	#region OdccQueryLooper
-	/// ÀÌ ÄÚµå´Â <see cref=\"BC.ODCC.OdccQueryLooper\"/>¸¦ È®ÀåÇÕ´Ï´Ù.
+	/// ì´ ì½”ë“œëŠ” <see cref=\"BC.ODCC.OdccQueryLooper\"/>ë¥¼ í™•ì¥í•©ë‹ˆë‹¤.
 	public partial class OdccQueryLooper
 	{
 

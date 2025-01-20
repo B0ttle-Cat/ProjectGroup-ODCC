@@ -574,11 +574,17 @@ namespace BC.ODCC
 			if(data == null)
 				data = new T();
 
+			data.ThisContainer = this;
 			ContainerNode.AddItem(data);
 			return data;
 		}
 		public void AddDatas(params DataObject[] datas)
 		{
+			int length = datas.Length;
+			for(int i = 0 ; i < length ; i++)
+			{
+				datas[i].ThisContainer = this;
+			}
 			ContainerNode.AddItems(datas);
 		}
 		public void AddData(DataObject data = null)
@@ -618,6 +624,7 @@ namespace BC.ODCC
 
 			if(target != null)
 			{
+				target.ThisContainer = null;
 				ContainerNode.RemoveItem(target);
 				return true;
 			}
