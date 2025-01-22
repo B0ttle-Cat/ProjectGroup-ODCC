@@ -8,6 +8,8 @@ namespace BC.ODCC
 	[HideReferenceObjectPicker]
 	public class DataObject : IOdccData
 	{
+		[HideInEditorMode]
+		public string guid;
 #if UNITY_EDITOR
 		[ShowInInspector, Title(""), PropertyOrder(float.MinValue), PropertySpace(-4, -20)]
 		[HideLabel, DisplayAsString, EnableGUI]
@@ -73,6 +75,7 @@ namespace BC.ODCC
 		bool IOdccData.IsData => true;
 		public DataObject()
 		{
+			guid = System.Guid.NewGuid().ToString();
 		}
 		internal IOdccItem IOdccItem => this;
 		int IOdccItem.odccTypeIndex { get; set; }

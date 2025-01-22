@@ -26,13 +26,8 @@ namespace BC.Base
 		private AnimatorControllerPlayable animatorControllerPlayable;
 		private AnimationPlayableOutput animationOutput;
 
-
-
 		[SerializeField]
 		public StatePlayableMapping[] stateMappings;
-
-		//private PlayableGraph playableGraph;
-		//private AnimationMixerPlayable mixer;
 
 		[Serializable]
 		public class StatePlayableMapping

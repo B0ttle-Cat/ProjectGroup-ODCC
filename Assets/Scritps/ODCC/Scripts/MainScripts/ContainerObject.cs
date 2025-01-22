@@ -481,6 +481,24 @@ namespace BC.ODCC
 			callback.Invoke(t);
 		}
 		#endregion
+		#region GetIOdccItem
+		public List<T> FindAllType<T>()
+		{
+			List<T> t = new List<T>();
+			if(ThisObject is T tObj) t.Add(tObj);
+			int length = DataList.Length;
+			for(int i = 0 ; i < length ; i++)
+			{
+				if(DataList[i] is T tData) t.Add(tData);
+			}
+			length = ComponentList.Length;
+			for(int i = 0 ; i < length ; i++)
+			{
+				if(ComponentList[i] is T tData) t.Add(tData);
+			}
+			return t;
+		}
+		#endregion
 		#region Get OdccItemInList
 		internal bool _TryGetComponent<T>(out T t, Func<T, bool> condition = null) where T : class, IOdccItem
 		{
@@ -632,6 +650,30 @@ namespace BC.ODCC
 			{
 				return false;
 			}
+		}
+		#endregion
+
+		#region Type
+		public DataObject GetData(Type type)
+		{
+			int length = DataList.Length;
+			for(int i = 0 ; i < length ; i++)
+			{
+				if(DataList[i].GetType().Equals(type))
+				{
+					if(DataList[i] is DataObject data)
+					{
+						return data;
+					}
+				}
+			}
+			return null;
+		}
+		public DataObject AddData(Type type)
+		{
+			DataObject data = Activator.CreateInstance(type) as DataObject;
+			AddData(data);
+			return data;
 		}
 		#endregion
 
