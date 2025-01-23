@@ -1,4 +1,8 @@
-using System;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+
+using Sirenix.OdinInspector;
 
 using UnityEngine;
 
@@ -6,92 +10,157 @@ using Object = UnityEngine.Object;
 
 namespace BC.Base
 {
-	public enum eResourcesLoadType
-	{
-		None = 0,
-		//ResourcesLoad = 0,
-		//AssetBundle = 1,
-	}
 	[Serializable]
-#pragma warning disable CS0282 // partial 구조체의 여러 선언에서 필드 간 순서가 정의되어 있지 않습니다.
-	public partial struct ResourcesKey : IDisposable
-#pragma warning restore CS0282 // partial 구조체의 여러 선언에서 필드 간 순서가 정의되어 있지 않습니다.
+	[InlineProperty]
+	[HideLabel]
+	public partial struct ResourcesKey<T> : IDisposable where T : Object
 	{
-		public eResourcesLoadType LoadType;
-		public Object ObjectAsset;
-
-		public bool IsEmpty => LoadType switch {
-			eResourcesLoadType.None => ObjectAsset == null,
-			_ => false,
-		};
-		public override bool Equals(object obj)
+		public ResourcesKey(T asset)
 		{
-			return obj is ResourcesKey key&&Equals(key);
+#if UNITY_EDITOR
+			rootPath = new string[0];
+			guid = "";
+			this.asset = asset;
+#endif
+			resourcesPath = "";
+			loadAsset = null;
+			OnValidate();
 		}
-		public bool Equals(ResourcesKey other)
+		public ResourcesKey(string[] path)
 		{
-			if(other == null && this == null) return true;
-			if(other == null || this == null) return false;
-
-			if(LoadType!=other.LoadType) return false;
-			if(LoadType == eResourcesLoadType.None) return ObjectAsset == other.ObjectAsset;
-			return true;
-		}
-		public override int GetHashCode()
-		{
-			return base.GetHashCode();
-		}
-		public override string ToString()
-		{
-			return base.ToString();
-		}
-		public static bool operator ==(ResourcesKey left, ResourcesKey right)
-		{
-			return left.Equals(right);
-		}
-		public static bool operator !=(ResourcesKey left, ResourcesKey right)
-		{
-			return !(left==right);
+#if UNITY_EDITOR
+			rootPath = path;
+			guid = "";
+			asset = null;
+#endif
+			resourcesPath = "";
+			loadAsset = null;
 		}
 
+		public ResourcesKey(string path)
+		{
+#if UNITY_EDITOR
+			rootPath = new string[1] { path };
+			guid = "";
+			asset = null;
+#endif
+			resourcesPath = "";
+			loadAsset = null;
+		}
+#if UNITY_EDITOR
+		[TabGroup("Tab", "Resources"), PropertyOrder(-50)]
+		[ShowInInspector, HideLabel, ReadOnly, EnableGUI, PreviewField(75, ObjectFieldAlignment.Center)]
+		[HorizontalGroup("Tab/Resources/H1", width: 80)]
+		private T preview => asset;
+		[TabGroup("Tab", "Resources"), PropertyOrder(-50)]
+		[ShowInInspector, HideLabel, ValueDropdown("GetCharacterPrefabs")]
+		[HorizontalGroup("Tab/Resources/H1"), VerticalGroup("Tab/Resources/H1/V1")]
+		private T asset { get; set; }
 
+		[TabGroup("Tab", "Option"), PropertyOrder(50)]
+		[ShowInInspector, LabelWidth(40), DisplayAsString]
+		private string guid;
+		[TabGroup("Tab", "Option"), PropertyOrder(50)]
+		[ShowInInspector, FolderPath]
+		private string[] rootPath;
+#endif
+		[TabGroup("Tab", "Resources")]
+		[HorizontalGroup("Tab/Resources/H1"), VerticalGroup("Tab/Resources/H1/V1")]
+		[HideLabel, Multiline(3), ReadOnly,EnableGUI]
+		public string resourcesPath;
+
+		private T loadAsset { get; set; }
+
+		public T LoadAsset()
+		{
+			if(loadAsset == null)
+				loadAsset = Resources.Load<T>(resourcesPath);
+			return loadAsset;
+		}
+		public void UnloadAsset()
+		{
+			loadAsset = null;
+		}
 		public void Dispose()
 		{
-			ObjectAsset = null;
+			try
+			{
+				Resources.UnloadAsset(loadAsset);
+			}
+			catch(Exception ex) { }
+			loadAsset = null;
 		}
+
+#if UNITY_EDITOR
+		private ValueDropdownList<T> GetCharacterPrefabs()
+		{
+			ValueDropdownList<T> list = new ValueDropdownList<T>();
+			HashSet<(string,T)> tList = new HashSet<(string,T)>();
+			int length = rootPath.Length;
+			for(int i = 0 ; i < length ; i++)
+			{
+
+				string folderPath = AssetPathConvertResourcesPath(rootPath[i]);
+
+				if(string.IsNullOrWhiteSpace(folderPath)) continue;
+
+				var allTAssets = Resources.LoadAll<T>(folderPath);
+				foreach(var tAsset in allTAssets)
+				{
+					string assetPath = UnityEditor.AssetDatabase.GetAssetPath(tAsset);
+					assetPath = assetPath.Replace($"{rootPath[i]}/", "");
+					assetPath = Path.ChangeExtension(assetPath, null);
+					tList.Add((assetPath, tAsset));
+				}
+			}
+			foreach(var item in tList)
+			{
+				list.Add(item.Item1, item.Item2);
+			}
+			return list;
+		}
+
+		string AssetPathConvertResourcesPath(string assetPath)
+		{
+			string keyword = "Resources";
+			assetPath = assetPath.Contains(keyword, StringComparison.OrdinalIgnoreCase)
+				? assetPath[(assetPath.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) + keyword.Length)..].TrimStart('\\', '/')
+				: assetPath;
+			assetPath = Path.ChangeExtension(assetPath, null);
+			return assetPath;
+		}
+
+		public void OnValidate()
+		{
+			if(asset == null)
+			{
+				if(guid.IsNotNullOrWhiteSpace())
+				{
+					string path = UnityEditor.AssetDatabase.GUIDToAssetPath(guid);
+					resourcesPath = AssetPathConvertResourcesPath(path);
+				}
+				if(resourcesPath.IsNotNullOrWhiteSpace())
+				{
+					asset = Resources.Load<T>(resourcesPath);
+				}
+				else
+				{
+					return;
+				}
+			}
+			else
+			{
+				string assetPath = UnityEditor.AssetDatabase.GetAssetPath(asset);
+				guid = UnityEditor.AssetDatabase.AssetPathToGUID(assetPath);
+				resourcesPath = AssetPathConvertResourcesPath(assetPath);
+			}
+		}
+#endif
+
 	}
 
 	public static class UtilResourcesKey
 	{
-		public static void AsyncInstantiate<T>(this ResourcesKey loadKey, MonoBehaviour mono, Action<T> result, Action<float> progress = null) where T : Object
-		{
-			loadKey.LoadType = eResourcesLoadType.None;
-			if(loadKey.IsEmpty)
-			{
-				Debug.LogError("ResourcesKey Is Empty");
-				result?.Invoke(null);
-				return;
-			}
-			ResourcesManager.AsyncInstantiate(loadKey, mono, progress, result);
-		}
-		public static async Awaitable<T> AsyncInstantiate<T>(this ResourcesKey loadKey, MonoBehaviour mono, Action<float> progress = null) where T : Object
-		{
-			T obj = null;
-			bool wait = true;
-			AsyncInstantiate<T>(loadKey, mono, (t) => { obj = t; wait = false; }, progress);
-			while(wait)
-			{
-				await Awaitable.NextFrameAsync();
-			}
-			return obj;
-		}
-		public static void Unload(this ResourcesKey loadKey, MonoBehaviour mono)
-		{
-			if(loadKey.LoadType != eResourcesLoadType.None)
-			{
-				ResourcesManager.Unload(loadKey, mono);
-			}
-		}
 
 	}
 }

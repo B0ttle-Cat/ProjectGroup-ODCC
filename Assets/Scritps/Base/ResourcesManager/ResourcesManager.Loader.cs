@@ -1,343 +1,343 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
+ï»¿//using System;
+//using System.Collections;
+//using System.Collections.Generic;
+//using System.IO;
 
-using Sirenix.OdinInspector;
-using Sirenix.Utilities;
+//using Sirenix.OdinInspector;
+//using Sirenix.Utilities;
 
-using UnityEngine;
-using UnityEngine.Networking;
+//using UnityEngine;
+//using UnityEngine.Networking;
 
-using Object = UnityEngine.Object;
+//using Object = UnityEngine.Object;
 
-namespace BC.Base
-{
-	public partial class ResourcesManager
-	{
-		// ·Îµå »óÅÂ Á¤ÀÇ
-		public enum LoadState
-		{
-			None = 0,
-			Loading = 1,
-			Success = 2,
-			Error = 3,
-		}
+//namespace BC.Base
+//{
+//	public partial class ResourcesManager
+//	{
+//		// ë¡œë“œ ìƒíƒœ ì •ì˜
+//		public enum LoadState
+//		{
+//			None = 0,
+//			Loading = 1,
+//			Success = 2,
+//			Error = 3,
+//		}
 
-		[Serializable]
-		public abstract class Loader
-		{
-			[UnityEngine.SerializeField, ReadOnly]
-			LoadState loadState;
-			[UnityEngine.SerializeField, ReadOnly]
-			public Object LoadObject { get; internal set; }
-			[UnityEngine.SerializeField, ReadOnly]
-			private ResourcesKey resourcesKey;
-			[UnityEngine.SerializeField, ReadOnly]
-			private List<(object, Action<float>, Action<Object>)> connectHandler;
+//		[Serializable]
+//		public abstract class Loader
+//		{
+//			[UnityEngine.SerializeField, ReadOnly]
+//			LoadState loadState;
+//			[UnityEngine.SerializeField, ReadOnly]
+//			public Object LoadObject { get; internal set; }
+//			[UnityEngine.SerializeField, ReadOnly]
+//			private ResourcesKey resourcesKey;
+//			[UnityEngine.SerializeField, ReadOnly]
+//			private List<(object, Action<float>, Action<Object>)> connectHandler;
 
-			public LoadState LoadState => loadState;
-			public ResourcesKey ResourcesKey => resourcesKey;
+//			public LoadState LoadState => loadState;
+//			public ResourcesKey ResourcesKey => resourcesKey;
 
-			public void OnInit(ResourcesKey _resourcesKey)
-			{
-				connectHandler ??= new List<(object, Action<float>, Action<Object>)>();
+//			public void OnInit(ResourcesKey _resourcesKey)
+//			{
+//				connectHandler ??= new List<(object, Action<float>, Action<Object>)>();
 
-				loadState = LoadState.None;
-				LoadObject = null;
-				resourcesKey = _resourcesKey;
-				Init();
-			}
+//				loadState = LoadState.None;
+//				LoadObject = null;
+//				resourcesKey = _resourcesKey;
+//				Init();
+//			}
 
-			public IEnumerator OnDownload()
-			{
-				if(loadState == LoadState.Loading)
-				{
-					yield break;
-				}
+//			public IEnumerator OnDownload()
+//			{
+//				if(loadState == LoadState.Loading)
+//				{
+//					yield break;
+//				}
 
-				if(loadState != LoadState.Success)
-				{
-					loadState = LoadState.Loading;
-					LoadObject = null;
-					yield return Download();
-					loadState = LoadObject == null ? LoadState.Error : LoadState.Success;
-				}
+//				if(loadState != LoadState.Success)
+//				{
+//					loadState = LoadState.Loading;
+//					LoadObject = null;
+//					yield return Download();
+//					loadState = LoadObject == null ? LoadState.Error : LoadState.Success;
+//				}
 
-				while(connectHandler.Count > 0)
-				{
-					var handler = connectHandler[0];
-					connectHandler.RemoveAt(0);
-					try
-					{
-						handler.Item3?.Invoke(LoadObject);
-					}
-					catch(Exception ex)
-					{
-						Debug.LogException(ex);
-					}
-				}
-			}
-			public void OnClear()
-			{
-				Clear();
-				if(connectHandler != null) connectHandler.Clear();
-				loadState = LoadState.None;
-				LoadObject = null;
-			}
+//				while(connectHandler.Count > 0)
+//				{
+//					var handler = connectHandler[0];
+//					connectHandler.RemoveAt(0);
+//					try
+//					{
+//						handler.Item3?.Invoke(LoadObject);
+//					}
+//					catch(Exception ex)
+//					{
+//						Debug.LogException(ex);
+//					}
+//				}
+//			}
+//			public void OnClear()
+//			{
+//				Clear();
+//				if(connectHandler != null) connectHandler.Clear();
+//				loadState = LoadState.None;
+//				LoadObject = null;
+//			}
 
-			public void AddHandler(object handler, Action<float> progress, Action<Object> result)
-			{
-				connectHandler ??= new List<(object, Action<float>, Action<Object>)>();
-				int index = connectHandler.FindIndex(item=>item.Item1 == handler);
-				if(index < 0)
-				{
-					connectHandler.Add((handler, progress, result));
-				}
-			}
-			public void RemoveHandler(object handler)
-			{
-				if(connectHandler == null || connectHandler.Count == 0) return;
+//			public void AddHandler(object handler, Action<float> progress, Action<Object> result)
+//			{
+//				connectHandler ??= new List<(object, Action<float>, Action<Object>)>();
+//				int index = connectHandler.FindIndex(item=>item.Item1 == handler);
+//				if(index < 0)
+//				{
+//					connectHandler.Add((handler, progress, result));
+//				}
+//			}
+//			public void RemoveHandler(object handler)
+//			{
+//				if(connectHandler == null || connectHandler.Count == 0) return;
 
-				int index = connectHandler.FindIndex(item=>item.Item1 == handler);
-				if(index >= 0)
-				{
-					connectHandler.RemoveAt(index);
-					if(connectHandler.Count == 0)
-					{
-						OnClear();
-					}
-				}
-			}
-			public int GetHandlerCount()
-			{
-				if(connectHandler == null) return -1;
-				return connectHandler.Count;
-			}
-			protected abstract void Init();
-			protected abstract IEnumerator Download();
-			protected abstract void Clear();
-		}
+//				int index = connectHandler.FindIndex(item=>item.Item1 == handler);
+//				if(index >= 0)
+//				{
+//					connectHandler.RemoveAt(index);
+//					if(connectHandler.Count == 0)
+//					{
+//						OnClear();
+//					}
+//				}
+//			}
+//			public int GetHandlerCount()
+//			{
+//				if(connectHandler == null) return -1;
+//				return connectHandler.Count;
+//			}
+//			protected abstract void Init();
+//			protected abstract IEnumerator Download();
+//			protected abstract void Clear();
+//		}
 
-		[Serializable]
-		public class AssetBundleLoader : Loader
-		{
-			AssetBundle LoadAssetBundle;
-			protected override void Init()
-			{
-			}
+//		[Serializable]
+//		public class AssetBundleLoader : Loader
+//		{
+//			AssetBundle LoadAssetBundle;
+//			protected override void Init()
+//			{
+//			}
 
-			protected override IEnumerator Download()
-			{
-				string bundleName = "";// ResourcesKey.BundleName;
-				string assetName = "";// ResourcesKey.FullPath;
-				if(bundleLoaderLinkStack.ContainsKey(bundleName))
-				{
-					bundleLoaderLinkStack[bundleName]++;
-				}
-				else
-				{
-					bundleLoaderLinkStack.Add(bundleName, 1);
-				}
-				yield return _Download();
-				if(bundleLoaderLinkStack.ContainsKey(bundleName))
-				{
-					bundleLoaderLinkStack[bundleName]--;
-				}
+//			protected override IEnumerator Download()
+//			{
+//				string bundleName = "";// ResourcesKey.BundleName;
+//				string assetName = "";// ResourcesKey.FullPath;
+//				if(bundleLoaderLinkStack.ContainsKey(bundleName))
+//				{
+//					bundleLoaderLinkStack[bundleName]++;
+//				}
+//				else
+//				{
+//					bundleLoaderLinkStack.Add(bundleName, 1);
+//				}
+//				yield return _Download();
+//				if(bundleLoaderLinkStack.ContainsKey(bundleName))
+//				{
+//					bundleLoaderLinkStack[bundleName]--;
+//				}
 
-				IEnumerator _Download()
-				{
-					if(LoadAssetBundle == null)
-					{
-						if(bundleLoaderLink.ContainsKey(bundleName))
-						{
-							while(LoadAssetBundle != null && bundleLoaderLink.ContainsKey(bundleName))
-							{
-								LoadAssetBundle = bundleLoaderLink[bundleName];
-								yield return null;
-							}
-						}
-						else
-						{
-							bundleLoaderLink.Add(bundleName, null);
-							if(LoadAssetBundle == null)
-							{
-								Debug.Log($"Already Loaded Check");
-								var loadedList =  AssetBundle.GetAllLoadedAssetBundles();
-								loadedList.ForEach(loaded => {
-									if(loaded.name == bundleName)
-									{
-										Debug.Log($"Is Already Loaded LoadAssetBundle");
-										LoadAssetBundle = loaded;
-									}
-								});
-							}
-							if(LoadAssetBundle == null)
-							{
-								// ·ÎÄÃ ÆÄÀÏ °æ·Î¿Í URL °æ·Î¸¦ »ı¼ºÇÕ´Ï´Ù.
-								string fullLocalPath = Path.Combine(ConstString.BundleLocalPath, bundleName);
-								string fullUrlPath = Path.Combine(ConstString.BundleURLPath, bundleName);
+//				IEnumerator _Download()
+//				{
+//					if(LoadAssetBundle == null)
+//					{
+//						if(bundleLoaderLink.ContainsKey(bundleName))
+//						{
+//							while(LoadAssetBundle != null && bundleLoaderLink.ContainsKey(bundleName))
+//							{
+//								LoadAssetBundle = bundleLoaderLink[bundleName];
+//								yield return null;
+//							}
+//						}
+//						else
+//						{
+//							bundleLoaderLink.Add(bundleName, null);
+//							if(LoadAssetBundle == null)
+//							{
+//								Debug.Log($"Already Loaded Check");
+//								var loadedList =  AssetBundle.GetAllLoadedAssetBundles();
+//								loadedList.ForEach(loaded => {
+//									if(loaded.name == bundleName)
+//									{
+//										Debug.Log($"Is Already Loaded LoadAssetBundle");
+//										LoadAssetBundle = loaded;
+//									}
+//								});
+//							}
+//							if(LoadAssetBundle == null)
+//							{
+//								// ë¡œì»¬ íŒŒì¼ ê²½ë¡œì™€ URL ê²½ë¡œë¥¼ ìƒì„±í•©ë‹ˆë‹¤.
+//								string fullLocalPath = Path.Combine(ConstString.BundleLocalPath, bundleName);
+//								string fullUrlPath = Path.Combine(ConstString.BundleURLPath, bundleName);
 
-								// ·ÎÄÃ ÆÄÀÏÀÌ Á¸ÀçÇÏÁö ¾ÊÀ¸¸é À¥¿¡¼­ ´Ù¿î·ÎµåÇÕ´Ï´Ù.
-								if(!File.Exists(fullLocalPath))
-								{
-									Debug.Log($"Down LoadAssetBundle URL: {fullUrlPath}");
-									// UnityWebRequest¸¦ »ı¼ºÇÏ°í ÇØ´ç URL·ÎºÎÅÍ ¹øµé µ¥ÀÌÅÍ¸¦ ´Ù¿î·ÎµåÇÕ´Ï´Ù.
-									using(UnityWebRequest www = UnityWebRequest.Get(fullUrlPath))
-									{
-										try
-										{
-											www.SendWebRequest();
-										}
-										catch(Exception ex)
-										{
-											Debug.LogException(ex);
-											yield break;
-										}
+//								// ë¡œì»¬ íŒŒì¼ì´ ì¡´ì¬í•˜ì§€ ì•Šìœ¼ë©´ ì›¹ì—ì„œ ë‹¤ìš´ë¡œë“œí•©ë‹ˆë‹¤.
+//								if(!File.Exists(fullLocalPath))
+//								{
+//									Debug.Log($"Down LoadAssetBundle URL: {fullUrlPath}");
+//									// UnityWebRequestë¥¼ ìƒì„±í•˜ê³  í•´ë‹¹ URLë¡œë¶€í„° ë²ˆë“¤ ë°ì´í„°ë¥¼ ë‹¤ìš´ë¡œë“œí•©ë‹ˆë‹¤.
+//									using(UnityWebRequest www = UnityWebRequest.Get(fullUrlPath))
+//									{
+//										try
+//										{
+//											www.SendWebRequest();
+//										}
+//										catch(Exception ex)
+//										{
+//											Debug.LogException(ex);
+//											yield break;
+//										}
 
-										// ´Ù¿î·Îµå°¡ ¿Ï·áµÉ ¶§±îÁö ÁøÇà »óÈ²À» °¨½ÃÇÕ´Ï´Ù.
-										while(!www.isDone)
-										{
-											yield return null;
-										}
+//										// ë‹¤ìš´ë¡œë“œê°€ ì™„ë£Œë  ë•Œê¹Œì§€ ì§„í–‰ ìƒí™©ì„ ê°ì‹œí•©ë‹ˆë‹¤.
+//										while(!www.isDone)
+//										{
+//											yield return null;
+//										}
 
-										// ´Ù¿î·Îµå°¡ ½ÇÆĞÇÑ °æ¿ì ¿¡·¯ ¸Ş½ÃÁö¸¦ Ãâ·ÂÇÏ°í °á°ú¸¦ ¹İÈ¯ÇÕ´Ï´Ù.
-										if(www.result != UnityWebRequest.Result.Success)
-										{
-											Debug.LogError($"Failed to download LoadAssetBundle: {www.error}");
-											yield break;
-										}
+//										// ë‹¤ìš´ë¡œë“œê°€ ì‹¤íŒ¨í•œ ê²½ìš° ì—ëŸ¬ ë©”ì‹œì§€ë¥¼ ì¶œë ¥í•˜ê³  ê²°ê³¼ë¥¼ ë°˜í™˜í•©ë‹ˆë‹¤.
+//										if(www.result != UnityWebRequest.Result.Success)
+//										{
+//											Debug.LogError($"Failed to download LoadAssetBundle: {www.error}");
+//											yield break;
+//										}
 
-										// ´Ù¿î·ÎµåÇÑ ¹øµé µ¥ÀÌÅÍ¸¦ ·ÎÄÃ ÆÄÀÏ¿¡ ÀúÀåÇÕ´Ï´Ù.
-										try
-										{
-											File.WriteAllBytes(fullLocalPath, www.downloadHandler.data);
-											Debug.Log("LoadAssetBundle downloaded and saved.");
-										}
-										catch(Exception ex)
-										{
-											Debug.LogException(ex);
-											yield break;
-										}
-									}
-								}
+//										// ë‹¤ìš´ë¡œë“œí•œ ë²ˆë“¤ ë°ì´í„°ë¥¼ ë¡œì»¬ íŒŒì¼ì— ì €ì¥í•©ë‹ˆë‹¤.
+//										try
+//										{
+//											File.WriteAllBytes(fullLocalPath, www.downloadHandler.data);
+//											Debug.Log("LoadAssetBundle downloaded and saved.");
+//										}
+//										catch(Exception ex)
+//										{
+//											Debug.LogException(ex);
+//											yield break;
+//										}
+//									}
+//								}
 
-								// ·ÎÄÃ ÆÄÀÏ¿¡¼­ ¹øµéÀ» ·ÎµåÇÕ´Ï´Ù.
-								AssetBundleCreateRequest asyncBundle = null;
-								try
-								{
-									Debug.Log($"ResourcesInstantiate LoadAssetBundle from Path: {fullLocalPath}");
-									asyncBundle = AssetBundle.LoadFromFileAsync(fullLocalPath);
-								}
-								catch(Exception ex)
-								{
-									asyncBundle = null;
-									Debug.LogException(ex);
-								}
+//								// ë¡œì»¬ íŒŒì¼ì—ì„œ ë²ˆë“¤ì„ ë¡œë“œí•©ë‹ˆë‹¤.
+//								AssetBundleCreateRequest asyncBundle = null;
+//								try
+//								{
+//									Debug.Log($"ResourcesInstantiate LoadAssetBundle from Path: {fullLocalPath}");
+//									asyncBundle = AssetBundle.LoadFromFileAsync(fullLocalPath);
+//								}
+//								catch(Exception ex)
+//								{
+//									asyncBundle = null;
+//									Debug.LogException(ex);
+//								}
 
-								// ·ÎµùÀÌ ¿Ï·áµÉ ¶§±îÁö ÁøÇà »óÈ²À» °¨½ÃÇÕ´Ï´Ù.
-								if(asyncBundle != null)
-								{
-									while(!asyncBundle.isDone)
-									{
-										yield return null;
-									}
-									LoadAssetBundle = asyncBundle.assetBundle;
-									Debug.Log("LoadAssetBundle loaded successfully.");
-								}
-							}
+//								// ë¡œë”©ì´ ì™„ë£Œë  ë•Œê¹Œì§€ ì§„í–‰ ìƒí™©ì„ ê°ì‹œí•©ë‹ˆë‹¤.
+//								if(asyncBundle != null)
+//								{
+//									while(!asyncBundle.isDone)
+//									{
+//										yield return null;
+//									}
+//									LoadAssetBundle = asyncBundle.assetBundle;
+//									Debug.Log("LoadAssetBundle loaded successfully.");
+//								}
+//							}
 
-							if(LoadAssetBundle == null)
-							{
-								bundleLoaderLink.Remove(bundleName);
-							}
-							else
-							{
-								bundleLoaderLink[bundleName] = LoadAssetBundle;
-							}
-						}
-					}
+//							if(LoadAssetBundle == null)
+//							{
+//								bundleLoaderLink.Remove(bundleName);
+//							}
+//							else
+//							{
+//								bundleLoaderLink[bundleName] = LoadAssetBundle;
+//							}
+//						}
+//					}
 
-					if(LoadAssetBundle == null || !bundleLoaderLink.ContainsKey(bundleName)) yield break;
-
-
-					var asyncObject = LoadAssetBundle.LoadAssetAsync<Object>(assetName);
-					yield return asyncObject;
-					if(asyncObject.isDone)
-					{
-						LoadObject = asyncObject.asset;
-						Debug.Log("Loaded Success.");
-					}
-					else
-					{
-						LoadObject = null;
-						Debug.LogError("Loaded Fail.");
-					}
-				}
-			}
-
-			protected override void Clear()
-			{
-			}
-		}
+//					if(LoadAssetBundle == null || !bundleLoaderLink.ContainsKey(bundleName)) yield break;
 
 
-		[Serializable]
-		public class GameObjectAssetLoader : Loader
-		{
-			protected override void Init()
-			{
-			}
+//					var asyncObject = LoadAssetBundle.LoadAssetAsync<Object>(assetName);
+//					yield return asyncObject;
+//					if(asyncObject.isDone)
+//					{
+//						LoadObject = asyncObject.asset;
+//						Debug.Log("Loaded Success.");
+//					}
+//					else
+//					{
+//						LoadObject = null;
+//						Debug.LogError("Loaded Fail.");
+//					}
+//				}
+//			}
 
-			protected override IEnumerator Download()
-			{
-				LoadObject = ResourcesKey.ObjectAsset;
-				if(LoadObject != null)
-				{
-					Debug.Log("Loaded Success.");
-				}
-				else
-				{
-					Debug.LogError("Loaded Fail.");
-				}
-				yield break;
-			}
-
-			protected override void Clear()
-			{
-			}
-		}
+//			protected override void Clear()
+//			{
+//			}
+//		}
 
 
-		[Serializable]
-		public class ResourcesAssetLoader : Loader
-		{
-			protected override void Init()
-			{
-			}
+//		[Serializable]
+//		public class GameObjectAssetLoader : Loader
+//		{
+//			protected override void Init()
+//			{
+//			}
 
-			protected override IEnumerator Download()
-			{
-				string assetName = "";// ResourcesKey.FullPath;
+//			protected override IEnumerator Download()
+//			{
+//				LoadObject = ResourcesKey.ObjectAsset;
+//				if(LoadObject != null)
+//				{
+//					Debug.Log("Loaded Success.");
+//				}
+//				else
+//				{
+//					Debug.LogError("Loaded Fail.");
+//				}
+//				yield break;
+//			}
 
-				ResourceRequest asyncObject = Resources.LoadAsync(assetName);
-				yield return asyncObject;
+//			protected override void Clear()
+//			{
+//			}
+//		}
 
-				if(asyncObject.isDone)
-				{
-					LoadObject = asyncObject.asset;
-					Debug.Log("Loaded Success.");
-				}
-				else
-				{
-					LoadObject = null;
-					Debug.LogError("Loaded Fail.");
-				}
-			}
 
-			protected override void Clear()
-			{
-			}
-		}
-	}
-}
+//		[Serializable]
+//		public class ResourcesAssetLoader : Loader
+//		{
+//			protected override void Init()
+//			{
+//			}
+
+//			protected override IEnumerator Download()
+//			{
+//				string assetName = "";// ResourcesKey.FullPath;
+
+//				ResourceRequest asyncObject = Resources.LoadAsync(assetName);
+//				yield return asyncObject;
+
+//				if(asyncObject.isDone)
+//				{
+//					LoadObject = asyncObject.asset;
+//					Debug.Log("Loaded Success.");
+//				}
+//				else
+//				{
+//					LoadObject = null;
+//					Debug.LogError("Loaded Fail.");
+//				}
+//			}
+
+//			protected override void Clear()
+//			{
+//			}
+//		}
+//	}
+//}
