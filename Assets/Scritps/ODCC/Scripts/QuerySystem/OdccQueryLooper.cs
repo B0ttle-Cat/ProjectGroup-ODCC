@@ -20,6 +20,9 @@ namespace BC.ODCC
 		// 루퍼의 키입니다.
 		internal string looperKey;
 
+		// 루퍼의 RunAwaitable / RunAction 메서드 실행 여부입니다.
+		public bool sleep;
+
 		/// CallForeach 로 만든 액션의 개수만큼 들어있습니다.
 		internal List<RunForeachStruct> runForeachStructList;
 
@@ -170,6 +173,7 @@ namespace BC.ODCC
 			OdccQueryLooper looper = new OdccQueryLooper
 			{
 				looperKey = key,
+				sleep = false,
 				queryCollector = queryCollector,
 				loopOrder = loopOrder,
 				runForeachStructList = new List<RunForeachStruct>(),
@@ -197,6 +201,7 @@ namespace BC.ODCC
 			OdccQueryLooper looper = new OdccQueryLooper
 			{
 				looperKey = key,
+				sleep = false,
 				queryCollector = queryCollector,
 				loopOrder = 0,
 				runForeachStructList = new List<RunForeachStruct>(),
@@ -213,6 +218,8 @@ namespace BC.ODCC
 		/// <returns>UnityEngine.Awaitable 객체</returns>
 		public async Awaitable RunAwaitable()
 		{
+			if(sleep) return;
+
 			// 쿼리 콜렉터가 null인 경우 중단합니다.
 			if(queryCollector is null) return;
 

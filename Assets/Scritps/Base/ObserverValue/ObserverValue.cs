@@ -1,10 +1,16 @@
-using System;
+﻿using System;
+
+using Sirenix.OdinInspector;
+
+using UnityEngine;
 
 namespace BC.Base
 {
+	[Serializable, InlineProperty]
 	public class ObserverValue<T>
 	{
 		Action<T> callback;
+		[SerializeField,HideLabel]
 		private T value;
 
 		private bool pause;
@@ -26,6 +32,7 @@ namespace BC.Base
 				Callback();
 			}
 		}
+		public Action<T> Event { get => callback; set => callback = value; }
 		public void Pause()
 		{
 			pause = true;

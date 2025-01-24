@@ -585,7 +585,7 @@ namespace BC.ODCC
 		}
 		public T AddComponent<T>(GameObject obj = null) where T : ComponentBehaviour
 		{
-			return (obj ?? ThisObject.GameObject).AddComponent<T>();
+			return (obj != null ? obj : ThisObject.GameObject).AddComponent<T>();
 		}
 		public T AddData<T>(T data = null) where T : DataObject, new()
 		{

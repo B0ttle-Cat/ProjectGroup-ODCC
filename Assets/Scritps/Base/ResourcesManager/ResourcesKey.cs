@@ -49,8 +49,8 @@ namespace BC.Base
 		}
 #if UNITY_EDITOR
 		[TabGroup("Tab", "Resources"), PropertyOrder(-50)]
-		[ShowInInspector, HideLabel, ReadOnly, EnableGUI, PreviewField(75, ObjectFieldAlignment.Center)]
-		[HorizontalGroup("Tab/Resources/H1", width: 80)]
+		[ShowInInspector, HideLabel, ReadOnly, EnableGUI, PreviewField(55, ObjectFieldAlignment.Center)]
+		[HorizontalGroup("Tab/Resources/H1", width: 55)]
 		private T preview => asset;
 		[TabGroup("Tab", "Resources"), PropertyOrder(-50)]
 		[ShowInInspector, HideLabel, ValueDropdown("GetCharacterPrefabs")]
@@ -66,10 +66,12 @@ namespace BC.Base
 #endif
 		[TabGroup("Tab", "Resources")]
 		[HorizontalGroup("Tab/Resources/H1"), VerticalGroup("Tab/Resources/H1/V1")]
-		[HideLabel, Multiline(3), ReadOnly,EnableGUI]
+		[HideLabel, Multiline(2), ReadOnly,EnableGUI]
 		public string resourcesPath;
 
 		private T loadAsset { get; set; }
+
+		public string resourcesName => Path.GetFileName(resourcesPath);
 
 		public T LoadAsset()
 		{
@@ -96,13 +98,11 @@ namespace BC.Base
 		{
 			ValueDropdownList<T> list = new ValueDropdownList<T>();
 			HashSet<(string,T)> tList = new HashSet<(string,T)>();
-			int length = rootPath.Length;
+			int length = rootPath == null ? 0 : rootPath.Length;
 			for(int i = 0 ; i < length ; i++)
 			{
 
 				string folderPath = AssetPathConvertResourcesPath(rootPath[i]);
-
-				if(string.IsNullOrWhiteSpace(folderPath)) continue;
 
 				var allTAssets = Resources.LoadAll<T>(folderPath);
 				foreach(var tAsset in allTAssets)
@@ -119,14 +119,27 @@ namespace BC.Base
 			}
 			return list;
 		}
-
 		string AssetPathConvertResourcesPath(string assetPath)
 		{
 			string keyword = "Resources";
-			assetPath = assetPath.Contains(keyword, StringComparison.OrdinalIgnoreCase)
-				? assetPath[(assetPath.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) + keyword.Length)..].TrimStart('\\', '/')
-				: assetPath;
-			assetPath = Path.ChangeExtension(assetPath, null);
+			int stopIndex = assetPath.IndexOf(keyword) + keyword.Length;
+
+			if(stopIndex != -1) // 문자열이 존재하는 경우
+			{
+				assetPath = assetPath.Substring(stopIndex).TrimStart('\\', '/');
+				assetPath = Path.ChangeExtension(assetPath, null);
+			}
+			return assetPath;
+		}
+		string AssetPathCutoutResourcesPath(string assetPath)
+		{
+			string keyword = "Resources";
+			int stopIndex = assetPath.IndexOf(keyword);
+
+			if(stopIndex != -1) // 문자열이 존재하는 경우
+			{
+				return assetPath.Substring(0, stopIndex + keyword.Length);
+			}
 			return assetPath;
 		}
 
@@ -143,16 +156,23 @@ namespace BC.Base
 				{
 					asset = Resources.Load<T>(resourcesPath);
 				}
-				else
-				{
-					return;
-				}
 			}
 			else
 			{
 				string assetPath = UnityEditor.AssetDatabase.GetAssetPath(asset);
 				guid = UnityEditor.AssetDatabase.AssetPathToGUID(assetPath);
 				resourcesPath = AssetPathConvertResourcesPath(assetPath);
+			}
+			if(asset != null && (rootPath == null || rootPath.Length == 0))
+			{
+				if(!string.IsNullOrWhiteSpace(resourcesPath))
+				{
+					string addPath = resourcesPath.Substring(0,resourcesPath.IndexOf("/"));
+					string assetPath = UnityEditor.AssetDatabase.GetAssetPath(asset);
+					rootPath = new string[1] {
+						$"{AssetPathCutoutResourcesPath(assetPath)}/{addPath}"
+					};
+				}
 			}
 		}
 #endif

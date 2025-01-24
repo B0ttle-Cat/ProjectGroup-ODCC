@@ -20,7 +20,7 @@ namespace BC.OdccBase
 	public partial class OdccComponentAction : Action
 	{
 		[SerializeReference] public BlackboardVariable<OdccBehaviorTarget> actionTarget;
-		public bool TargetIsNull => actionTarget != null && actionTarget.Value != null;
+		public bool TargetIsNull => actionTarget == null || actionTarget.Value == null;
 
 		Status status;
 

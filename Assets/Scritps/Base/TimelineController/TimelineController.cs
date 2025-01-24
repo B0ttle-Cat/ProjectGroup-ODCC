@@ -109,14 +109,14 @@ namespace BC.Base
 					}
 				}
 
-				if(lastSignal != null)
-				{
-					Debug.Log($"가장 마지막 SignalAsset: {lastSignal.name} (시간: {lastSignalTime})");
-				}
-				else
-				{
-					Debug.LogWarning("SignalAsset을 찾을 수 없습니다.");
-				}
+				//if(lastSignal != null)
+				//{
+				//	Debug.Log($"가장 마지막 SignalAsset: {lastSignal.name} (시간: {lastSignalTime})");
+				//}
+				//else
+				//{
+				//	Debug.LogWarning("SignalAsset을 찾을 수 없습니다.");
+				//}
 
 				return lastSignal;
 			}

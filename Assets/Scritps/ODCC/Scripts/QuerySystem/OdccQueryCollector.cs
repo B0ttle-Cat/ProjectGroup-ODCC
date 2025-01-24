@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 using Sirenix.OdinInspector;
-using Sirenix.Utilities;
 
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -32,7 +30,7 @@ namespace BC.ODCC
 		internal bool IsDontDestoryLifeItem { get; set; }
 
 		// 쿼리된 ObjectBehaviour 항목들입니다.
-		internal IEnumerable<ObjectBehaviour> queryItems;
+		internal List<ObjectBehaviour> queryItems;
 
 		// ODCC 루퍼 딕셔너리입니다.
 		internal Dictionary<string, OdccQueryLooper> odccLoopers;
@@ -425,9 +423,7 @@ namespace BC.ODCC
 
 			if(IsSatisfiesQuery(item))
 			{
-				var list = queryItems.ToList();
-				list.Add(item);
-				queryItems = list;
+				queryItems.Add(item);
 				changeItemList?.Invoke(item, true);
 
 				foreach(var looper in odccLoopers)
@@ -441,7 +437,7 @@ namespace BC.ODCC
 				}
 #if UNITY_EDITOR
 				onShowQueryItems = new List<ObjectBehaviour>();
-				onShowQueryItems.AddRange(list);
+				onShowQueryItems.AddRange(queryItems);
 #endif
 				return true;
 			}
@@ -454,12 +450,10 @@ namespace BC.ODCC
 		/// <param name="item">제거할 ObjectBehaviour 객체</param>
 		internal bool RemoveObject(ObjectBehaviour item)
 		{
-			if(!queryItems.Contains(item)) return true;
+			if(!this.queryItems.Contains(item)) return true;
 
-			var list = queryItems.ToList();
-			if(list.Remove(item))
+			if(queryItems.Remove(item))
 			{
-				queryItems = list;
 				changeItemList?.Invoke(item, false);
 
 				foreach(var looper in odccLoopers)
@@ -473,7 +467,7 @@ namespace BC.ODCC
 				}
 #if UNITY_EDITOR
 				onShowQueryItems = new List<ObjectBehaviour>();
-				onShowQueryItems.AddRange(list);
+				onShowQueryItems.AddRange(queryItems);
 #endif
 				return true;
 			}
@@ -544,9 +538,9 @@ namespace BC.ODCC
 		/// 쿼리된 ObjectBehaviour 항목들을 반환하는 메서드입니다.
 		/// </summary>
 		/// <returns>쿼리된 ObjectBehaviour 항목들</returns>
-		public IEnumerable<ObjectBehaviour> GetQueryItems()
+		public List<ObjectBehaviour> GetQueryItems(bool newList = false)
 		{
-			return queryItems;
+			return newList ? new List<ObjectBehaviour>(queryItems) : queryItems;
 		}
 
 		/// <summary>
