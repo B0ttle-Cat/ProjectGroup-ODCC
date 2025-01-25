@@ -560,36 +560,5 @@ namespace BC.ODCC
 		{
 			return this;
 		}
-
-		/////////////////////////// Obsolete //////////////////////////
-
-		[Obsolete("CreateLooperEvent 를 사용할 것 - 오래된 이름 규칙", true)]
-		private OdccQueryLooper CreateLooper(string key, bool prevUpdate = true)
-		{
-			return CreateLooperEvent(key, prevUpdate ? 0 : 1);
-		}
-
-		[Obsolete("DeleteLooperEvent 를 사용할 것 - 오래된 이름 규칙", true)]
-		private OdccQueryCollector DeleteLooper(string key)
-		{
-			return DeleteLooperEvent(key);
-		}
-
-		[Obsolete("CreateActionEvent 를 사용할 것 - 오래된 이름 규칙", true)]
-		private OdccQueryLooper CreateCallEvent(string key)
-		{
-			return CreateActionEvent(key);
-		}
-
-		[Obsolete("DeleteActionEvent 를 사용할 것 - 오래된 이름 규칙", true)]
-		private OdccQueryCollector DeleteCallEvent(string key)
-		{
-			return DeleteActionEvent(key);
-		}
-
-		//public OdccQueryCollector CreateLooperEvent(object onUnitTargetCollectorUpdate)
-		//{
-		//	throw new NotImplementedException();
-		//}
 	}
 }

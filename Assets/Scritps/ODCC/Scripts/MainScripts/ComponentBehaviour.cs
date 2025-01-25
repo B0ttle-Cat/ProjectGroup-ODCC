@@ -32,7 +32,12 @@ namespace BC.ODCC
 			try
 			{
 				if(UnityEditor.EditorApplication.isPlaying) return;
-				if(IsEditingPrefab()) return;
+				if(IsEditingPrefab())
+				{
+					BaseReset(true);
+					return;
+				}
+				;
 
 				if(ThisTransform == null) return;
 				ThisObject = GetComponentInParent<ObjectBehaviour>(true);
@@ -47,7 +52,12 @@ namespace BC.ODCC
 		internal override void OnValidate()
 		{
 			if(UnityEditor.EditorApplication.isPlaying) return;
-			if(IsEditingPrefab()) return;
+			if(IsEditingPrefab())
+			{
+				BaseValidate(true);
+				return;
+			}
+
 
 			if(ThisTransform == null) return;
 			ThisObject = GetComponentInParent<ObjectBehaviour>(true);

@@ -95,7 +95,7 @@ namespace BC.ODCC
 		{
 			if(callDestroy) return;
 			callDestroy = true;
-			//Debug.Log($"Destroy| {gameObject.name}({GetType()})");
+			Debug.Log($"Destroy| {gameObject.name}({GetType()})");
 			try
 			{
 				OdccManager.OdccDestroy(this);
@@ -199,8 +199,8 @@ namespace BC.ODCC
 			BaseStart();
 		}
 
-		protected virtual void BaseReset() { }
-		protected virtual void BaseValidate() { }
+		protected virtual void BaseReset(in bool isPrefab = false) { }
+		protected virtual void BaseValidate(in bool isPrefab = false) { }
 		protected virtual void BaseAwake() { }
 		protected virtual void BaseDestroy() { }
 		protected virtual void BaseEnable() { }

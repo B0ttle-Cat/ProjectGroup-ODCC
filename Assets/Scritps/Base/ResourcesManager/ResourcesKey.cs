@@ -73,6 +73,7 @@ namespace BC.Base
 
 		public string resourcesName => Path.GetFileName(resourcesPath);
 
+		public bool IsEmpty => string.IsNullOrWhiteSpace(resourcesName);
 		public T LoadAsset()
 		{
 			if(loadAsset == null)
@@ -176,7 +177,6 @@ namespace BC.Base
 			}
 		}
 #endif
-
 	}
 
 	public static class UtilResourcesKey

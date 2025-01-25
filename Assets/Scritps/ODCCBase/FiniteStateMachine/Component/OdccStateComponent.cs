@@ -1,4 +1,4 @@
-using BC.ODCC;
+ï»¿using BC.ODCC;
 
 using Sirenix.OdinInspector;
 
@@ -23,12 +23,13 @@ namespace BC.OdccBase
 		protected bool IsEnableinState { get; set; } = false;
 
 		/// <summary>
-		/// Enable ¿¡¼­´Â ÀÌÀü State / Disable ¿¡¼­´Â ´ÙÀ½ State
+		/// Enable ì—ì„œëŠ” ì´ì „ State / Disable ì—ì„œëŠ” ë‹¤ìŒ State
 		/// </summary>
 		public OdccStateComponent ChangeState { get; set; }
 
-		protected override void BaseValidate()
+		protected override void BaseValidate(in bool isPrefab = false)
 		{
+			if(isPrefab) return;
 			ThisStateMachine = ThisContainer.GetComponent<OdccFiniteStateMachine>();
 		}
 		protected override void Disposing()

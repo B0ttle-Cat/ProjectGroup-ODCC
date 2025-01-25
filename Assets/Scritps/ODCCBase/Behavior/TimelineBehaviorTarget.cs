@@ -11,8 +11,9 @@ namespace BC.OdccBase
 		private PlayableDirector playableDirector;
 		private bool isStop = false;
 
-		protected override void BaseValidate()
+		protected override void BaseValidate(in bool isPrefab = false)
 		{
+			if(isPrefab) return;
 			if(playableDirector == null)
 				playableDirector = GetComponent<PlayableDirector>() ?? gameObject.AddComponent<PlayableDirector>();
 			playableDirector.playOnAwake = false;

@@ -17,9 +17,9 @@ namespace BC.OdccBase
 		public abstract OdccStateData ThisStateData { get; }
 
 		private bool warningStateChange;
-		protected override void BaseValidate()
+		protected override void BaseValidate(in bool isPrefab = false)
 		{
-			base.BaseValidate();
+			base.BaseValidate(in isPrefab);
 			if(enableStateList == null)
 			{
 				enableStateList = new List<OdccStateComponent>();

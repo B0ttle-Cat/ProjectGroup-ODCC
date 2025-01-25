@@ -1,4 +1,4 @@
-#if UNITY_EDITOR
+﻿#if UNITY_EDITOR
 using System.Collections.Generic;
 using System.Linq;
 
@@ -39,9 +39,9 @@ namespace BC.OdccBase
 			}
 		}
 
-		protected override void BaseValidate()
+		protected override void BaseValidate(in bool isPrefab = false)
 		{
-			base.BaseValidate();
+			base.BaseValidate(in isPrefab);
 
 			if(!ThisContainer.TryGetData<AnimatorData>(out var animatorData))
 			{
