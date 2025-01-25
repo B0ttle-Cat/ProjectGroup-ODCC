@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 
 using UnityEngine;
 
@@ -459,15 +460,15 @@ namespace BC.ODCC
 		/// <returns>설정된 항목</returns>
 		internal T SetForeachItem<T>(ObjectBehaviour item) where T : class, IOdccItem
 		{
-			if(typeof(T).IsSubclassOf(typeof(ComponentBehaviour)) && item.ThisContainer._TryGetComponent<T>(out T t))
+			if(typeof(T).IsSubclassOf(typeof(IOdccComponent)) && item.ThisContainer._TryGetComponent<T>(out T t))
 			{
 				return t;
 			}
-			else if(typeof(T).IsSubclassOf(typeof(DataObject)) && item.ThisContainer._TryGetData<T>(out T tt))
+			else if(typeof(T).IsSubclassOf(typeof(IDataObject)) && item.ThisContainer._TryGetData<T>(out T tt))
 			{
 				return tt;
 			}
-			else if(typeof(T).IsSubclassOf(typeof(ObjectBehaviour)))
+			else if(typeof(T).IsSubclassOf(typeof(IOdccObject)))
 			{
 				return item as T;
 			}
@@ -484,24 +485,32 @@ namespace BC.ODCC
 				return item.GetComponent<T>();
 			}
 		}
-		//internal T SetForeachItems<T>(ObjectBehaviour item) where T : class, ICollection<IOdccItem>, new()
-		//{
-		//	return null;
-		//}
 		internal List<T> SetForeachItems<T>(ObjectBehaviour item) where T : class, IOdccItem
 		{
-			Type elementType = typeof(T).GetGenericArguments()[0];
-			int elementTypeID = OdccManager.GetTypeToIndex(elementType);
-			if(typeof(T).IsSubclassOf(typeof(ComponentBehaviour)) && item.ThisContainer._TryGetComponents<T>(elementTypeID, out var t))
+			if(typeof(T).IsSubclassOf(typeof(IOdccComponent)) && item.ThisContainer._TryGetComponents<T>(out var t))
 			{
 				return t;
 			}
-			else if(typeof(T).IsSubclassOf(typeof(DataObject)) && item.ThisContainer._TryGetDatas<T>(elementTypeID, out var tt))
+			else if(typeof(T).IsSubclassOf(typeof(IDataObject)) && item.ThisContainer._TryGetDatas<T>(out var tt))
 			{
 				return tt;
 			}
-
-			return null;
+			else if(typeof(T).IsSubclassOf(typeof(IOdccObject)))
+			{
+				return new List<T>(new T[1] { item as T });
+			}
+			else if(item.ThisContainer._TryGetComponents<T>(out var component))
+			{
+				return component;
+			}
+			else if(item.ThisContainer._TryGetDatas<T>(out var data))
+			{
+				return data;
+			}
+			else
+			{
+				return new List<T>(item.gameObject.GetComponents<T>());
+			}
 		}
 
 		/// <summary>
