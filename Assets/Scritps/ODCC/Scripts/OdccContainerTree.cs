@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -221,7 +221,7 @@ namespace BC.ODCC
 		}
 		public static void RemoveAndReleaseSelfContainerNode(ContainerNode node, List<IOdccComponent> components)
 		{
-			node.RemoveItems(components.ToArray());
+			node.RemoveItems(components);
 		}
 	}
 }

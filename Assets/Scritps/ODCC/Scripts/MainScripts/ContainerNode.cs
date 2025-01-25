@@ -42,20 +42,20 @@ namespace BC.ODCC
 		// 자식 오브젝트 배열
 
 		[ReadOnly, ShowInInspector, ShowIf("@ShowObject")]
-		public IOdccObject[] children = new IOdccObject[0];
+		public List<IOdccObject> children = new List<IOdccObject>();
 
 		// 컴포넌트 리스트 배열
 		[ReadOnly, ShowInInspector, ShowIf("@ShowComponent")]
-		public IOdccComponent[] components = new IOdccComponent[0];
+		public List<IOdccComponent> components = new List < IOdccComponent >();
 
 		// 데이터 리스트 배열
 		[SerializeReference, ShowIf("@ShowData")]
-		public IOdccData[] datas = new IOdccData[0];
+		public List<IOdccData> datas = new List < IOdccData >();
 
 		// 타입 인덱스 배열
 		[ReadOnly, ShowInInspector, ShowIf("@ShowType")]
 		[ValueDropdown("ShowTypeText")]
-		internal int[] typeIndex = new int[0];
+		internal List<int> typeIndex = new List<int>();
 
 		/// <summary>
 		/// 생성자
@@ -67,10 +67,10 @@ namespace BC.ODCC
 
 			initOdccItem = null;
 
-			children = new IOdccObject[0];
-			components = new IOdccComponent[0];
-			datas = new IOdccData[0];
-			typeIndex = new int[0];
+			children = new List<IOdccObject>();
+			components = new List<IOdccComponent>();
+			datas = new List<IOdccData>();
+			typeIndex = new List<int>();
 		}
 
 		/// <summary>
@@ -109,9 +109,9 @@ namespace BC.ODCC
 			if(initOdccItem == null) initOdccItem = new List<IOdccItem>();
 			if(thisObject != null) initOdccItem.Add(thisObject);
 			if(parent != null) initOdccItem.Add(parent);
-			if(children != null && children.Length > 0) initOdccItem.AddRange(children);
-			if(components != null && components.Length > 0) initOdccItem.AddRange(components);
-			if(datas != null && datas.Length > 0) initOdccItem.AddRange(datas);
+			if(children != null && children.Count > 0) initOdccItem.AddRange(children);
+			if(components != null && components.Count > 0) initOdccItem.AddRange(components);
+			if(datas != null && datas.Count > 0) initOdccItem.AddRange(datas);
 		}
 		internal void UpdateInit()
 		{
@@ -151,9 +151,9 @@ namespace BC.ODCC
 				}
 			}
 
-			children = new IOdccObject[resize_children];
-			components = new IOdccComponent[resize_component];
-			datas = new IOdccData[resize_data];
+			children = new List<IOdccObject>(new IOdccObject[resize_children]);
+			components = new List<IOdccComponent>(new IOdccComponent[resize_component]);
+			datas = new List<IOdccData>(new IOdccData[resize_data]);
 
 			addInList?.Invoke();
 
@@ -167,7 +167,7 @@ namespace BC.ODCC
 		{
 			AddItem(ref children, target);
 		}
-		internal void AddItems(IOdccObject[] targets)
+		internal void AddItems(List<IOdccObject> targets)
 		{
 			AddItems(ref children, targets);
 		}
@@ -175,7 +175,7 @@ namespace BC.ODCC
 		{
 			RemoveItem(ref children, target);
 		}
-		internal void RemoveItems(IOdccObject[] targets)
+		internal void RemoveItems(List<IOdccObject> targets)
 		{
 			RemoveItems(ref children, targets);
 		}
@@ -184,7 +184,7 @@ namespace BC.ODCC
 		{
 			AddItem(ref components, target);
 		}
-		internal void AddItems(IOdccComponent[] targets)
+		internal void AddItems(List<IOdccComponent> targets)
 		{
 			AddItems(ref components, targets);
 		}
@@ -192,7 +192,7 @@ namespace BC.ODCC
 		{
 			RemoveItem(ref components, target);
 		}
-		internal void RemoveItems(IOdccComponent[] targets)
+		internal void RemoveItems(List<IOdccComponent> targets)
 		{
 			RemoveItems(ref components, targets);
 		}
@@ -202,7 +202,7 @@ namespace BC.ODCC
 			AddItem(ref datas, target);
 			OdccManager.UpdateQuery(thisObject);
 		}
-		internal void AddItems(IOdccData[] targets)
+		internal void AddItems(List<IOdccData> targets)
 		{
 			AddItems(ref datas, targets);
 			OdccManager.UpdateQuery(thisObject);
@@ -212,54 +212,46 @@ namespace BC.ODCC
 			RemoveItem(ref datas, target);
 			OdccManager.UpdateQuery(thisObject);
 		}
-		internal void RemoveItems(IOdccData[] targets)
+		internal void RemoveItems(List<IOdccData> targets)
 		{
 			RemoveItems(ref datas, targets);
 			OdccManager.UpdateQuery(thisObject);
 		}
 
-		private void AddItem<T>(ref T[] tList, T target) where T : IOdccItem
+		private void AddItem<T>(ref List<T> tList, T target) where T : IOdccItem
 		{
 			if(target == null) return;
-			var tempList = tList.ToList();
-			if(tempList.Contains(target)) return;
-			tempList.Add(target);
-			tList = tempList.ToArray();
+			if(tList.Contains(target)) return;
+			tList.Add(target);
 			TypeIndexUpdate();
 		}
-		private void AddItems<T>(ref T[] tList, T[] targets) where T : IOdccItem
+		private void AddItems<T>(ref List<T> tList, List<T> targets) where T : IOdccItem
 		{
-			int length = targets.Length;
+			int length = targets.Count;
 			if(length == 0) return;
-			var tempList = tList.ToList();
 			for(int i = 0 ; i < length ; i++)
 			{
-				if(tempList.Contains(targets[i])) continue;
-				tempList.Add(targets[i]);
+				if(tList.Contains(targets[i])) continue;
+				tList.Add(targets[i]);
 			}
-			tList = tempList.ToArray();
 			TypeIndexUpdate();
 		}
-		private void RemoveItem<T>(ref T[] tList, T target) where T : IOdccItem
+		private void RemoveItem<T>(ref List<T> tList, T target) where T : IOdccItem
 		{
 			if(target == null) return;
-			var tempList = tList.ToList();
-			if(!tempList.Contains(target)) return;
-			tempList.Remove(target);
-			tList = tempList.ToArray();
+			if(!tList.Contains(target)) return;
+			tList.Remove(target);
 			TypeIndexUpdate();
 		}
-		private void RemoveItems<T>(ref T[] tList, T[] targets) where T : IOdccItem
+		private void RemoveItems<T>(ref List<T> tList, List<T> targets) where T : IOdccItem
 		{
-			int length = targets.Length;
+			int length = targets.Count;
 			if(length == 0) return;
-			var tempList = tList.ToList();
 			for(int i = 0 ; i < length ; i++)
 			{
-				if(!tempList.Contains(targets[i])) continue;
-				tempList.Remove(targets[i]);
+				if(!tList.Contains(targets[i])) continue;
+				tList.Remove(targets[i]);
 			}
-			tList = tempList.ToArray();
 			TypeIndexUpdate();
 		}
 
@@ -287,7 +279,7 @@ namespace BC.ODCC
 		{
 			return TryGetItem(in children, out target, condition);
 		}
-		internal bool TryGetChild<T>(out T[] target, Func<T, bool> condition) where T : IOdccObject
+		internal bool TryGetChild<T>(out List<T> target, Func<T, bool> condition) where T : IOdccObject
 		{
 			return TryGetItems(in children, out target, condition);
 		}
@@ -295,7 +287,7 @@ namespace BC.ODCC
 		{
 			return TryGetItem(in components, out target, condition);
 		}
-		internal bool TryGetComponent<T>(out T[] target, Func<T, bool> condition) where T : IOdccComponent
+		internal bool TryGetComponent<T>(out List<T> target, Func<T, bool> condition) where T : IOdccComponent
 		{
 			return TryGetItems(in components, out target, condition);
 		}
@@ -303,15 +295,15 @@ namespace BC.ODCC
 		{
 			return TryGetItem(in datas, out target, condition);
 		}
-		internal bool TryGetData<T>(out T[] target, Func<T, bool> condition) where T : IOdccData
+		internal bool TryGetData<T>(out List<T> target, Func<T, bool> condition) where T : IOdccData
 		{
 			return TryGetItems(in datas, out target, condition);
 		}
 
-		private bool TryGetItem<L, T>(in L[] tList, out T result, Func<T, bool> condition) where L : IOdccItem where T : IOdccItem
+		private bool TryGetItem<L, T>(in List<L> tList, out T result, Func<T, bool> condition) where L : IOdccItem where T : IOdccItem
 		{
 			result = default;
-			int length = tList.Length;
+			int length = tList.Count;
 			for(int i = 0 ; i < length ; i++)
 			{
 				var find = tList[i];
@@ -324,12 +316,12 @@ namespace BC.ODCC
 			}
 			return result != null;
 		}
-		private bool TryGetItems<L, T>(in L[] tList, out T[] result, Func<T, bool> condition) where L : IOdccItem where T : IOdccItem
+		private bool TryGetItems<L, T>(in List<L> tList, out List<T> result, Func<T, bool> condition) where L : IOdccItem where T : IOdccItem
 		{
-			T[] _result = null;
+			List<T> _result = null;
 
 			int size = 0;
-			int length = tList.Length;
+			int length = tList.Count;
 			Action addList = null;
 			for(int i = 0 ; i < length ; i++)
 			{
@@ -345,11 +337,11 @@ namespace BC.ODCC
 			}
 			if(size == 0)
 			{
-				_result = new T[0];
+				_result = new List<T>();
 			}
 			else
 			{
-				_result = new T[size];
+				_result = new List<T>(new T[size]);
 				addList?.Invoke();
 			}
 			result = _result;
@@ -377,7 +369,7 @@ namespace BC.ODCC
 				.Select(x => x.OdccTypeIndex)
 				.Concat(typeIndexItem.SelectMany(x => x.OdccTypeInheritanceIndex))
 				.Distinct()
-				.ToArray();
+				.ToList();
 		}
 #if UNITY_EDITOR
 		private IEnumerable<ValueDropdownItem> ShowTypeText()

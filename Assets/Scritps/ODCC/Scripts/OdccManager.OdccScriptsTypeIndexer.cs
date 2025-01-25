@@ -204,9 +204,9 @@ namespace BC.ODCC
 			return interfaceList.Contains(type);
 		}
 
-		public static int[] GetObjectBehaviourUsingTypeArray(ObjectBehaviour item)
+		public static List<int> GetObjectBehaviourUsingTypeArray(ObjectBehaviour item)
 		{
-			return (item is null || item.ThisContainer is null) ? new int[0] : item.ThisContainer.TypeIndex;
+			return (item is null || item.ThisContainer is null) ? new List<int>() : item.ThisContainer.TypeIndex;
 		}
 	}
 }

@@ -1,4 +1,4 @@
-#if UNITY_EDITOR
+ï»¿#if UNITY_EDITOR
 
 using System.Collections.Generic;
 
@@ -8,11 +8,11 @@ using UnityEngine;
 
 namespace BC.ODCC
 {
-	/// ÀÌ ÄÚµå´Â <see cref="BC.ODCC.OdccUniversalDelegates"/>¿¡ ÄÚµå¸¦ ÀÛ¼ºÇÕ´Ï´Ù."
+	/// ì´ ì½”ë“œëŠ” <see cref="BC.ODCC.OdccUniversalDelegates"/>ì— ì½”ë“œë¥¼ ì‘ì„±í•©ë‹ˆë‹¤."
 	public static class OdccUniversalDelegatesGenerator
 	{
 		static string generateDelegatesClass =
-@$"/// ÀÌ ÄÚµå´Â <see cref=\""BC.ODCC.OdccUniversalDelegatesGenerator\""/>¿¡¼­ ÀÚµ¿¿Ï¼º µË´Ï´Ù.
+@$"/// ì´ ì½”ë“œëŠ” <see cref=\""BC.ODCC.OdccUniversalDelegatesGenerator\""/>ì—ì„œ ìë™ì™„ì„± ë©ë‹ˆë‹¤.
 namespace BC.ODCC
 {{
 	using System.Collections.Generic;
@@ -29,7 +29,7 @@ namespace BC.ODCC
 	#endregion
 
 	#region QuerySystemBuilder
-	/// ÀÌ ÄÚµå´Â <see cref=\""BC.ODCC.QuerySystemBuilder\""/>¸¦ È®ÀåÇÕ´Ï´Ù.
+	/// ì´ ì½”ë“œëŠ” <see cref=\""BC.ODCC.QuerySystemBuilder\""/>ë¥¼ í™•ì¥í•©ë‹ˆë‹¤.
 	public partial class QuerySystemBuilder
 	{{
 		{{2}}
@@ -39,7 +39,7 @@ namespace BC.ODCC
 	#endregion
 
 	#region OdccQueryLooper
-	/// ÀÌ ÄÚµå´Â <see cref=\""BC.ODCC.OdccQueryLooper\""/>¸¦ È®ÀåÇÕ´Ï´Ù.
+	/// ì´ ì½”ë“œëŠ” <see cref=\""BC.ODCC.OdccQueryLooper\""/>ë¥¼ í™•ì¥í•©ë‹ˆë‹¤.
 	public partial class OdccQueryLooper
 	{{
 		{{5}}
@@ -53,7 +53,7 @@ namespace BC.ODCC
 		{
 			string generate = generateDelegatesClass;
 			string generateCode = "";
-			int generateCount = 16; //Action¿¡ °¡´ÉÇÑ ÀÎÀÚ¼ö°¡ ÃÖ´ë 16 °³ÀÓ
+			int generateCount = 16; //Actionì— ê°€ëŠ¥í•œ ì¸ììˆ˜ê°€ ìµœëŒ€ 16 ê°œì„
 
 			generateCode = string.Join("\n\t", GenerateDelegate(generateCount));
 			Debug.Log(generateCode);
@@ -81,7 +81,7 @@ namespace BC.ODCC
 			generate = generate.Replace("{5}", generateCode);
 
 			GUIUtility.systemCopyBuffer = generate;
-			Debug.Log("Å¬¸³ º¸µå¿¡ º¹»çµÊ! OdccUniversalDelegates.cs ¿¡ Á÷Á¢ ºÙ¿©³Ö±â.");
+			Debug.Log("í´ë¦½ ë³´ë“œì— ë³µì‚¬ë¨! OdccUniversalDelegates.cs ì— ì§ì ‘ ë¶™ì—¬ë„£ê¸°.");
 		}
 
 		public static string[] GenerateDelegate(int count)
@@ -96,9 +96,10 @@ namespace BC.ODCC
 			}
 			return generateDelegate.ToArray();
 
-			static string GenerateType(int count, int iCount)
+			static string GenerateType(int count, int lCount)
 			{
-				return $"D{count:00}I{iCount:00}";
+				int vCount = (count + 1) - lCount;
+				return $"D{count:00}_{new string('L', lCount)}{new string('V', vCount)}";
 			}
 			static string GenerateParameters(int count, int iCount)
 			{
@@ -109,12 +110,19 @@ namespace BC.ODCC
 				}
 				return string.Join(", ", parameters);
 			}
-			static string GenerateArguments(int count, int iCount)
+			static string GenerateArguments(int count, int lCount)
 			{
 				string[] arguments = new string[++count];
 				for(int i = 0 ; i < count ; i++)
 				{
-					arguments[i] = $"T{i} t{i}";
+					if(i >= lCount)
+					{
+						arguments[i] = $"T{i} t{i}";
+					}
+					else
+					{
+						arguments[i] = $"List<T{i}> t{i}";
+					}
 				}
 				return string.Join(", ", arguments);
 			}
@@ -123,14 +131,7 @@ namespace BC.ODCC
 				string[] parameters = new string[++count];
 				for(int i = 0 ; i < count ; i++)
 				{
-					if(i >= iCount)
-					{
-						parameters[i] = $"where T{i} : class, IOdccItem";
-					}
-					else
-					{
-						parameters[i] = $"where T{i} : class, ICollection<IOdccAttach>, new()";
-					}
+					parameters[i] = $"where T{i} : class, IOdccItem";
 				}
 				return string.Join(" ", parameters);
 			}
@@ -147,9 +148,10 @@ namespace BC.ODCC
 			}
 			return generateDelegate.ToArray();
 
-			static string GenerateType(int count, int iCount)
+			static string GenerateType(int count, int lCount)
 			{
-				return $"A{count:00}I{iCount:00}";
+				int vCount = (count + 1) - lCount;
+				return $"A{count:00}_{new string('L', lCount)}{new string('V', vCount)}";
 			}
 			static string GenerateParameters(int count, int iCount)
 			{
@@ -161,12 +163,19 @@ namespace BC.ODCC
 				return string.Join(", ", parameters);
 			}
 
-			static string GenerateArguments(int count, int iCount)
+			static string GenerateArguments(int count, int lCount)
 			{
 				string[] arguments = new string[++count];
 				for(int i = 0 ; i < count ; i++)
 				{
-					arguments[i] = $"T{i} t{i}";
+					if(i >= lCount)
+					{
+						arguments[i] = $"T{i} t{i}";
+					}
+					else
+					{
+						arguments[i] = $"List<T{i}> t{i}";
+					}
 				}
 				return string.Join(", ", arguments);
 			}
@@ -176,14 +185,7 @@ namespace BC.ODCC
 				string[] parameters = new string[++count];
 				for(int i = 0 ; i < count ; i++)
 				{
-					if(i >= iCount)
-					{
-						parameters[i] = $"where T{i} : class, IOdccItem";
-					}
-					else
-					{
-						parameters[i] = $"where T{i} : class, ICollection<IOdccAttach>, new()";
-					}
+					parameters[i] = $"where T{i} : class, IOdccItem";
 				}
 				return string.Join(" ", parameters);
 			}
@@ -237,11 +239,12 @@ namespace BC.ODCC
 					string D = GenerateType_D(i, ii);
 					string A = GenerateType_A(i, ii);
 					string T = GenerateParameters(i);
+					//string P = GenerateParameters(i,ii);
 					string Where = GenerateWhere(i, ii);
 					string getForeach1 = GenerateGetForeachItem(i, ii, ", looper.");
 					string getForeach2 = GenerateGetForeachItem(i, ii, ", ");
-					string arguments = GenerateArguments(i, "; ");
-					string parameters = GenerateArguments(i, ", ");
+					string arguments = GenerateArguments(i,ii, "; ");
+					string parameters = GenerateArguments(i, ii, ", ");
 					string setValue = GenerateSetValue(i, "; ");
 					string getValue = GenerateGetValue(i, ", ");
 
@@ -293,45 +296,54 @@ namespace BC.ODCC
 			}
 			return generateForeach.ToArray();
 
-			static string GenerateType_D(int count, int iCount)
+			static string GenerateType_D(int count, int lCount)
 			{
-				return $"D{count:00}I{iCount:00}";
+				int vCount = (count + 1) - lCount;
+				return $"D{count:00}_{new string('L', lCount)}{new string('V', vCount)}";
 			}
-			static string GenerateType_A(int count, int iCount)
+			static string GenerateType_A(int count, int lCount)
 			{
-				return $"A{count:00}I{iCount:00}";
+				int vCount = (count + 1) - lCount;
+				return $"A{count:00}_{new string('L', lCount)}{new string('V', vCount)}";
 			}
-			static string GenerateParameters(int count)
+			static string GenerateParameters(int count, int lCount = -1)
 			{
 				string[] parameters = new string[++count];
 				for(int i = 0 ; i < count ; i++)
 				{
-					parameters[i] = $"T{i}";
-				}
-				return string.Join(", ", parameters);
-			}
-			static string GenerateWhere(int count, int iCount)
-			{
-				string[] parameters = new string[++count];
-				for(int i = 0 ; i < count ; i++)
-				{
-					if(i >= iCount)
+					if(lCount <0 || i >= lCount)
 					{
-						parameters[i] = $"where T{i} : class, IOdccItem";
+						parameters[i] = $"T{i}";
 					}
 					else
 					{
-						parameters[i] = $"where T{i} : class, ICollection<IOdccAttach>, new()";
+						parameters[i] = $"List<T{i}>";
 					}
+				}
+				return string.Join(", ", parameters);
+			}
+			static string GenerateWhere(int count, int lCount)
+			{
+				string[] parameters = new string[++count];
+				for(int i = 0 ; i < count ; i++)
+				{
+					parameters[i] = $"where T{i} : class, IOdccItem";
 				}
 				return string.Join(" ", parameters);
 			}
-			static string GenerateArguments(int count, string split)
+			static string GenerateArguments(int count, int lCount, string split)
 			{
 				string[] arguments = new string[++count];
 				for(int i = 0 ; i < count ; i++)
 				{
-					arguments[i] = $"T{i} t{i}";
+					if(i >= lCount)
+					{
+						arguments[i] = $"T{i} t{i}";
+					}
+					else
+					{
+						arguments[i] = $"List<T{i}> t{i}";
+					}
 				}
 				return string.Join(split, arguments);
 			}

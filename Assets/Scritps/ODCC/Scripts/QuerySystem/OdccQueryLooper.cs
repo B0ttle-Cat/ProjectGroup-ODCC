@@ -484,12 +484,14 @@ namespace BC.ODCC
 				return item.GetComponent<T>();
 			}
 		}
-
-		internal T SetForeachItems<T>(ObjectBehaviour item) where T : class, ICollection<IOdccAttach>, new()
+		//internal T SetForeachItems<T>(ObjectBehaviour item) where T : class, ICollection<IOdccItem>, new()
+		//{
+		//	return null;
+		//}
+		internal List<T> SetForeachItems<T>(ObjectBehaviour item) where T : class, IOdccItem
 		{
 			Type elementType = typeof(T).GetGenericArguments()[0];
 			int elementTypeID = OdccManager.GetTypeToIndex(elementType);
-			//
 			if(typeof(T).IsSubclassOf(typeof(ComponentBehaviour)) && item.ThisContainer._TryGetComponents<T>(elementTypeID, out var t))
 			{
 				return t;
@@ -498,22 +500,7 @@ namespace BC.ODCC
 			{
 				return tt;
 			}
-			////else if(typeof(T).IsSubclassOf(typeof(ObjectBehaviour)))
-			////{
-			////	return item as T;
-			////}
-			////else if(item.ThisContainer._TryGetComponent<T>(out T component))
-			////{
-			////	return component;
-			////}
-			////else if(item.ThisContainer._TryGetData<T>(out T data))
-			////{
-			////	return data;
-			////}
-			//else
-			//{
-			//	return item.GetComponents<T>();
-			//}
+
 			return null;
 		}
 

@@ -254,10 +254,10 @@ namespace BC.ODCC
 						var list = item.ThisContainer.ChildObject;
 						if(list != null)
 						{
-							int length = list.Length;
+							int length = list.Count;
 							for(int i = 0 ; i < length ; i++)
 							{
-								if(TargetObject == list[i])
+								if(TargetObject == list[i] as ObjectBehaviour)
 								{
 									return true;
 								}

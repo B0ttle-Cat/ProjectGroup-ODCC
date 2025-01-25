@@ -193,7 +193,7 @@ namespace BC.ODCC
 							node.thisObject = _object;
 							node.AddInit(_object);
 							var dataList = _object.ThisContainer.DataList;
-							int dLength = dataList.Length;
+							int dLength = dataList.Count;
 							for(int d = 0 ; d < dLength ; d++)
 							{
 								if(dataList[d] == null) continue;
