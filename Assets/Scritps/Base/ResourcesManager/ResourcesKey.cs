@@ -51,11 +51,13 @@ namespace BC.Base
 		[TabGroup("Tab", "Resources"), PropertyOrder(-50)]
 		[ShowInInspector, HideLabel, ReadOnly, EnableGUI, PreviewField(55, ObjectFieldAlignment.Center)]
 		[HorizontalGroup("Tab/Resources/H1", width: 55)]
-		private T preview => asset;
+		private Object preview => asset;
+
 		[TabGroup("Tab", "Resources"), PropertyOrder(-50)]
 		[ShowInInspector, HideLabel, ValueDropdown("GetCharacterPrefabs")]
 		[HorizontalGroup("Tab/Resources/H1"), VerticalGroup("Tab/Resources/H1/V1")]
-		private T asset { get; set; }
+		[InlineButton("Clear")]
+		private Object asset { get; set; }
 
 		[TabGroup("Tab", "Option"), PropertyOrder(50)]
 		[ShowInInspector, LabelWidth(40), DisplayAsString]
@@ -95,23 +97,46 @@ namespace BC.Base
 		}
 
 #if UNITY_EDITOR
-		private ValueDropdownList<T> GetCharacterPrefabs()
+		private void Clear()
 		{
-			ValueDropdownList<T> list = new ValueDropdownList<T>();
-			HashSet<(string,T)> tList = new HashSet<(string,T)>();
+			asset = null;
+			guid = null;
+			resourcesPath = null;
+			loadAsset = null;
+		}
+		private ValueDropdownList<Object> GetCharacterPrefabs()
+		{
+			bool isPrefabs = typeof(T).IsSubclassOf(typeof(MonoBehaviour));
+
+			ValueDropdownList<Object> list = new ValueDropdownList<Object>();
+			HashSet<(string,Object)> tList = new HashSet<(string,Object)>();
 			int length = rootPath == null ? 0 : rootPath.Length;
 			for(int i = 0 ; i < length ; i++)
 			{
 
 				string folderPath = AssetPathConvertResourcesPath(rootPath[i]);
 
-				var allTAssets = Resources.LoadAll<T>(folderPath);
-				foreach(var tAsset in allTAssets)
+				if(isPrefabs)
 				{
-					string assetPath = UnityEditor.AssetDatabase.GetAssetPath(tAsset);
-					assetPath = assetPath.Replace($"{rootPath[i]}/", "");
-					assetPath = Path.ChangeExtension(assetPath, null);
-					tList.Add((assetPath, tAsset));
+					var allTAssets = Resources.LoadAll<GameObject>(folderPath);
+					foreach(var tAsset in allTAssets)
+					{
+						string assetPath = UnityEditor.AssetDatabase.GetAssetPath(tAsset);
+						assetPath = assetPath.Replace($"{rootPath[i]}/", "");
+						assetPath = Path.ChangeExtension(assetPath, null);
+						tList.Add((assetPath, tAsset));
+					}
+				}
+				else
+				{
+					var allTAssets = Resources.LoadAll<T>(folderPath);
+					foreach(var tAsset in allTAssets)
+					{
+						string assetPath = UnityEditor.AssetDatabase.GetAssetPath(tAsset);
+						assetPath = assetPath.Replace($"{rootPath[i]}/", "");
+						assetPath = Path.ChangeExtension(assetPath, null);
+						tList.Add((assetPath, tAsset));
+					}
 				}
 			}
 			foreach(var item in tList)
@@ -155,7 +180,7 @@ namespace BC.Base
 				}
 				if(resourcesPath.IsNotNullOrWhiteSpace())
 				{
-					asset = Resources.Load<T>(resourcesPath);
+					asset = Resources.Load<Object>(resourcesPath);
 				}
 			}
 			else

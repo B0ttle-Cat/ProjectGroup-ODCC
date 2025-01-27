@@ -89,9 +89,9 @@ DestroyState : {DestroyState}
 		{
 			public void BaseLateUpdate();
 		}
-		//public interface Fixed : IOCBehaviour
-		//{
-		//	public void FixedUpdate();
-		//}
+		public interface Fixed : IOCBehaviour
+		{
+			public void BaseFixedUpdate();
+		}
 	}
 }

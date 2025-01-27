@@ -171,7 +171,7 @@ namespace BC.ODCC
 				{
 					foreach(var item in objectList)
 					{
-						newCollector.AddObject(item);
+						if(!newCollector.HasObject(item)) newCollector.AddObject(item);
 					}
 				}
 
@@ -417,10 +417,17 @@ namespace BC.ODCC
 		/// </summary>
 		/// <param name="item">추가할 ObjectBehaviour 객체</param>
 		/// <param name="passDoubleCheck">중복 확인 여부</param>
+		internal bool HasObject(ObjectBehaviour item)
+		{
+			return queryItems.Contains(item);
+		}
+		/// <summary>
+		/// ObjectBehaviour 객체를 추가하는 메서드입니다.
+		/// </summary>
+		/// <param name="item">추가할 ObjectBehaviour 객체</param>
+		/// <param name="passDoubleCheck">중복 확인 여부</param>
 		internal bool AddObject(ObjectBehaviour item)
 		{
-			if(queryItems.Contains(item)) return true;
-
 			if(IsSatisfiesQuery(item))
 			{
 				queryItems.Add(item);
@@ -450,9 +457,7 @@ namespace BC.ODCC
 		/// <param name="item">제거할 ObjectBehaviour 객체</param>
 		internal bool RemoveObject(ObjectBehaviour item)
 		{
-			if(!this.queryItems.Contains(item)) return true;
-
-			if(queryItems.Remove(item))
+			if(!IsSatisfiesQuery(item) && queryItems.Remove(item))
 			{
 				changeItemList?.Invoke(item, false);
 
@@ -523,11 +528,13 @@ namespace BC.ODCC
 		/// <param name="item">업데이트할 ObjectBehaviour 객체</param>
 		internal void UpdateObjectInQuery(ObjectBehaviour item)
 		{
-			if(AddObject(item))
+			bool hasObject = HasObject(item);
+
+			if(!hasObject && AddObject(item))
 			{
 				// Added
 			}
-			else if(RemoveObject(item))
+			else if(hasObject && RemoveObject(item))
 			{
 				// Removed
 			}

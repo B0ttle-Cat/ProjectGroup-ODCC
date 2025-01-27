@@ -255,6 +255,10 @@ namespace BC.ODCC
 					for(int i = 0 ; i < length ; i++)
 					{
 						var target = awakeList[i];
+						if(target is IOdccUpdate.Fixed odccUpdateFixed)
+						{
+							OdccForeach.AddFixedUpdateBehaviour(odccUpdateFixed);
+						}
 						if(target is IOdccUpdate.Fast odccUpdateFast)
 						{
 							OdccForeach.AddFastUpdateBehaviour(odccUpdateFast);
@@ -373,6 +377,10 @@ namespace BC.ODCC
 				for(int i = 0 ; i < length ; i++)
 				{
 					var target = deleteList[i];
+					if(target is IOdccUpdate.Fixed odccUpdateFixed)
+					{
+						OdccForeach.RemoveFixedUpdateBehaviour(odccUpdateFixed);
+					}
 					if(target is IOdccUpdate.Fast odccUpdateFast)
 					{
 						OdccForeach.RemoveFastUpdateBehaviour(odccUpdateFast);
@@ -541,11 +549,14 @@ namespace BC.ODCC
 		{
 			OdccForeach.ForeachFastUpdate();
 		}
-
+		private void FixedUpdate()
+		{
+			OdccForeach.ForeachFixedUpdate();
+		}
 		/// <summary>
 		/// MonoBehaviour의 Update 메서드를 오버라이드합니다.
 		/// </summary>
-		public void Update()
+		private void Update()
 		{
 #if UNITY_EDITOR
 			// 에디터 환경에서 프로파일러 활성화 여부를 설정합니다.
@@ -561,7 +572,7 @@ namespace BC.ODCC
 		/// <summary>
 		/// MonoBehaviour의 LateUpdate 메서드를 오버라이드합니다.
 		/// </summary>
-		public void LateUpdate()
+		private void LateUpdate()
 		{
 			// ODCC CallForeach 시스템의 LateUpdate 메서드를 호출합니다.
 			OdccForeach.ForeachLateUpdate();

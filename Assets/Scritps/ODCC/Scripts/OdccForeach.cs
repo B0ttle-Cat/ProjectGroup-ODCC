@@ -37,11 +37,17 @@ namespace BC.ODCC
 		// ComponentBehaviour 의 Fast Update리스트입니다.
 		internal static List<IOdccUpdate.Fast> componentFastUpdateList = new List<IOdccUpdate.Fast>();
 
-		// ObjectBehaviour 의 Update 리스트입니다.
+		// ObjectBehaviour 의 Late Update 리스트입니다.
 		internal static List<IOdccUpdate.Late> objectLateUpdateList = new List<IOdccUpdate.Late>();
 
-		// ComponentBehaviour 의 Update리스트입니다.
+		// ComponentBehaviour 의 Late Update리스트입니다.
 		internal static List<IOdccUpdate.Late> componentLateUpdateList = new List<IOdccUpdate.Late>();
+
+		// ObjectBehaviour 의 FixedUpdate 리스트입니다.
+		internal static List<IOdccUpdate.Fixed> objectFixedUpdateList = new List<IOdccUpdate.Fixed>();
+
+		// ComponentBehaviour 의 FixedUpdate 리스트입니다.
+		internal static List<IOdccUpdate.Fixed> componentFixedUpdateList = new List<IOdccUpdate.Fixed>();
 
 		internal static HashSet<IOCBehaviour> reservationDestroyObject = new HashSet<IOCBehaviour>();
 
@@ -176,6 +182,34 @@ namespace BC.ODCC
 				foreachAction.Dequeue().Invoke();
 			}
 		}
+		private static void OCBehaviourFixedUpdate(IEnumerable<IOdccUpdate.Fixed> behaviour)
+		{
+			if(behaviour == null) return;
+
+			// CallForeach 액션 큐를 비웁니다.
+			while(foreachAction.Count > 0)
+			{
+				foreachAction.Dequeue().Invoke();
+			}
+
+			// 각 OCBehaviour 객체에 대해 FastUpdate 작업을 수행합니다.
+			foreach(var _item in behaviour)
+			{
+				var item = _item;
+				if(item is IOdccUpdate.Fixed update && item._IsCanEnterUpdate)
+				{
+					foreachAction.Enqueue(() => {
+						update.BaseFixedUpdate();
+					});
+				}
+			}
+
+			// CallForeach 액션 큐를 다시 비웁니다.
+			while(foreachAction.Count > 0)
+			{
+				foreachAction.Dequeue().Invoke();
+			}
+		}
 
 		internal static void UpdateOdccCollectorList(IOdccObject behaviour)
 		{
@@ -254,6 +288,17 @@ namespace BC.ODCC
 				componentFastUpdateList.Add(behaviour);
 			}
 		}
+		internal static void AddFixedUpdateBehaviour(IOdccUpdate.Fixed behaviour)
+		{
+			if(behaviour is IOdccObject)
+			{
+				objectFixedUpdateList.Add(behaviour);
+			}
+			else
+			{
+				componentFixedUpdateList.Add(behaviour);
+			}
+		}
 		internal static void RemoveUpdateBehaviour(IOdccUpdate behaviour)
 		{
 			if(behaviour is IOdccObject)
@@ -285,6 +330,17 @@ namespace BC.ODCC
 			else
 			{
 				componentFastUpdateList.Remove(behaviour);
+			}
+		}
+		internal static void RemoveFixedUpdateBehaviour(IOdccUpdate.Fixed behaviour)
+		{
+			if(behaviour is IOdccObject)
+			{
+				objectFixedUpdateList.Remove(behaviour);
+			}
+			else
+			{
+				componentFixedUpdateList.Remove(behaviour);
 			}
 		}
 		/// <summary>
@@ -378,14 +434,24 @@ namespace BC.ODCC
 			// ObjectBehaviour 리스트의 LateUpdate를 수행합니다.
 			OCBehaviourLateUpdate(objectLateUpdateList);
 			OCBehaviourLateUpdate(componentLateUpdateList);
-		}   /// <summary>
-			/// CallForeach 시스템의 FastUpdate를 수행하는 메서드입니다.
-			/// </summary>
+		}
+		/// <summary>
+		/// CallForeach 시스템의 FastUpdate를 수행하는 메서드입니다.
+		/// </summary>
 		internal static void ForeachFastUpdate()
 		{
 			// ObjectBehaviour 리스트의 LateUpdate를 수행합니다.
 			OCBehaviourFastUpdate(objectFastUpdateList);
 			OCBehaviourFastUpdate(componentFastUpdateList);
+		}
+		/// <summary>
+		/// CallForeach 시스템의 FixedUpdate를 수행하는 메서드입니다.
+		/// </summary>
+		internal static void ForeachFixedUpdate()
+		{
+			// ObjectBehaviour 리스트의 LateUpdate를 수행합니다.
+			OCBehaviourFixedUpdate(objectFixedUpdateList);
+			OCBehaviourFixedUpdate(componentFixedUpdateList);
 		}
 		/// <summary>
 		/// LifeItem에서 씬을 기준으로 OCBehaviour를 제거하는 메서드입니다.
