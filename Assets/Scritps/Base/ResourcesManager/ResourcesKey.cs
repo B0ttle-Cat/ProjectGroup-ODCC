@@ -15,7 +15,7 @@ namespace BC.Base
 	[HideLabel]
 	public partial struct ResourcesKey<T> : IDisposable where T : Object
 	{
-		public ResourcesKey(T asset)
+		public ResourcesKey(Object asset)
 		{
 #if UNITY_EDITOR
 			rootPath = new string[0];
