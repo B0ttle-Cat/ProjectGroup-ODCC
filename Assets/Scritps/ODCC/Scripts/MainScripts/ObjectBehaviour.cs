@@ -1,7 +1,6 @@
 ﻿using System;
 
 using Sirenix.OdinInspector;
-using Sirenix.Utilities;
 
 using UnityEngine;
 
@@ -147,5 +146,9 @@ namespace BC.ODCC
 		{
 			base.DestroyThis(true);
 		}
+
+		public void SetActive(bool value) => GameObject.SetActive(value);
+		public bool activeSelf => GameObject.activeSelf;
+		public bool activeInHierarchy => GameObject.activeInHierarchy;
 	}
 }

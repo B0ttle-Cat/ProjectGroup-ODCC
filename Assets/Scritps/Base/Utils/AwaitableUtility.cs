@@ -159,6 +159,35 @@ namespace BC.Base
 				waitParallel--;
 			}
 		}
+		public static async Awaitable<T> ParallelWaitAll<T>(Awaitable<T> resultAwaitables, params Awaitable[] awaitables)
+		{
+			int length = awaitables.Length + 1;
+			T result = default;
+			int waitParallel = length;
+			ResultParallelUpdate(resultAwaitables);
+			for(int i = 0 ; i<length ; i++)
+			{
+				Awaitable awaitable = awaitables[i];
+				ParallelUpdate(awaitable);
+			}
+
+			while(waitParallel > 0)
+			{
+				await Awaitable.NextFrameAsync();
+			}
+
+			return result;
+			async void ParallelUpdate(Awaitable awaitable)
+			{
+				await awaitable;
+				waitParallel--;
+			}
+			async void ResultParallelUpdate(Awaitable<T> awaitable)
+			{
+				result = await awaitable;
+				waitParallel--;
+			}
+		}
 
 
 		public static async Awaitable ParallelWaitAny(params Awaitable[] awaitables)
@@ -173,7 +202,14 @@ namespace BC.Base
 			{
 				await Awaitable.NextFrameAsync();
 			}
-
+			foreach(var awaitable in awaitables)
+			{
+				try
+				{
+					awaitable.Cancel();
+				}
+				catch(System.OperationCanceledException cancel) { }
+			}
 			async void ParallelUpdate(Awaitable awaitable)
 			{
 				await awaitable;
@@ -194,7 +230,14 @@ namespace BC.Base
 			{
 				await Awaitable.NextFrameAsync();
 			}
-
+			foreach(var awaitable in awaitables)
+			{
+				try
+				{
+					awaitable.Cancel();
+				}
+				catch(System.OperationCanceledException cancel) { }
+			}
 			return result;
 			async void ParallelUpdate(Awaitable<T> awaitable)
 			{
@@ -204,6 +247,41 @@ namespace BC.Base
 					result = _result;
 				}
 				waitParallel = false;
+			}
+		}
+
+		public static async Awaitable<T> ParallelWaitAny<T>(Awaitable<T> resultAwaitables, params Awaitable[] awaitables)
+		{
+			T result = default;
+			bool waitResult = true;
+			bool waitParallel = true;
+			foreach(var awaitable in awaitables)
+			{
+				ParallelUpdate(awaitable);
+			}
+
+			while(waitParallel || waitResult)
+			{
+				await Awaitable.NextFrameAsync();
+			}
+			foreach(var awaitable in awaitables)
+			{
+				try
+				{
+					awaitable.Cancel();
+				}
+				catch(System.OperationCanceledException cancel) { }
+			}
+			return result;
+			async void ParallelUpdate(Awaitable awaitable)
+			{
+				await awaitable;
+				waitParallel = false;
+			}
+			async void ResultParallelUpdate(Awaitable<T> awaitable)
+			{
+				result = await awaitable;
+				waitResult = false;
 			}
 		}
 	}

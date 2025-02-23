@@ -82,7 +82,9 @@ namespace BC.ODCC
 				if(parent != null && parent._IsCanEnterAwake)
 				{
 					// 부모의 Awake 가 안되어 있으면 부모 먼저 Awake 실행
+					//Debug.Log($"upAwake{target.ThisTransform.name}==>{parent.ThisTransform.name}");
 					_OdccAwake(parent);
+					//Debug.Log($"downAwake{target.ThisTransform.name}<=={parent.ThisTransform.name}");
 				}
 
 				// 기본 리스트 구성하기
