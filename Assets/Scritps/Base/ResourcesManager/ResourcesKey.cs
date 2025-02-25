@@ -21,6 +21,7 @@ namespace BC.Base
 			rootPath = new string[0];
 			guid = "";
 			this.asset = asset;
+			EditOption = false;
 #endif
 			resourcesPath = "";
 			loadAsset = null;
@@ -32,6 +33,7 @@ namespace BC.Base
 			rootPath = path;
 			guid = "";
 			asset = null;
+			EditOption = false;
 #endif
 			resourcesPath = "";
 			loadAsset = null;
@@ -43,31 +45,33 @@ namespace BC.Base
 			rootPath = new string[1] { path };
 			guid = "";
 			asset = null;
+			EditOption = false;
 #endif
 			resourcesPath = "";
 			loadAsset = null;
 		}
 #if UNITY_EDITOR
-		[TabGroup("Tab", "Resources"), PropertyOrder(-50)]
+		[BoxGroup("Resources"), PropertyOrder(-50)]
 		[ShowInInspector, HideLabel, ReadOnly, EnableGUI, PreviewField(55, ObjectFieldAlignment.Center)]
-		[HorizontalGroup("Tab/Resources/H1", width: 55)]
+		[HorizontalGroup("Resources/H1", width: 55)]
 		private Object preview => asset;
 
-		[TabGroup("Tab", "Resources"), PropertyOrder(-50)]
+		[BoxGroup("Resources"), PropertyOrder(-50)]
 		[ShowInInspector, HideLabel, ValueDropdown("GetCharacterPrefabs")]
-		[HorizontalGroup("Tab/Resources/H1"), VerticalGroup("Tab/Resources/H1/V1")]
+		[HorizontalGroup("Resources/H1"), VerticalGroup("Resources/H1/V1")]
 		[InlineButton("Clear")]
 		private Object asset { get; set; }
-
-		[TabGroup("Tab", "Option"), PropertyOrder(50)]
+		[BoxGroup("Resources"), ToggleGroup("Resources/EditOption"), PropertyOrder(-10), ShowInInspector]
+		private bool EditOption { get; set; }
+		[BoxGroup("Resources"), ToggleGroup("Resources/EditOption")]
 		[ShowInInspector, LabelWidth(40), DisplayAsString]
 		private string guid;
-		[TabGroup("Tab", "Option"), PropertyOrder(50)]
+		[BoxGroup("Resources"), ToggleGroup("Resources/EditOption")]
 		[ShowInInspector, FolderPath]
 		private string[] rootPath;
 #endif
-		[TabGroup("Tab", "Resources")]
-		[HorizontalGroup("Tab/Resources/H1"), VerticalGroup("Tab/Resources/H1/V1")]
+		[BoxGroup("Resources")]
+		[HorizontalGroup("Resources/H1"), VerticalGroup("Resources/H1/V1")]
 		[HideLabel, Multiline(2), ReadOnly,EnableGUI]
 		public string resourcesPath;
 
