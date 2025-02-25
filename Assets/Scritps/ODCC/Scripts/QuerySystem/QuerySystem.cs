@@ -12,16 +12,17 @@ using Object = UnityEngine.Object;
 
 namespace BC.ODCC
 {
-	public sealed partial class QuerySystemBuilder
+	public class QuerySystemBuilder { }
+	public sealed partial class OdccQueryBuilder : QuerySystemBuilder
 	{
 		internal Scene TargetScene;
 		internal ObjectBehaviour TargetObject;
-		internal QuerySystem.RangeType Range;
+		internal OdccQuerySystem.RangeType Range;
 
 		internal HashSet<int> Any = new HashSet<int>();
 		internal HashSet<int> None = new HashSet<int>();
 		internal HashSet<int> All = new HashSet<int>();
-		private QuerySystemBuilder(QuerySystem initQuerySystem = null)
+		private OdccQueryBuilder(OdccQuerySystem initQuerySystem = null)
 		{
 			Any = new HashSet<int>();
 			None = new HashSet<int>();
@@ -33,49 +34,49 @@ namespace BC.ODCC
 				All = initQuerySystem.All.ToHashSet();
 			}
 		}
-		public static QuerySystemBuilder CreateQuery(QuerySystem initQuerySystem = null)
+		public static OdccQueryBuilder CreateQuery(OdccQuerySystem initQuerySystem = null)
 		{
-			return new QuerySystemBuilder(initQuerySystem);
+			return new OdccQueryBuilder(initQuerySystem);
 		}
-		public QuerySystem Build(Scene scene)
+		public OdccQuerySystem Build(Scene scene)
 		{
 			TargetScene = scene;
 			TargetObject = null;
-			Range = QuerySystem.RangeType.Scene;
+			Range = OdccQuerySystem.RangeType.Scene;
 			return _Build();
 		}
-		public QuerySystem Build(ObjectBehaviour target, QuerySystem.RangeType range)
+		public OdccQuerySystem Build(ObjectBehaviour target, OdccQuerySystem.RangeType range)
 		{
 			TargetScene = default;
 			TargetObject = null;
 
-			range &= ~QuerySystem.RangeType.Scene;
-			if(range != QuerySystem.RangeType.World && target != null)
+			range &= ~OdccQuerySystem.RangeType.Scene;
+			if(range != OdccQuerySystem.RangeType.World && target != null)
 			{
 				TargetObject = target;
 			}
 			else
 			{
-				Range = QuerySystem.RangeType.World;
+				Range = OdccQuerySystem.RangeType.World;
 			}
 			Range = range;
 			return _Build();
 		}
-		public QuerySystem Build()
+		public OdccQuerySystem Build()
 		{
 			TargetScene = default;
 			TargetObject = null;
-			Range = QuerySystem.RangeType.World;
+			Range = OdccQuerySystem.RangeType.World;
 			return _Build();
 		}
-		private QuerySystem _Build()
+		private OdccQuerySystem _Build()
 		{
-			return new QuerySystem(TargetScene, TargetObject, Range,
+			return new OdccQuerySystem(TargetScene, TargetObject, Range,
 				Any.OrderBy(x => x).ToArray(),
 				None.OrderBy(x => x).ToArray(),
 				All.OrderBy(x => x).ToArray());
 		}
-		public QuerySystemBuilder WithAny(params int[] typeIndexs)
+		public OdccQueryBuilder WithAny(params int[] typeIndexs)
 		{
 			foreach(var item in typeIndexs)
 			{
@@ -84,7 +85,7 @@ namespace BC.ODCC
 			}
 			return this;
 		}
-		public QuerySystemBuilder WithNone(params int[] typeIndexs)
+		public OdccQueryBuilder WithNone(params int[] typeIndexs)
 		{
 			foreach(var item in typeIndexs)
 			{
@@ -93,7 +94,7 @@ namespace BC.ODCC
 			}
 			return this;
 		}
-		public QuerySystemBuilder WithAll(params int[] typeIndexs)
+		public OdccQueryBuilder WithAll(params int[] typeIndexs)
 		{
 			foreach(var item in typeIndexs)
 			{
@@ -102,17 +103,17 @@ namespace BC.ODCC
 			}
 			return this;
 		}
-		public QuerySystemBuilder ClearWithAny()
+		public OdccQueryBuilder ClearWithAny()
 		{
 			Any.Clear();
 			return this;
 		}
-		public QuerySystemBuilder ClearWithNone()
+		public OdccQueryBuilder ClearWithNone()
 		{
 			None.Clear();
 			return this;
 		}
-		public QuerySystemBuilder ClearWithAll()
+		public OdccQueryBuilder ClearWithAll()
 		{
 			All.Clear();
 			return this;
@@ -123,14 +124,14 @@ namespace BC.ODCC
 		/// <code>WithAny() - where T : ObjectBehaviour
 		/// return Build()</code>
 		/// </summary>
-		public static QuerySystem SimpleQueryBuild<T>() where T : ObjectBehaviour
+		public static OdccQuerySystem SimpleQueryBuild<T>() where T : ObjectBehaviour
 		{
 			return CreateQuery().WithAny<T>().Build();
 		}
 	}
 
 	[Serializable]
-	public class QuerySystem : IEquatable<QuerySystem>
+	public class OdccQuerySystem : IEquatable<OdccQuerySystem>
 	{
 		internal Scene TargetScene;
 		internal ObjectBehaviour TargetObject;
@@ -158,7 +159,7 @@ namespace BC.ODCC
 		string onShowQuerySystem;
 #endif
 
-		internal QuerySystem(Scene targetScene, ObjectBehaviour targetObject, RangeType range,
+		internal OdccQuerySystem(Scene targetScene, ObjectBehaviour targetObject, RangeType range,
 			int[] any, int[] none, int[] all)
 		{
 			TargetScene = targetScene;
@@ -173,11 +174,11 @@ namespace BC.ODCC
 			SetEditorQueryInfo();
 			void SetEditorQueryInfo()
 			{
-				onShowQuerySystem = "QuerySystem Info";
+				onShowQuerySystem = "OdccQuerySystem Info";
 				Object targetObject = TargetObject;
 
-				string rangeString = Enum.GetValues(typeof(QuerySystem.RangeType))
-					.Cast<QuerySystem.RangeType>()
+				string rangeString = Enum.GetValues(typeof(OdccQuerySystem.RangeType))
+					.Cast<OdccQuerySystem.RangeType>()
 					.Where(r => Range.HasFlag(r))
 					.Select(r => r.ToString())
 					.Aggregate((current, next) => current + " | " + next);
@@ -299,9 +300,9 @@ namespace BC.ODCC
 
 		public override bool Equals(object obj)
 		{
-			return Equals(obj as QuerySystem);
+			return Equals(obj as OdccQuerySystem);
 		}
-		public bool Equals(QuerySystem other)
+		public bool Equals(OdccQuerySystem other)
 		{
 			if(ReferenceEquals(this, other))
 				return true;
@@ -324,14 +325,14 @@ namespace BC.ODCC
 				return false;
 			return true;
 		}
-		public static bool operator ==(QuerySystem lhs, QuerySystem rhs)
+		public static bool operator ==(OdccQuerySystem lhs, OdccQuerySystem rhs)
 		{
 			if(ReferenceEquals(lhs, null))
 				return ReferenceEquals(rhs, null);
 
 			return lhs.Equals(rhs);
 		}
-		public static bool operator !=(QuerySystem lhs, QuerySystem rhs)
+		public static bool operator !=(OdccQuerySystem lhs, OdccQuerySystem rhs)
 		{
 			return !(lhs == rhs);
 		}

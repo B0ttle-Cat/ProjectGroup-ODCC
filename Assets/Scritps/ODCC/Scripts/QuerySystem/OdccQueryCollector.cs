@@ -16,8 +16,8 @@ namespace BC.ODCC
 	public class OdccQueryCollector : IDisposable
 	{
 		[ShowInInspector, ReadOnly, InlineProperty, HideLabel]
-		// QuerySystem 객체입니다.
-		internal QuerySystem querySystem;
+		// OdccQuerySystem 객체입니다.
+		internal OdccQuerySystem querySystem;
 #if UNITY_EDITOR
 		[ShowInInspector, ReadOnly]
 		private List<ObjectBehaviour> onShowQueryItems;
@@ -44,8 +44,8 @@ namespace BC.ODCC
 		/// <summary>
 		/// OdccQueryCollector의 생성자입니다.
 		/// </summary>
-		/// <param name="querySystem">QuerySystem 객체</param>
-		internal OdccQueryCollector(QuerySystem querySystem)
+		/// <param name="querySystem">OdccQuerySystem 객체</param>
+		internal OdccQueryCollector(OdccQuerySystem querySystem)
 		{
 #if UNITY_EDITOR
 			onShowQueryItems = new List<ObjectBehaviour>();
@@ -95,12 +95,12 @@ namespace BC.ODCC
 		}
 
 		/// <summary>
-		/// QuerySystem을 기반으로 OdccQueryCollector를 생성하는 메서드입니다.
+		/// OdccQuerySystem을 기반으로 OdccQueryCollector를 생성하는 메서드입니다.
 		/// </summary>
-		/// <param name="querySystem">QuerySystem 객체</param>
+		/// <param name="querySystem">OdccQuerySystem 객체</param>
 		/// <param name="lifeItem">라이프 아이템</param>
 		/// <returns>OdccQueryCollector 객체</returns>
-		public static OdccQueryCollector CreateQueryCollector(QuerySystem querySystem, Scene lifeItem)
+		public static OdccQueryCollector CreateQueryCollector(OdccQuerySystem querySystem, Scene lifeItem)
 		{
 			var collector = _CreateQueryCollector(querySystem);
 			collector.AddLifeItem(lifeItem);
@@ -108,27 +108,12 @@ namespace BC.ODCC
 		}
 
 		/// <summary>
-		/// QuerySystem을 기반으로 OdccQueryCollector를 생성하는 메서드입니다.
+		/// OdccQuerySystem을 기반으로 OdccQueryCollector를 생성하는 메서드입니다.
 		/// </summary>
-		/// <param name="querySystem">QuerySystem 객체</param>
+		/// <param name="querySystem">OdccQuerySystem 객체</param>
 		/// <param name="lifeItem">라이프 아이템</param>
 		/// <returns>OdccQueryCollector 객체</returns>
-		public static OdccQueryCollector CreateQueryCollector(QuerySystem querySystem, OCBehaviour lifeItem)
-		{
-			if(lifeItem == null) throw new NullReferenceException();
-
-			var collector = _CreateQueryCollector(querySystem);
-			collector.AddLifeItem(lifeItem);
-			return collector;
-		}
-
-		/// <summary>
-		/// QuerySystem을 기반으로 OdccQueryCollector를 생성하는 메서드입니다.
-		/// </summary>
-		/// <param name="querySystem">QuerySystem 객체</param>
-		/// <param name="lifeItem">라이프 아이템</param>
-		/// <returns>OdccQueryCollector 객체</returns>
-		public static OdccQueryCollector CreateQueryCollector(QuerySystem querySystem, string lifeItem)
+		public static OdccQueryCollector CreateQueryCollector(OdccQuerySystem querySystem, OCBehaviour lifeItem)
 		{
 			if(lifeItem == null) throw new NullReferenceException();
 
@@ -138,11 +123,26 @@ namespace BC.ODCC
 		}
 
 		/// <summary>
-		/// QuerySystem을 기반으로 OdccQueryCollector를 생성하는 메서드입니다.
+		/// OdccQuerySystem을 기반으로 OdccQueryCollector를 생성하는 메서드입니다.
 		/// </summary>
-		/// <param name="querySystem">QuerySystem 객체</param>
+		/// <param name="querySystem">OdccQuerySystem 객체</param>
+		/// <param name="lifeItem">라이프 아이템</param>
 		/// <returns>OdccQueryCollector 객체</returns>
-		public static OdccQueryCollector CreateQueryCollector(QuerySystem querySystem)
+		public static OdccQueryCollector CreateQueryCollector(OdccQuerySystem querySystem, string lifeItem)
+		{
+			if(lifeItem == null) throw new NullReferenceException();
+
+			var collector = _CreateQueryCollector(querySystem);
+			collector.AddLifeItem(lifeItem);
+			return collector;
+		}
+
+		/// <summary>
+		/// OdccQuerySystem을 기반으로 OdccQueryCollector를 생성하는 메서드입니다.
+		/// </summary>
+		/// <param name="querySystem">OdccQuerySystem 객체</param>
+		/// <returns>OdccQueryCollector 객체</returns>
+		public static OdccQueryCollector CreateQueryCollector(OdccQuerySystem querySystem)
 		{
 			var collector = _CreateQueryCollector(querySystem);
 			collector.IsDontDestoryLifeItem = true;
@@ -151,11 +151,11 @@ namespace BC.ODCC
 		}
 
 		/// <summary>
-		/// QuerySystem을 기반으로 OdccQueryCollector를 생성하는 내부 메서드입니다.
+		/// OdccQuerySystem을 기반으로 OdccQueryCollector를 생성하는 내부 메서드입니다.
 		/// </summary>
-		/// <param name="querySystem">QuerySystem 객체</param>
+		/// <param name="querySystem">OdccQuerySystem 객체</param>
 		/// <returns>OdccQueryCollector 객체</returns>
-		private static OdccQueryCollector _CreateQueryCollector(QuerySystem querySystem)
+		private static OdccQueryCollector _CreateQueryCollector(OdccQuerySystem querySystem)
 		{
 			var odccQueryCollectors = OdccForeach.OdccQueryCollectors;
 			if(odccQueryCollectors.ContainsKey(querySystem))
@@ -181,11 +181,11 @@ namespace BC.ODCC
 		}
 
 		/// <summary>
-		/// QuerySystem을 기반으로 OdccQueryCollector를 삭제하는 메서드입니다.
+		/// OdccQuerySystem을 기반으로 OdccQueryCollector를 삭제하는 메서드입니다.
 		/// </summary>
-		/// <param name="querySystem">QuerySystem 객체</param>
+		/// <param name="querySystem">OdccQuerySystem 객체</param>
 		/// <param name="lifeItem">라이프 아이템 (string 외 다른 항목은 자동으로 체크함)</param>
-		public static void DeleteQueryCollector(QuerySystem querySystem, string lifeItem)
+		public static void DeleteQueryCollector(OdccQuerySystem querySystem, string lifeItem)
 		{
 			if(querySystem != null && OdccForeach.OdccQueryCollectors.ContainsKey(querySystem))
 			{
@@ -194,10 +194,10 @@ namespace BC.ODCC
 		}
 
 		/// <summary>
-		/// QuerySystem을 기반으로 OdccQueryCollector를 삭제하는 메서드입니다.
+		/// OdccQuerySystem을 기반으로 OdccQueryCollector를 삭제하는 메서드입니다.
 		/// </summary>
-		/// <param name="querySystem">QuerySystem 객체</param>
-		public static void DeleteQueryCollector(QuerySystem querySystem)
+		/// <param name="querySystem">OdccQuerySystem 객체</param>
+		public static void DeleteQueryCollector(OdccQuerySystem querySystem)
 		{
 			if(querySystem != null && OdccForeach.OdccQueryCollectors.ContainsKey(querySystem))
 			{
@@ -551,10 +551,10 @@ namespace BC.ODCC
 		}
 
 		/// <summary>
-		/// QuerySystem 객체를 반환하는 메서드입니다.
+		/// OdccQuerySystem 객체를 반환하는 메서드입니다.
 		/// </summary>
-		/// <returns>QuerySystem 객체</returns>
-		public QuerySystem GetQuerySystem()
+		/// <returns>OdccQuerySystem 객체</returns>
+		public OdccQuerySystem GetQuerySystem()
 		{
 			return querySystem;
 		}

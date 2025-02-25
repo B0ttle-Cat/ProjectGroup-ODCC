@@ -15,13 +15,13 @@ namespace BC.ODCC
 		internal static OdccQueryCollector OCBehaviourList;
 
 		// ObjectBehaviour 목록에 대한 쿼리 시스템입니다.
-		internal static QuerySystem OCBehaviourListQuerySystem;
+		internal static OdccQuerySystem OCBehaviourListQuerySystem;
 
 		// ODCC 쿼리 컬렉터들을 관리하는 딕셔너리입니다.
-		internal static Dictionary<QuerySystem, OdccQueryCollector> OdccQueryCollectors = new ();
+		internal static Dictionary<OdccQuerySystem, OdccQueryCollector> OdccQueryCollectors = new ();
 
 		// ODCC 쿼리 컬렉터들을 관리하는 딕셔너리입니다.
-		internal static Dictionary<QuerySystem, ObjectBehaviour> OdccQueryFindCashList = new ();
+		internal static Dictionary<OdccQuerySystem, ObjectBehaviour> OdccQueryFindCashList = new ();
 
 		internal static List<ObjectBehaviour> allObjectBehaviours = new List<ObjectBehaviour>();
 
@@ -67,10 +67,10 @@ namespace BC.ODCC
 		internal static void InitForeach()
 		{
 			// ObjectBehaviour 목록에 대한 쿼리 시스템을 생성하고 초기화합니다.
-			OCBehaviourListQuerySystem = QuerySystemBuilder.CreateQuery().WithAll<ObjectBehaviour>().Build();
+			OCBehaviourListQuerySystem = OdccQueryBuilder.CreateQuery().WithAll<ObjectBehaviour>().Build();
 			OCBehaviourList = new OdccQueryCollector(OCBehaviourListQuerySystem);
 			OdccQueryCollectors.Add(OCBehaviourListQuerySystem, OCBehaviourList);
-			OdccQueryFindCashList = new Dictionary<QuerySystem, ObjectBehaviour>();
+			OdccQueryFindCashList = new Dictionary<OdccQuerySystem, ObjectBehaviour>();
 			OCBehaviourList.IsDontDestoryLifeItem = true;
 			OCBehaviourList.ClearLifeItem();
 		}
@@ -482,7 +482,7 @@ namespace BC.ODCC
 			}
 		}
 
-		internal static bool TryFindOdccObject(QuerySystem findQuery, bool findInCash, out ObjectBehaviour find)
+		internal static bool TryFindOdccObject(OdccQuerySystem findQuery, bool findInCash, out ObjectBehaviour find)
 		{
 			if(findInCash && OdccQueryFindCashList.TryGetValue(findQuery, out find) && find != null)
 			{
@@ -495,7 +495,7 @@ namespace BC.ODCC
 
 			return find != null;
 		}
-		internal static bool TryFindOdccObject(QuerySystem findQuery, out ObjectBehaviour find)
+		internal static bool TryFindOdccObject(OdccQuerySystem findQuery, out ObjectBehaviour find)
 		{
 			return TryFindOdccObject(findQuery, true, out find);
 		}

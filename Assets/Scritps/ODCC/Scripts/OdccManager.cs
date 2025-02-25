@@ -581,15 +581,15 @@ namespace BC.ODCC
 		}
 
 
-		public static bool TryFindOdccObject(QuerySystem findQuery, bool findInCash, out ObjectBehaviour find)
+		public static bool TryFindOdccObject(OdccQuerySystem findQuery, bool findInCash, out ObjectBehaviour find)
 		{
 			return OdccForeach.TryFindOdccObject(findQuery, findInCash, out find);
 		}
-		public static bool TryFindOdccObject(QuerySystem findQuery, out ObjectBehaviour find)
+		public static bool TryFindOdccObject(OdccQuerySystem findQuery, out ObjectBehaviour find)
 		{
 			return OdccForeach.TryFindOdccObject(findQuery, out find);
 		}
-		public static bool TryFindOdccObject<T>(QuerySystem findQuery, bool findInCash, out T find) where T : ObjectBehaviour
+		public static bool TryFindOdccObject<T>(OdccQuerySystem findQuery, bool findInCash, out T find) where T : ObjectBehaviour
 		{
 			find = null;
 			if(TryFindOdccObject(findQuery, findInCash, out var _find))
@@ -598,7 +598,7 @@ namespace BC.ODCC
 			}
 			return find != null;
 		}
-		public static bool TryFindOdccObject<T>(QuerySystem findQuery, out T find) where T : ObjectBehaviour
+		public static bool TryFindOdccObject<T>(OdccQuerySystem findQuery, out T find) where T : ObjectBehaviour
 		{
 			find = null;
 			if(TryFindOdccObject(findQuery, out var _find))

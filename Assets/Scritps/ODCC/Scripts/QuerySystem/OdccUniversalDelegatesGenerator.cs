@@ -28,9 +28,9 @@ namespace BC.ODCC
 	{{1}}
 	#endregion
 
-	#region QuerySystemBuilder
-	/// 이 코드는 <see cref=\""BC.ODCC.QuerySystemBuilder\""/>를 확장합니다.
-	public partial class QuerySystemBuilder
+	#region OdccQueryBuilder
+	/// 이 코드는 <see cref=\""BC.ODCC.OdccQueryBuilder\""/>를 확장합니다.
+	public partial class OdccQueryBuilder
 	{{
 		{{2}}
 		{{3}}
@@ -196,7 +196,7 @@ namespace BC.ODCC
 			string[] generateMethod = new string[count];
 			for(int i = 0 ; i < count ; i++)
 			{
-				generateMethod[i] = $"public QuerySystemBuilder {key}<{GenerateParameters(i)}>() {GenerateWhere(i)} => {key}(OdccManager.GetTypeToIndex({GenerateTypeof(i)}));";
+				generateMethod[i] = $"public OdccQueryBuilder {key}<{GenerateParameters(i)}>() {GenerateWhere(i)} => {key}(OdccManager.GetTypeToIndex({GenerateTypeof(i)}));";
 			}
 			return generateMethod;
 
