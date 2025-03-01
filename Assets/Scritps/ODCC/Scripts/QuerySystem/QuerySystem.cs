@@ -118,7 +118,13 @@ namespace BC.ODCC
 			All.Clear();
 			return this;
 		}
-
+		public OdccQueryBuilder Clear()
+		{
+			Any.Clear();
+			All.Clear();
+			None.Clear();
+			return this;
+		}
 
 		/// <summary>
 		/// <code>WithAny() - where T : ObjectBehaviour

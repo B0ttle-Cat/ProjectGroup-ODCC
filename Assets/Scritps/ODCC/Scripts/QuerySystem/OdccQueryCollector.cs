@@ -166,7 +166,7 @@ namespace BC.ODCC
 			{
 				OdccQueryCollector newCollector = new OdccQueryCollector(querySystem);
 
-				var objectList = OdccForeach.OCBehaviourList.GetQueryItems();
+				var objectList = OdccForeach.OCBehaviourList.GetQueryItemList();
 				if(objectList != null)
 				{
 					foreach(var item in objectList)
@@ -363,10 +363,10 @@ namespace BC.ODCC
 		/// <param name="setInitList">초기 목록 설정 액션</param>
 		/// <param name="changeListEvent">목록 변경 이벤트 액션</param>
 		/// <returns>OdccQueryCollector 객체</returns>
-		public OdccQueryCollector CreateChangeListEvent(Action<IEnumerable<ObjectBehaviour>> setInitList, Action<ObjectBehaviour, bool> changeListEvent)
+		public OdccQueryCollector CreateChangedListEvent(Action<IEnumerable<ObjectBehaviour>> setInitList, Action<ObjectBehaviour, bool> changeListEvent)
 		{
 			if(setInitList != null)
-				setInitList.Invoke(GetQueryItems());
+				setInitList.Invoke(GetQueryItemList());
 
 			if(changeListEvent != null)
 				changeItemList += changeListEvent;
@@ -379,11 +379,11 @@ namespace BC.ODCC
 		/// </summary>
 		/// <param name="changeListEvent">목록 변경 이벤트 액션</param>
 		/// <returns>OdccQueryCollector 객체</returns>
-		public OdccQueryCollector CreateChangeListEvent(Action<ObjectBehaviour, bool> changeListEvent)
+		public OdccQueryCollector CreateChangedListEvent(Action<ObjectBehaviour, bool> changeListEvent)
 		{
 			if(changeListEvent != null)
 			{
-				var list = GetQueryItems();
+				var list = GetQueryItemList();
 				if(list != null)
 				{
 					foreach(var item in list)
@@ -404,7 +404,7 @@ namespace BC.ODCC
 		/// </summary>
 		/// <param name="changeListEvent">목록 변경 이벤트 액션</param>
 		/// <returns>OdccQueryCollector 객체</returns>
-		public OdccQueryCollector DeleteChangeListEvent(Action<ObjectBehaviour, bool> changeListEvent)
+		public OdccQueryCollector DeleteChangedListEvent(Action<ObjectBehaviour, bool> changeListEvent)
 		{
 			if(changeListEvent != null)
 				changeItemList -= changeListEvent;
@@ -545,11 +545,14 @@ namespace BC.ODCC
 		/// 쿼리된 ObjectBehaviour 항목들을 반환하는 메서드입니다.
 		/// </summary>
 		/// <returns>쿼리된 ObjectBehaviour 항목들</returns>
-		public List<ObjectBehaviour> GetQueryItems(bool newList = false)
+		public List<ObjectBehaviour> GetQueryItemList(bool newList = false)
 		{
 			return newList ? new List<ObjectBehaviour>(queryItems) : queryItems;
 		}
-
+		public int GetQueryItemCount()
+		{
+			return queryItems.Count;
+		}
 		/// <summary>
 		/// OdccQuerySystem 객체를 반환하는 메서드입니다.
 		/// </summary>
