@@ -161,7 +161,7 @@ namespace BC.Base
 		}
 		public static async Awaitable<T> ParallelWaitAll<T>(Awaitable<T> resultAwaitables, params Awaitable[] awaitables)
 		{
-			int length = awaitables.Length + 1;
+			int length = awaitables.Length;
 			T result = default;
 			int waitParallel = length;
 			ResultParallelUpdate(resultAwaitables);
