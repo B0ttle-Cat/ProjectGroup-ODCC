@@ -15,7 +15,10 @@ namespace BC.Base
 				try
 				{
 					cancellationToken.ThrowIfCancellationRequested();
-					if(condition()) return;
+					if(condition())
+					{
+						return;
+					}
 					await Awaitable.NextFrameAsync(cancellationToken);
 				}
 				catch(Exception ex)
@@ -88,6 +91,7 @@ namespace BC.Base
 
 				try
 				{
+					if(awaitable == null) continue;
 					await awaitable;
 				}
 				catch(Exception ex)
@@ -106,7 +110,9 @@ namespace BC.Base
 			{
 				try
 				{
-					result[i] = await awaitables[i];
+					var awaitable = awaitables[i];
+					if(awaitable == null) continue;
+					result[i] = await awaitable;
 				}
 				catch(Exception ex)
 				{
@@ -122,6 +128,7 @@ namespace BC.Base
 			int waitParallel = awaitables.Length;
 			foreach(var awaitable in awaitables)
 			{
+				if(awaitable == null) continue;
 				ParallelUpdate(awaitable);
 			}
 
@@ -144,6 +151,11 @@ namespace BC.Base
 			for(int i = 0 ; i<length ; i++)
 			{
 				Awaitable<T> awaitable = awaitables[i];
+				if(awaitable == null)
+				{
+					waitParallel--;
+					continue;
+				}
 				ParallelUpdate(i, awaitable);
 			}
 
@@ -163,11 +175,16 @@ namespace BC.Base
 		{
 			int length = awaitables.Length;
 			T result = default;
-			int waitParallel = length;
+			int waitParallel = length + 1;
 			ResultParallelUpdate(resultAwaitables);
 			for(int i = 0 ; i<length ; i++)
 			{
 				Awaitable awaitable = awaitables[i];
+				if(awaitable == null)
+				{
+					waitParallel--;
+					continue;
+				}
 				ParallelUpdate(awaitable);
 			}
 
@@ -195,6 +212,7 @@ namespace BC.Base
 			bool waitParallel = true;
 			foreach(Awaitable awaitable in awaitables)
 			{
+				if(awaitable == null) continue;
 				ParallelUpdate(awaitable);
 			}
 
@@ -223,6 +241,7 @@ namespace BC.Base
 			bool waitParallel = true;
 			foreach(var awaitable in awaitables)
 			{
+				if(awaitable == null) continue;
 				ParallelUpdate(awaitable);
 			}
 
@@ -257,6 +276,7 @@ namespace BC.Base
 			bool waitParallel = true;
 			foreach(var awaitable in awaitables)
 			{
+				if(awaitable == null) continue;
 				ParallelUpdate(awaitable);
 			}
 

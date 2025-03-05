@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 using BC.ODCC;
 
-using Unity.Collections;
-
 using UnityEngine;
-using UnityEngine.Playables;
+
+using ReadOnlyAttribute = Sirenix.OdinInspector.ReadOnlyAttribute;
 namespace BC.OdccBase
 {
 	public partial class AnimatorComponent : ComponentBehaviour//, IOdccUpdate
@@ -27,11 +27,13 @@ namespace BC.OdccBase
 			private set => animator = value;
 		}
 
-		[SerializeField, ReadOnly]
+		//[SerializeField, ReadOnly]
 		private AnimatorOverrideController overrideController;
+		private List<KeyValuePair<AnimationClip, AnimationClip>> originalClipSetup;
 
-		private Dictionary<int, HashSet<int>> animatorStateEnterList = new Dictionary<int, HashSet<int>>();
-		private HashSet<int> machineStateChecker = new HashSet<int>();
+		private Dictionary<int, AnimatorStateInfo> statePlayListToInfo = new Dictionary<int, AnimatorStateInfo>();
+		private HashSet<int> animatorStatePlayList = new HashSet<int>();
+		private HashSet<int> machineStatePlayList = new HashSet<int>();
 
 		protected override void BaseValidate(in bool isPrefab = false)
 		{
@@ -50,14 +52,18 @@ namespace BC.OdccBase
 					? new AnimatorOverrideController(animOverride.runtimeAnimatorController)
 					: new AnimatorOverrideController(animator.runtimeAnimatorController);
 				animator.runtimeAnimatorController = this.overrideController;
+
+				originalClipSetup = new List<KeyValuePair<AnimationClip, AnimationClip>>();
+				overrideController.GetOverrides(originalClipSetup);
 			}
-			animatorStateEnterList = new Dictionary<int, HashSet<int>>();
-			machineStateChecker = new HashSet<int>();
+			statePlayListToInfo = new Dictionary<int, AnimatorStateInfo>();
+			animatorStatePlayList = new HashSet<int>();
+			machineStatePlayList = new HashSet<int>();
 		}
 		protected override void BaseDestroy()
 		{
-			if(animatorStateEnterList != null) animatorStateEnterList.Clear();
-			if(machineStateChecker != null) machineStateChecker.Clear();
+			if(animatorStatePlayList != null) animatorStatePlayList.Clear();
+			if(machineStatePlayList != null) machineStatePlayList.Clear();
 		}
 
 		#region Parameter
@@ -105,26 +111,59 @@ namespace BC.OdccBase
 
 		#endregion
 		#region StateMachine
-		internal void OnAnimatorStateEnter(AnimatorStateInfo stateInfo, int layerIndex)
+		public virtual void OnAnimatorStateEnter(AnimatorStateInfo stateInfo)
 		{
-			if(animatorStateEnterList == null) return;
-			(animatorStateEnterList[layerIndex] ??= new HashSet<int>()).Add(stateInfo.fullPathHash);
+			if(animatorStatePlayList == null) return;
+			if(animatorStatePlayList.Add(stateInfo.fullPathHash))
+			{
+				statePlayListToInfo.Add(stateInfo.fullPathHash, stateInfo);
+			}
 		}
-		internal void OnAnimatorStateExit(AnimatorStateInfo stateInfo, int layerIndex)
+		public virtual void OnAnimatorStateExit(AnimatorStateInfo stateInfo)
 		{
-			if(animatorStateEnterList == null) return;
+			if(animatorStatePlayList == null) return;
 
-			(animatorStateEnterList[layerIndex] ??= new HashSet<int>()).Remove(stateInfo.fullPathHash);
+			if(animatorStatePlayList.Remove(stateInfo.fullPathHash))
+			{
+				statePlayListToInfo.Remove(stateInfo.fullPathHash);
+			}
 		}
-		internal void OnMachineStateEnter(int stateMachinePathHash)
+		public virtual void OnAnimatorStateEnd(AnimatorStateInfo stateInfo)
 		{
-			if(machineStateChecker == null) return;
-			machineStateChecker.Add(stateMachinePathHash);
+			if(animatorStatePlayList == null) return;
+
+			if(animatorStatePlayList.Remove(stateInfo.fullPathHash))
+			{
+				statePlayListToInfo.Remove(stateInfo.fullPathHash);
+			}
 		}
-		internal void OnMachineStateExit(int stateMachinePathHash)
+		public virtual void OnMachineStateEnter(int stateMachinePathHash)
 		{
-			if(machineStateChecker == null) return;
-			machineStateChecker.Remove(stateMachinePathHash);
+			if(machineStatePlayList == null) return;
+			machineStatePlayList.Add(stateMachinePathHash);
+		}
+		public virtual void OnMachineStateExit(int stateMachinePathHash)
+		{
+			if(machineStatePlayList == null) return;
+			machineStatePlayList.Remove(stateMachinePathHash);
+		}
+		public bool IsAnimatorStatePlay(string fullPathStateName)
+		{
+			return IsAnimatorStatePlay(StringToHash(fullPathStateName));
+		}
+		public bool IsAnimatorStatePlay(int fullPathStateHash)
+		{
+			if(animatorStatePlayList == null) return false;
+			return animatorStatePlayList.Contains(fullPathStateHash);
+		}
+		public bool IsMachineStatePlay(string stateMachinePathName)
+		{
+			return IsMachineStatePlay(StringToHash(stateMachinePathName));
+		}
+		public bool IsMachineStatePlay(int stateMachinePathHash)
+		{
+			if(machineStatePlayList == null) return false;
+			return machineStatePlayList.Contains(stateMachinePathHash);
 		}
 		#endregion
 		#region WaitStateExit
@@ -136,7 +175,7 @@ namespace BC.OdccBase
 		{
 			return await WaitMachineStateExit(Animator.StringToHash(stateMachinePathName), waitEnterTime);
 		}
-		public async Awaitable<bool> WaitAnimatorStateExit(int waitStateID, int layerIndex = 0, float waitEnterTime = 1f)
+		public async Awaitable<bool> WaitAnimatorStateExit(int waitStateID, int layerIndex = 0, float waitEnterTime = 1f, float waitClipTime = 1f)
 		{
 			float timeout = waitEnterTime;
 
@@ -153,11 +192,10 @@ namespace BC.OdccBase
 
 			while(IsValid())
 			{
-				if(IsHasState())
+				if(IsHasState(out _))
 				{
 					break;
 				}
-
 				timeout -= Time.deltaTime;
 				if(timeout <= 0f)
 				{
@@ -166,11 +204,18 @@ namespace BC.OdccBase
 				await Awaitable.NextFrameAsync(DestroyCancelToken);
 			}
 
+			timeout = waitClipTime;
 			while(IsValid())
 			{
-				if(!IsHasState())
+				if(!IsHasState(out var animatorStateInfo))
 				{
 					break;
+				}
+
+				timeout -= animatorStateInfo.speed * Time.deltaTime;
+				if(timeout <= 0f)
+				{
+					return false;
 				}
 				await Awaitable.NextFrameAsync(DestroyCancelToken);
 			}
@@ -179,13 +224,15 @@ namespace BC.OdccBase
 			bool IsValid()
 			{
 				if(Animator == null) return false;
-				if(animatorStateEnterList == null) return false;
+				if(animatorStatePlayList == null) return false;
 				if(DestroyCancelToken.IsCancellationRequested) return false;
 				return true;
 			}
-			bool IsHasState()
+			bool IsHasState(out AnimatorStateInfo animatorStateInfo)
 			{
-				return animatorStateEnterList.TryGetValue(layerIndex, out var stateList) && stateList.Contains(waitStateID);
+				animatorStateInfo = default;
+				if(statePlayListToInfo == null) return false;
+				return statePlayListToInfo.TryGetValue(waitStateID, out animatorStateInfo);
 			}
 		}
 		public async Awaitable<bool> WaitMachineStateExit(int waitStateID, float waitEnterTime = 1f)
@@ -230,32 +277,36 @@ namespace BC.OdccBase
 			bool IsValid()
 			{
 				if(Animator == null) return false;
-				if(machineStateChecker == null) return false;
+				if(machineStatePlayList == null) return false;
 				if(DestroyCancelToken.IsCancellationRequested) return false;
 				return true;
 			}
 			bool IsHasState()
 			{
-				return machineStateChecker.Contains(waitStateID);
+				return machineStatePlayList.Contains(waitStateID);
 			}
 		}
 		#endregion
-
-
-		#region ForcedPlayClip
-		public void ForcedPlayClip(AnimationClip clip)
+		#region OverrideClip
+		public void OverrideAnimationClip(AnimationClip originalClip, AnimationClip overrideClip)
 		{
-			if(animator == null || clip == null) return;
-			var animationClipPlayable = AnimationPlayableUtilities.PlayClip(animator, clip, out PlayableGraph playableGraph);
+			if(originalClip == null) return;
+			try { overrideController[originalClip] = overrideClip; }
+			catch(Exception ex) { Debug.LogException(ex); }
 		}
-		public async Awaitable ForcedPlayClipAndWaiting(AnimationClip clip)
+		public void OverrideAnimationClear(AnimationClip originalClip)
 		{
-			if(animator == null || clip == null) return;
-			var animationClipPlayable = AnimationPlayableUtilities.PlayClip(animator, clip, out PlayableGraph playableGraph);
-			if(!playableGraph.IsDone())
-			{
-				await Awaitable.NextFrameAsync();
-			}
+			OverrideAnimationClip(originalClip, null);
+		}
+		public void OverrideAnimationClipList(List<KeyValuePair<AnimationClip, AnimationClip>> animationKeyValue)
+		{
+			if(animationKeyValue == null || animationKeyValue.Count == 0) return;
+			try { overrideController.ApplyOverrides(animationKeyValue); }
+			catch(Exception ex) { Debug.LogException(ex); }
+		}
+		public void OverrideAnimationClearList()
+		{
+			OverrideAnimationClipList(originalClipSetup);
 		}
 		#endregion
 	}
