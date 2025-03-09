@@ -259,44 +259,97 @@ namespace BC.ODCC
 		{
 			if(behaviour is IOdccObject)
 			{
-				objectUpdateList.Add(behaviour);
+				TryInsert(ref objectUpdateList, behaviour);
 			}
 			else
 			{
-				componentUpdateList.Add(behaviour);
+				TryInsert(ref componentUpdateList, behaviour);
+			}
+			void TryInsert(ref List<IOdccUpdate> list, IOdccUpdate behaviour)
+			{
+				int length = list.Count;
+				for(int i = 0 ; i < length ; i++)
+				{
+					if(list[i].UpdatePriority > behaviour.UpdatePriority)
+					{
+						list.Insert(i, behaviour);
+						return;
+					}
+				}
+				list.Add(behaviour);
 			}
 		}
+
 		internal static void AddLateUpdateBehaviour(IOdccUpdate.Late behaviour)
 		{
 			if(behaviour is IOdccObject)
 			{
-				objectLateUpdateList.Add(behaviour);
+				TryInsert(ref objectLateUpdateList, behaviour);
 			}
 			else
 			{
-				componentLateUpdateList.Add(behaviour);
+				TryInsert(ref componentLateUpdateList, behaviour);
+			}
+			void TryInsert(ref List<IOdccUpdate.Late> list, IOdccUpdate.Late behaviour)
+			{
+				int length = list.Count;
+				for(int i = 0 ; i < length ; i++)
+				{
+					if(list[i].UpdatePriority > behaviour.UpdatePriority)
+					{
+						list.Insert(i, behaviour);
+						return;
+					}
+				}
+				list.Add(behaviour);
 			}
 		}
 		internal static void AddFastUpdateBehaviour(IOdccUpdate.Fast behaviour)
 		{
 			if(behaviour is IOdccObject)
 			{
-				objectFastUpdateList.Add(behaviour);
+				TryInsert(ref objectFastUpdateList, behaviour);
 			}
 			else
 			{
-				componentFastUpdateList.Add(behaviour);
+				TryInsert(ref componentFastUpdateList, behaviour);
+			}
+			void TryInsert(ref List<IOdccUpdate.Fast> list, IOdccUpdate.Fast behaviour)
+			{
+				int length = list.Count;
+				for(int i = 0 ; i < length ; i++)
+				{
+					if(list[i].UpdatePriority > behaviour.UpdatePriority)
+					{
+						list.Insert(i, behaviour);
+						return;
+					}
+				}
+				list.Add(behaviour);
 			}
 		}
 		internal static void AddFixedUpdateBehaviour(IOdccUpdate.Fixed behaviour)
 		{
 			if(behaviour is IOdccObject)
 			{
-				objectFixedUpdateList.Add(behaviour);
+				TryInsert(ref objectFixedUpdateList, behaviour);
 			}
 			else
 			{
-				componentFixedUpdateList.Add(behaviour);
+				TryInsert(ref componentFixedUpdateList, behaviour);
+			}
+			void TryInsert(ref List<IOdccUpdate.Fixed> list, IOdccUpdate.Fixed behaviour)
+			{
+				int length = list.Count;
+				for(int i = 0 ; i < length ; i++)
+				{
+					if(list[i].UpdatePriority > behaviour.UpdatePriority)
+					{
+						list.Insert(i, behaviour);
+						return;
+					}
+				}
+				list.Add(behaviour);
 			}
 		}
 		internal static void RemoveUpdateBehaviour(IOdccUpdate behaviour)
@@ -379,21 +432,15 @@ namespace BC.ODCC
 		/// </summary>
 		internal static void ForeachUpdate()
 		{
-			Action listToNext = null;
-			bool waitMainUpdate = true;
-			// 이전 업데이트 리스트를 처리합니다.
+			//Action listToNext = null;
+			Action beforeMainUpdate = null;
+			Action afterMainUpdate = null;
+
 			foreach(var orderKey in ForeachQueryUpdate)
 			{
 				var order = orderKey.Key;
 				var dictionary = orderKey.Value;
 
-				if(order>0 && waitMainUpdate)
-				{
-					waitMainUpdate = false;
-					// ObjectBehaviour 리스트를 업데이트합니다.
-					OCBehaviourUpdate(objectUpdateList);
-					OCBehaviourUpdate(componentUpdateList);
-				}
 				foreach(var item in dictionary)
 				{
 					var key = item.Key;
@@ -404,7 +451,14 @@ namespace BC.ODCC
 						{
 							try
 							{
-								listToNext += () => dictionary[key] = key.RunAwaitable();
+								if(order>0)
+								{
+									beforeMainUpdate += () => dictionary[key] = key.RunAwaitable();
+								}
+								else
+								{
+									afterMainUpdate += () => dictionary[key] = key.RunAwaitable();
+								}
 							}
 							catch(Exception ex)
 							{
@@ -415,15 +469,10 @@ namespace BC.ODCC
 				}
 			}
 
-			if(waitMainUpdate)
-			{
-				// ObjectBehaviour 리스트를 업데이트합니다.
-				OCBehaviourUpdate(objectUpdateList);
-				OCBehaviourUpdate(componentUpdateList);
-			}
-
-			// 리스트를 다음으로 넘깁니다.
-			listToNext?.Invoke();
+			afterMainUpdate?.Invoke();
+			OCBehaviourUpdate(objectUpdateList);
+			OCBehaviourUpdate(componentUpdateList);
+			beforeMainUpdate?.Invoke();
 		}
 
 		/// <summary>

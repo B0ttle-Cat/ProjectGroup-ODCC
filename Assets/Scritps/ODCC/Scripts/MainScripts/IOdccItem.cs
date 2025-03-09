@@ -80,17 +80,24 @@ DestroyState : {DestroyState}
 	}
 	public interface IOdccUpdate : IOCBehaviour
 	{
+		public int UpdatePriority { get => 0; }
 		public void BaseUpdate();
 		public interface Fast : IOCBehaviour
 		{
+			public int UpdatePriority { get => 0; }
+
 			public void BaseFastUpdate();
 		}
 		public interface Late : IOCBehaviour
 		{
+			public int UpdatePriority { get => 0; }
+
 			public void BaseLateUpdate();
 		}
 		public interface Fixed : IOCBehaviour
 		{
+			public int UpdatePriority { get => 0; }
+
 			public void BaseFixedUpdate();
 		}
 	}
