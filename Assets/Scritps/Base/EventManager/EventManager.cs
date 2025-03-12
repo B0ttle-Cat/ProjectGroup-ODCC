@@ -265,6 +265,30 @@ namespace BC.Base
 			cashListenerList[type] = resultList.Cast<object>();
 			return resultList;
 		}
+		private T _GetFirstEventActor<T>() where T : class
+		{
+			Type type = typeof(T);
+
+			if(cashListenerList.TryGetValue(type, out var cachedValue))
+			{
+				foreach(var cache in cachedValue)
+				{
+					if(cache is T t)
+					{
+						return t;
+					}
+				}
+			}
+			int count = listenerList.Count;
+			for(int i = 0 ; i < count ; i++)
+			{
+				if(listenerList[i] is T find)
+				{
+					return find;
+				}
+			}
+			return null;
+		}
 		private bool _Contains(object actor)
 		{
 			return Contains(actor, out _);
@@ -370,6 +394,17 @@ namespace BC.Base
 		{
 			if(action == null) return;
 			await Call(c => c.gameObject.Equals(order), action);
+		}
+
+		public static bool TryGet<T>(out T result) where T : class
+		{
+			result = _Instance._GetFirstEventActor<T>();
+			return result != null;
+		}
+		public static bool TryGetList<T>(out List<T> result) where T : class
+		{
+			result = _Instance._GetAllEventActor<T>();
+			return result != null && result.Count > 0;
 		}
 
 
