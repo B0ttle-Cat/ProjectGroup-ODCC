@@ -46,12 +46,12 @@ namespace BC.OdccBase
 			{
 				animator = GetComponentInChildren<Animator>(true);
 			}
-			if(animator != null && this.overrideController == null)
+			if(animator != null && overrideController == null)
 			{
-				this.overrideController = animator.runtimeAnimatorController is AnimatorOverrideController animOverride
+				overrideController = animator.runtimeAnimatorController is AnimatorOverrideController animOverride
 					? new AnimatorOverrideController(animOverride.runtimeAnimatorController)
 					: new AnimatorOverrideController(animator.runtimeAnimatorController);
-				animator.runtimeAnimatorController = this.overrideController;
+				animator.runtimeAnimatorController = overrideController;
 
 				originalClipSetup = new List<KeyValuePair<AnimationClip, AnimationClip>>();
 				overrideController.GetOverrides(originalClipSetup);
@@ -177,6 +177,7 @@ namespace BC.OdccBase
 		}
 		public async Awaitable<bool> WaitAnimatorStateExit(int waitStateID, int layerIndex = 0, float waitEnterTime = 1f, float waitClipTime = 1f)
 		{
+			if(animator == null || animator.runtimeAnimatorController == null) return false;
 			float timeout = waitEnterTime;
 
 			while(!IsValid())
@@ -290,7 +291,7 @@ namespace BC.OdccBase
 		#region OverrideClip
 		public void OverrideAnimationClip(AnimationClip originalClip, AnimationClip overrideClip)
 		{
-			if(originalClip == null) return;
+			if(originalClip == null || overrideController == null) return;
 			try { overrideController[originalClip] = overrideClip; }
 			catch(Exception ex) { Debug.LogException(ex); }
 		}
@@ -300,7 +301,7 @@ namespace BC.OdccBase
 		}
 		public void OverrideAnimationClipList(List<KeyValuePair<AnimationClip, AnimationClip>> animationKeyValue)
 		{
-			if(animationKeyValue == null || animationKeyValue.Count == 0) return;
+			if(animationKeyValue == null || animationKeyValue.Count == 0 || overrideController == null) return;
 			try { overrideController.ApplyOverrides(animationKeyValue); }
 			catch(Exception ex) { Debug.LogException(ex); }
 		}

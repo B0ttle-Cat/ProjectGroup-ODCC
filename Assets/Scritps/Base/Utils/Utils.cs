@@ -218,5 +218,21 @@ namespace BC.Base
 			}
 		}
 		#endregion
+
+
+		public static int ToLayer(this LayerMask layerBitmask)
+		{
+			return ToLayer(layerBitmask.value);
+		}
+		public static int ToLayer(int bitmask)
+		{
+			int result = bitmask>0 ? 0 : 31;
+			while(bitmask>1)
+			{
+				bitmask = bitmask>>1;
+				result++;
+			}
+			return result;
+		}
 	}
 }
