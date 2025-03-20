@@ -70,7 +70,6 @@ namespace BC.ODCC
 				}
 			}
 		}
-
 #endif
 		bool IOdccData.IsData => true;
 		public DataObject()

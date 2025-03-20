@@ -202,6 +202,34 @@ namespace BC.ODCC
 		}
 
 		/// <summary>
+		/// 루퍼 이벤트를 생성하는 메서드입니다.
+		/// </summary>
+		/// <param name="queryCollector">관련된 OdccQueryCollector 객체</param>
+		/// <param name="key">루퍼 키</param>
+		/// <param name="loopOrder">업데이트 순서. 0 ~ 1 사이에 메인업데이트가 이루어짐</param>
+		/// <returns>OdccQueryLooper 객체</returns>
+		internal static OdccQueryLooper CreateFixedLooperEvent(OdccQueryCollector queryCollector, string key, int loopOrder = 0)
+		{
+			OdccQueryLooper looper = new OdccQueryLooper
+			{
+				looperKey = key,
+				sleep = false,
+				queryCollector = queryCollector,
+				loopOrder = loopOrder,
+				runForeachStructList = new List<RunForeachStruct>(),
+				onShowCallLog = false,
+				onShowCallLogDepth = 5
+			};
+			looper.SetBreakFunction(null);
+			if(!OdccForeach.ForeachQueryFixedUpdate.TryGetValue(loopOrder, out var loopDictionary))
+			{
+				loopDictionary = new Dictionary<OdccQueryLooper, Awaitable>();
+				OdccForeach.ForeachQueryFixedUpdate.Add(loopOrder, loopDictionary);
+			}
+			loopDictionary.Add(looper, looper.RunAwaitable());
+			return looper;
+		}
+		/// <summary>
 		/// 액션 이벤트를 생성하는 메서드입니다.
 		/// </summary>
 		/// <param name="queryCollector">관련된 OdccQueryCollector 객체</param>

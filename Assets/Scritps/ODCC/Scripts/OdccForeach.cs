@@ -52,6 +52,7 @@ namespace BC.ODCC
 		internal static HashSet<IOCBehaviour> reservationDestroyObject = new HashSet<IOCBehaviour>();
 
 		internal static SortedDictionary<int, Dictionary<OdccQueryLooper, UnityEngine.Awaitable>> ForeachQueryUpdate = new ();
+		internal static SortedDictionary<int, Dictionary<OdccQueryLooper, UnityEngine.Awaitable>> ForeachQueryFixedUpdate = new ();
 
 		[Obsolete("Using ForeachQueryUpdate", true)]
 		internal static Dictionary<OdccQueryLooper, UnityEngine.Awaitable> ForeachQueryPrevUpdate = new ();
@@ -88,6 +89,7 @@ namespace BC.ODCC
 			// 컬렉터와 업데이트 목록을 초기화합니다.
 			OdccQueryCollectors.Clear();
 			ForeachQueryUpdate.Clear();
+			ForeachQueryFixedUpdate.Clear();
 
 			OdccQueryFindCashList = null;
 
@@ -451,7 +453,7 @@ namespace BC.ODCC
 						{
 							try
 							{
-								if(order>0)
+								if(order<=0)
 								{
 									beforeMainUpdate += () => dictionary[key] = key.RunAwaitable();
 								}
@@ -469,10 +471,10 @@ namespace BC.ODCC
 				}
 			}
 
-			afterMainUpdate?.Invoke();
+			beforeMainUpdate?.Invoke();
 			OCBehaviourUpdate(objectUpdateList);
 			OCBehaviourUpdate(componentUpdateList);
-			beforeMainUpdate?.Invoke();
+			afterMainUpdate?.Invoke();
 		}
 
 		/// <summary>
@@ -498,9 +500,47 @@ namespace BC.ODCC
 		/// </summary>
 		internal static void ForeachFixedUpdate()
 		{
-			// ObjectBehaviour 리스트의 LateUpdate를 수행합니다.
+			//Action listToNext = null;
+			Action beforeMainUpdate = null;
+			Action afterMainUpdate = null;
+
+			foreach(var orderKey in ForeachQueryFixedUpdate)
+			{
+				var order = orderKey.Key;
+				var dictionary = orderKey.Value;
+
+				foreach(var item in dictionary)
+				{
+					var key = item.Key;
+					var value = item.Value;
+					if(key is not null)
+					{
+						if(value is null || value.IsCompleted)
+						{
+							try
+							{
+								if(order<=0)
+								{
+									beforeMainUpdate += () => dictionary[key] = key.RunAwaitable();
+								}
+								else
+								{
+									afterMainUpdate += () => dictionary[key] = key.RunAwaitable();
+								}
+							}
+							catch(Exception ex)
+							{
+								Debug.LogException(ex);
+							}
+						}
+					}
+				}
+			}
+
+			beforeMainUpdate?.Invoke();
 			OCBehaviourFixedUpdate(objectFixedUpdateList);
 			OCBehaviourFixedUpdate(componentFixedUpdateList);
+			afterMainUpdate?.Invoke();
 		}
 		/// <summary>
 		/// LifeItem에서 씬을 기준으로 OCBehaviour를 제거하는 메서드입니다.

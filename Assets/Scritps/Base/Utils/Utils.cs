@@ -220,10 +220,11 @@ namespace BC.Base
 		#endregion
 
 
-		public static int ToLayer(this LayerMask layerBitmask)
+		public static int ToLayer(this LayerMask layerMask)
 		{
-			return ToLayer(layerBitmask.value);
+			return ToLayer(layerMask.value);
 		}
+
 		public static int ToLayer(int bitmask)
 		{
 			int result = bitmask>0 ? 0 : 31;
@@ -233,6 +234,68 @@ namespace BC.Base
 				result++;
 			}
 			return result;
+		}
+		public static List<int> ToLayers(this LayerMask layerMask)
+		{
+			return ToLayers(layerMask.value);
+		}
+		public static LayerMask GetHitLayerMask(this LayerMask layerMask, bool andMask = true)
+		{
+			int resultMask = 0;
+
+			// 기준 레이어들을 추출
+			var baseLayers = layerMask.ToLayers();
+
+			// 모든 레이어(0~31)를 확인
+			for(int targetLayer = 0 ; targetLayer < 32 ; targetLayer++)
+			{
+				// 타겟 레이어가 존재하지 않으면 건너뜀
+				if(string.IsNullOrEmpty(LayerMask.LayerToName(targetLayer)))
+					continue;
+
+				bool hitConditionMet = andMask; // 초기 조건 설정
+
+				// 기준 레이어와의 충돌 여부를 확인
+				foreach(int baseLayer in baseLayers)
+				{
+					bool canCollide = !Physics.GetIgnoreLayerCollision(baseLayer, targetLayer);
+
+					if(andMask && !canCollide)
+					{
+						hitConditionMet = false;  // 모두 충돌이어야 하는데 하나라도 충돌이 안 되면 실패
+						break;
+					}
+					else if(!andMask && canCollide)
+					{
+						hitConditionMet = true;  // 하나라도 충돌하면 성공
+						break;
+					}
+				}
+
+				// 조건에 맞으면 결과에 추가
+				if(hitConditionMet)
+				{
+					resultMask |= (1 << targetLayer);
+				}
+			}
+
+			return resultMask;
+		}
+		public static List<int> ToLayers(int bitmask)
+		{
+			List<int> layers = new List<int>();
+			for(int i = 0 ; i < 32 ; i++)
+			{
+				if((bitmask & 1<<i) > 0)
+				{
+					layers.Add(i);
+				}
+			}
+			return layers;
+		}
+		public static bool HasLayer(this LayerMask layerMask, int layerIndex)
+		{
+			return (layerMask.value & (1 << layerIndex)) > 0;
 		}
 	}
 }

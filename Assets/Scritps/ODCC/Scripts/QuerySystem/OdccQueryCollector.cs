@@ -275,6 +275,25 @@ namespace BC.ODCC
 				return looper;
 			}
 		}
+		public OdccQueryLooper CreateFixedLooperEvent(string key, int loopOrder = 0)
+		{
+			return CreateFixedLooperEvent(key, out _, loopOrder);
+		}
+		public OdccQueryLooper CreateFixedLooperEvent(string key, out OdccQueryLooper looper, int loopOrder = 0)
+		{
+			if(odccLoopers.ContainsKey(key))
+			{
+				looper = odccLoopers[key];
+				return looper;
+			}
+			else
+			{
+				looper = OdccQueryLooper.CreateFixedLooperEvent(this, key, loopOrder);
+				odccLoopers.Add(key, looper);
+				return looper;
+			}
+		}
+
 		/// <summary>
 		/// 액션 이벤트를 생성하는 메서드입니다.
 		/// </summary>
@@ -569,6 +588,11 @@ namespace BC.ODCC
 		public OdccQueryCollector GetCollector()
 		{
 			return this;
+		}
+
+		public object CreateLooperEvent(object moveTowardsUpdate)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }
