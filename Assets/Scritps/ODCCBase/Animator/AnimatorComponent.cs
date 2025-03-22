@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 
 using BC.ODCC;
 
@@ -167,15 +168,15 @@ namespace BC.OdccBase
 		}
 		#endregion
 		#region WaitStateExit
-		public async Awaitable<bool> WaitAnimatorStateExit(string fullPathStateName, int layerIndex = 0, float waitEnterTime = 1f)
+		public async Awaitable<bool> WaitAnimatorStateExit(CancellationToken cancellationToken, string fullPathStateName, int layerIndex = 0, float waitEnterTime = 1f)
 		{
-			return await WaitAnimatorStateExit(Animator.StringToHash(fullPathStateName), layerIndex, waitEnterTime);
+			return await WaitAnimatorStateExit(cancellationToken, Animator.StringToHash(fullPathStateName), layerIndex, waitEnterTime);
 		}
-		public async Awaitable<bool> WaitMachineStateExit(string stateMachinePathName, float waitEnterTime = 1f)
+		public async Awaitable<bool> WaitMachineStateExit(CancellationToken cancellationToken, string stateMachinePathName, float waitEnterTime = 1f)
 		{
-			return await WaitMachineStateExit(Animator.StringToHash(stateMachinePathName), waitEnterTime);
+			return await WaitMachineStateExit(cancellationToken, Animator.StringToHash(stateMachinePathName), waitEnterTime);
 		}
-		public async Awaitable<bool> WaitAnimatorStateExit(int waitStateID, int layerIndex = 0, float waitEnterTime = 1f, float waitClipTime = 1f)
+		public async Awaitable<bool> WaitAnimatorStateExit(CancellationToken cancellationToken, int waitStateID, int layerIndex = 0, float waitEnterTime = 1f, float waitClipTime = 1f)
 		{
 			if(animator == null || animator.runtimeAnimatorController == null) return false;
 			float timeout = waitEnterTime;
@@ -187,7 +188,7 @@ namespace BC.OdccBase
 				{
 					return false;
 				}
-				await Awaitable.NextFrameAsync(DestroyCancelToken);
+				await Awaitable.NextFrameAsync(cancellationToken);
 			}
 
 
@@ -202,7 +203,7 @@ namespace BC.OdccBase
 				{
 					return false;
 				}
-				await Awaitable.NextFrameAsync(DestroyCancelToken);
+				await Awaitable.NextFrameAsync(cancellationToken);
 			}
 
 			timeout = waitClipTime;
@@ -218,7 +219,7 @@ namespace BC.OdccBase
 				{
 					return false;
 				}
-				await Awaitable.NextFrameAsync(DestroyCancelToken);
+				await Awaitable.NextFrameAsync(cancellationToken);
 			}
 
 			return IsValid();
@@ -227,6 +228,7 @@ namespace BC.OdccBase
 				if(Animator == null) return false;
 				if(animatorStatePlayList == null) return false;
 				if(DestroyCancelToken.IsCancellationRequested) return false;
+				if(!cancellationToken.CanBeCanceled) return false;
 				return true;
 			}
 			bool IsHasState(out AnimatorStateInfo animatorStateInfo)
@@ -236,7 +238,7 @@ namespace BC.OdccBase
 				return statePlayListToInfo.TryGetValue(waitStateID, out animatorStateInfo);
 			}
 		}
-		public async Awaitable<bool> WaitMachineStateExit(int waitStateID, float waitEnterTime = 1f)
+		public async Awaitable<bool> WaitMachineStateExit(CancellationToken cancellationToken, int waitStateID, float waitEnterTime = 1f)
 		{
 			float timeout = waitEnterTime;
 
@@ -247,7 +249,7 @@ namespace BC.OdccBase
 				{
 					return false;
 				}
-				await Awaitable.NextFrameAsync(DestroyCancelToken);
+				await Awaitable.NextFrameAsync(cancellationToken);
 			}
 
 			while(IsValid())
@@ -262,7 +264,7 @@ namespace BC.OdccBase
 				{
 					return false;
 				}
-				await Awaitable.NextFrameAsync(DestroyCancelToken);
+				await Awaitable.NextFrameAsync(cancellationToken);
 			}
 
 			while(IsValid())
@@ -271,7 +273,7 @@ namespace BC.OdccBase
 				{
 					break;
 				}
-				await Awaitable.NextFrameAsync(DestroyCancelToken);
+				await Awaitable.NextFrameAsync(cancellationToken);
 			}
 
 			return IsValid();
@@ -280,6 +282,7 @@ namespace BC.OdccBase
 				if(Animator == null) return false;
 				if(machineStatePlayList == null) return false;
 				if(DestroyCancelToken.IsCancellationRequested) return false;
+				if(!cancellationToken.CanBeCanceled) return false;
 				return true;
 			}
 			bool IsHasState()

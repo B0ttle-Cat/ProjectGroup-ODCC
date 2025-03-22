@@ -86,12 +86,16 @@ namespace BC.Base
 		}
 		public static async Awaitable WaitAll(params Awaitable[] awaitables)
 		{
+			await WaitAll(default, awaitables);
+		}
+		public static async Awaitable WaitAll(CancellationToken cancellationToken, params Awaitable[] awaitables)
+		{
 			foreach(var awaitable in awaitables)
 			{
 
 				try
 				{
-					if(awaitable == null) continue;
+					if(awaitable == null || !cancellationToken.CanBeCanceled) continue;
 					await awaitable;
 				}
 				catch(Exception ex)
@@ -104,6 +108,10 @@ namespace BC.Base
 
 		public static async Awaitable<T[]> WaitAll<T>(params Awaitable<T>[] awaitables)
 		{
+			return await WaitAll(default, awaitables);
+		}
+		public static async Awaitable<T[]> WaitAll<T>(CancellationToken cancellationToken, params Awaitable<T>[] awaitables)
+		{
 			int length = awaitables.Length;
 			T[] result = new T[length];
 			for(int i = 0 ; i<length ; i++)
@@ -111,7 +119,7 @@ namespace BC.Base
 				try
 				{
 					var awaitable = awaitables[i];
-					if(awaitable == null) continue;
+					if(awaitable == null || !cancellationToken.CanBeCanceled) continue;
 					result[i] = await awaitable;
 				}
 				catch(Exception ex)
@@ -125,6 +133,10 @@ namespace BC.Base
 
 		public static async Awaitable ParallelWaitAll(params Awaitable[] awaitables)
 		{
+			await ParallelWaitAll(default, awaitables);
+		}
+		public static async Awaitable ParallelWaitAll(CancellationToken cancellationToken, params Awaitable[] awaitables)
+		{
 			int waitParallel = awaitables.Length;
 			foreach(var awaitable in awaitables)
 			{
@@ -132,9 +144,9 @@ namespace BC.Base
 				ParallelUpdate(awaitable);
 			}
 
-			while(waitParallel > 0)
+			while(waitParallel > 0 && cancellationToken.CanBeCanceled)
 			{
-				await Awaitable.NextFrameAsync();
+				await Awaitable.NextFrameAsync(cancellationToken);
 			}
 			async void ParallelUpdate(Awaitable awaitable)
 			{
@@ -142,8 +154,11 @@ namespace BC.Base
 				waitParallel--;
 			}
 		}
-
 		public static async Awaitable<T[]> ParallelWaitAll<T>(params Awaitable<T>[] awaitables)
+		{
+			return await ParallelWaitAll(default, awaitables);
+		}
+		public static async Awaitable<T[]> ParallelWaitAll<T>(CancellationToken cancellationToken, params Awaitable<T>[] awaitables)
 		{
 			int length = awaitables.Length;
 			T[] result = new T[length];
@@ -159,9 +174,9 @@ namespace BC.Base
 				ParallelUpdate(i, awaitable);
 			}
 
-			while(waitParallel > 0)
+			while(waitParallel > 0 && cancellationToken.CanBeCanceled)
 			{
-				await Awaitable.NextFrameAsync();
+				await Awaitable.NextFrameAsync(cancellationToken);
 			}
 
 			return result;
@@ -172,6 +187,10 @@ namespace BC.Base
 			}
 		}
 		public static async Awaitable<T> ParallelWaitAll<T>(Awaitable<T> resultAwaitables, params Awaitable[] awaitables)
+		{
+			return await ParallelWaitAll(default, resultAwaitables, awaitables);
+		}
+		public static async Awaitable<T> ParallelWaitAll<T>(CancellationToken cancellationToken, Awaitable<T> resultAwaitables, params Awaitable[] awaitables)
 		{
 			int length = awaitables.Length;
 			T result = default;
@@ -188,9 +207,9 @@ namespace BC.Base
 				ParallelUpdate(awaitable);
 			}
 
-			while(waitParallel > 0)
+			while(waitParallel > 0 && cancellationToken.CanBeCanceled)
 			{
-				await Awaitable.NextFrameAsync();
+				await Awaitable.NextFrameAsync(cancellationToken);
 			}
 
 			return result;
@@ -209,16 +228,20 @@ namespace BC.Base
 
 		public static async Awaitable ParallelWaitAny(params Awaitable[] awaitables)
 		{
+			await ParallelWaitAny(default, awaitables);
+		}
+		public static async Awaitable ParallelWaitAny(CancellationToken cancellationToken, params Awaitable[] awaitables)
+		{
 			bool waitParallel = true;
 			foreach(Awaitable awaitable in awaitables)
 			{
-				if(awaitable == null) continue;
+				if(awaitable == null || !cancellationToken.CanBeCanceled) continue;
 				ParallelUpdate(awaitable);
 			}
 
-			while(waitParallel)
+			while(waitParallel || cancellationToken.CanBeCanceled)
 			{
-				await Awaitable.NextFrameAsync();
+				await Awaitable.NextFrameAsync(cancellationToken);
 			}
 			foreach(var awaitable in awaitables)
 			{
@@ -237,17 +260,21 @@ namespace BC.Base
 
 		public static async Awaitable<T> ParallelWaitAny<T>(params Awaitable<T>[] awaitables)
 		{
+			return await ParallelWaitAny(default, awaitables);
+		}
+		public static async Awaitable<T> ParallelWaitAny<T>(CancellationToken cancellationToken, params Awaitable<T>[] awaitables)
+		{
 			T result = default;
 			bool waitParallel = true;
 			foreach(var awaitable in awaitables)
 			{
-				if(awaitable == null) continue;
+				if(awaitable == null || !cancellationToken.CanBeCanceled) continue;
 				ParallelUpdate(awaitable);
 			}
 
-			while(waitParallel)
+			while(waitParallel && cancellationToken.CanBeCanceled)
 			{
-				await Awaitable.NextFrameAsync();
+				await Awaitable.NextFrameAsync(cancellationToken);
 			}
 			foreach(var awaitable in awaitables)
 			{
@@ -271,18 +298,22 @@ namespace BC.Base
 
 		public static async Awaitable<T> ParallelWaitAny<T>(Awaitable<T> resultAwaitables, params Awaitable[] awaitables)
 		{
+			return await ParallelWaitAny(default, resultAwaitables, awaitables);
+		}
+		public static async Awaitable<T> ParallelWaitAny<T>(CancellationToken cancellationToken, Awaitable<T> resultAwaitables, params Awaitable[] awaitables)
+		{
 			T result = default;
 			bool waitResult = true;
 			bool waitParallel = true;
 			foreach(var awaitable in awaitables)
 			{
-				if(awaitable == null) continue;
+				if(awaitable == null || !cancellationToken.CanBeCanceled) continue;
 				ParallelUpdate(awaitable);
 			}
 
-			while(waitParallel || waitResult)
+			while((waitParallel || waitResult) && cancellationToken.CanBeCanceled)
 			{
-				await Awaitable.NextFrameAsync();
+				await Awaitable.NextFrameAsync(cancellationToken);
 			}
 			foreach(var awaitable in awaitables)
 			{
