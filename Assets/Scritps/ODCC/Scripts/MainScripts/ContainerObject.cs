@@ -480,6 +480,28 @@ namespace BC.ODCC
 			if(t is null) return;
 			callback.Invoke(t);
 		}
+		#region DataAPIPlus
+		public void InitData<TData>(Action<TData> initData) where TData : DataObject, new()
+		{
+			if(TryGetData<TData>(out var tData))
+			{
+				initData?.Invoke(tData);
+			}
+			else
+			{
+				var newData = new TData();
+				initData?.Invoke(newData);
+				AddData(newData);
+			}
+		}
+		public void ReplaceData<TData>(Action<TData> replaceData) where TData : DataObject, new()
+		{
+			RemoveData<TData>();
+
+			var newData = new TData();
+			replaceData?.Invoke(newData);
+			AddData(newData);
+		}
 		#endregion
 		#region GetIOdccItem
 		public List<T> FindAllType<T>()
@@ -654,6 +676,7 @@ namespace BC.ODCC
 				return false;
 			}
 		}
+		#endregion
 		#endregion
 
 		#region Type
