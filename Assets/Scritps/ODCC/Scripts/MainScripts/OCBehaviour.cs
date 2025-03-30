@@ -88,6 +88,7 @@ namespace BC.ODCC
 			}
 			catch(Exception ex)
 			{
+				Debug.LogError($"AwakeError| {gameObject.name}({GetType()})");
 				Debug.LogException(ex);
 			}
 		}

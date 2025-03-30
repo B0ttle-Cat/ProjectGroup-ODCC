@@ -27,7 +27,12 @@ namespace BC.ODCC
 		/// <returns>해당 오브젝트의 컨테이너 노드</returns>
 		internal static ContainerNode GetContainerNode(IOdccObject key)
 		{
-			return ContainerNodeList.TryGetValue(key??EmptyObject, out var keyNode) ? keyNode : null;
+			key = key??EmptyObject;
+			if(key == null)
+			{
+				return null;
+			}
+			return ContainerNodeList.TryGetValue(key, out var keyNode) ? keyNode : null;
 		}
 		internal static ContainerNode GetContainerNode(IOdccComponent component)
 		{

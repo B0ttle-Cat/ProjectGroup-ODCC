@@ -51,28 +51,28 @@ namespace BC.Base
 			loadAsset = null;
 		}
 #if UNITY_EDITOR
-		[BoxGroup("Resources", LabelText = "@resourcesName"), PropertyOrder(-50)]
+		[FoldoutGroup("@resourcesName"), PropertyOrder(-50)]
 		[ShowInInspector, HideLabel, ReadOnly, EnableGUI, PreviewField(55, ObjectFieldAlignment.Center)]
-		[HorizontalGroup("Resources/H1", width: 55)]
+		[HorizontalGroup("@resourcesName/H1", width: 55)]
 		private Object preview => asset;
 
-		[BoxGroup("Resources"), PropertyOrder(-50)]
+		[FoldoutGroup("@resourcesName"), PropertyOrder(-50)]
 		[ShowInInspector, HideLabel, ValueDropdown("GetCharacterPrefabs")]
-		[HorizontalGroup("Resources/H1"), VerticalGroup("Resources/H1/V1")]
+		[HorizontalGroup("@resourcesName/H1"), VerticalGroup("@resourcesName/H1/V1")]
 		[InlineButton("Clear")]
 		[InlineButton("OnValidate", "Update")]
 		private Object asset { get; set; }
-		[BoxGroup("Resources"), ToggleGroup("Resources/EditOption"), PropertyOrder(-10), ShowInInspector]
+		[FoldoutGroup("@resourcesName"), ToggleGroup("@resourcesName/EditOption"), PropertyOrder(-10), ShowInInspector]
 		private bool EditOption { get; set; }
-		[BoxGroup("Resources"), ToggleGroup("Resources/EditOption")]
+		[FoldoutGroup("@resourcesName"), ToggleGroup("@resourcesName/EditOption")]
 		[ShowInInspector, LabelWidth(45), DisplayAsString]
 		private string guid;
-		[BoxGroup("Resources"), ToggleGroup("Resources/EditOption")]
+		[FoldoutGroup("@resourcesName"), ToggleGroup("@resourcesName/EditOption")]
 		[ShowInInspector, FolderPath]
 		private string[] rootPath;
 #endif
-		[BoxGroup("Resources")]
-		[HorizontalGroup("Resources/H1"), VerticalGroup("Resources/H1/V1")]
+		[FoldoutGroup("@resourcesName")]
+		[HorizontalGroup("@resourcesName/H1"), VerticalGroup("@resourcesName/H1/V1")]
 		[HideLabel, Multiline(2), ReadOnly, EnableGUI, DisplayAsString]
 		public string resourcesPath;
 
@@ -102,6 +102,7 @@ namespace BC.Base
 
 		private string ResourcesPathToName()
 		{
+			if(resourcesPath == null) return "";
 			int lastSlashIndex = resourcesPath.LastIndexOf('/');
 			return lastSlashIndex >= 0 ? resourcesPath.Substring(lastSlashIndex + 1) : resourcesPath;
 
