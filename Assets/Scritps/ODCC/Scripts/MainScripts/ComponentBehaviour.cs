@@ -9,7 +9,7 @@ namespace BC.ODCC
 	public class ComponentBehaviour : OCBehaviour, IOdccComponent
 	{
 		[ReadOnly, ShowInInspector]
-		[PropertyOrder(-5), PropertySpace(SpaceBefore = 0, SpaceAfter = 10)]
+		[PropertyOrder(-50), PropertySpace(SpaceBefore = 0, SpaceAfter = 10)]
 		public ObjectBehaviour ThisObject { get; internal set; }
 		public ContainerObject ThisContainer {
 			get {

@@ -233,14 +233,18 @@ namespace BC.ODCC
 		{
 			if(callDestroy) return;
 
-			if(removeThisGameObject)
+#if UNITY_EDITOR
+			if(Application.isPlaying)
 			{
-				Destroy(gameObject);
+#endif
+				Destroy(removeThisGameObject ? gameObject : this);
+#if UNITY_EDITOR
 			}
 			else
 			{
-				Destroy(this);
+				DestroyImmediate(removeThisGameObject ? gameObject : this);
 			}
+#endif
 		}
 	}
 }

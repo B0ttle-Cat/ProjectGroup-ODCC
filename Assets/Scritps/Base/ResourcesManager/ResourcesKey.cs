@@ -57,10 +57,10 @@ namespace BC.Base
 		private Object preview => asset;
 
 		[FoldoutGroup("@resourcesName"), PropertyOrder(-50)]
-		[ShowInInspector, HideLabel, ValueDropdown("GetCharacterPrefabs")]
+		[ShowInInspector, HideLabel, ValueDropdown("GetResourcesPrefabs")]
 		[HorizontalGroup("@resourcesName/H1"), VerticalGroup("@resourcesName/H1/V1")]
 		[InlineButton("Clear")]
-		[InlineButton("OnValidate", "Update")]
+		[InlineButton("_OnValidate", "Update")]
 		private Object asset { get; set; }
 		[FoldoutGroup("@resourcesName"), ToggleGroup("@resourcesName/EditOption"), PropertyOrder(-10), ShowInInspector]
 		private bool EditOption { get; set; }
@@ -115,7 +115,7 @@ namespace BC.Base
 			resourcesPath = null;
 			loadAsset = null;
 		}
-		private ValueDropdownList<Object> GetCharacterPrefabs()
+		private ValueDropdownList<Object> GetResourcesPrefabs()
 		{
 			bool isPrefabs = typeof(T).IsSubclassOf(typeof(MonoBehaviour));
 
@@ -190,8 +190,16 @@ namespace BC.Base
 			return assetPath;
 		}
 
-		public void OnValidate()
+		private void _OnValidate()
 		{
+			OnValidate(null);
+		}
+		public void OnValidate(params string[] rootPath)
+		{
+			if(rootPath != null && rootPath.Length > 0)
+			{
+				this.rootPath = rootPath;
+			}
 			if(asset == null)
 			{
 				if(guid.IsNotNullOrWhiteSpace())
