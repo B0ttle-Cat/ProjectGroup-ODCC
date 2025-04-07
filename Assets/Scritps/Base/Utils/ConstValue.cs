@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Reflection;
 
 using UnityEngine;
 
@@ -69,5 +71,60 @@ namespace BC.Base
 			}
 			return editorPlatform;
 		}
+
+#if UNITY_EDITOR
+		public static Sirenix.OdinInspector.ValueDropdownList<string> Editor_StringDropdownList()
+		{
+			var list = new Sirenix.OdinInspector.ValueDropdownList<string>();
+			var stringList = Editor_GetAllStringList(typeof(ConstString));
+			int length = stringList.Count;
+			for(int i = 0 ; i < length ; i++)
+			{
+				list.Add(stringList[i].path, stringList[i].value);
+			}
+
+			return list;
+		}
+		private static List<(string path, string value)> Editor_GetAllStringList(Type rootType)
+		{
+			var result = new List<(string path, string value)>();
+			CollectStringFieldsRecursive(rootType, rootType.Name, result);
+			return result;
+		}
+
+		private static void CollectStringFieldsRecursive(Type type, string path, List<(string path, string value)> result)
+		{
+			var fields = type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
+
+			foreach(var field in fields)
+			{
+				if(field.FieldType != typeof(string)) continue;
+
+				bool isConst = field.IsLiteral && !field.IsInitOnly;
+				bool isStatic = field.IsStatic && !field.IsLiteral;
+
+				if(isConst)
+				{
+					string value = (string)field.GetRawConstantValue();
+					result.Add(($"{path}/{field.Name}", value));
+				}
+				else if(isStatic)
+				{
+					string value = field.GetValue(null) as string;
+					if(value != null)
+					{
+						result.Add(($"{path}/{field.Name}", value));
+					}
+				}
+			}
+
+			foreach(var nested in type.GetNestedTypes(BindingFlags.Public | BindingFlags.NonPublic))
+			{
+				string nestedPath = $"{path}_{nested.Name}";
+				CollectStringFieldsRecursive(nested, nestedPath, result);
+			}
+		}
+
+#endif
 	}
 }

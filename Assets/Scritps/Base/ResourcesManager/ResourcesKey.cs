@@ -54,14 +54,18 @@ namespace BC.Base
 		[FoldoutGroup("@resourcesName"), PropertyOrder(-50)]
 		[ShowInInspector, HideLabel, ReadOnly, EnableGUI, PreviewField(55, ObjectFieldAlignment.Center)]
 		[HorizontalGroup("@resourcesName/H1", width: 55)]
-		private Object preview => asset;
+		public Object preview => asset;
 
 		[FoldoutGroup("@resourcesName"), PropertyOrder(-50)]
 		[ShowInInspector, HideLabel, ValueDropdown("GetResourcesPrefabs")]
 		[HorizontalGroup("@resourcesName/H1"), VerticalGroup("@resourcesName/H1/V1")]
+		[OnValueChanged("_OnValidate")]
 		[InlineButton("Clear")]
 		[InlineButton("_OnValidate", "Update")]
-		private Object asset { get; set; }
+		private Object asset {
+			get;
+			set;
+		}
 		[FoldoutGroup("@resourcesName"), ToggleGroup("@resourcesName/EditOption"), PropertyOrder(-10), ShowInInspector]
 		private bool EditOption { get; set; }
 		[FoldoutGroup("@resourcesName"), ToggleGroup("@resourcesName/EditOption")]
@@ -110,22 +114,25 @@ namespace BC.Base
 #if UNITY_EDITOR
 		private void Clear()
 		{
+			rootPath = new string[1] { "" };
+			guid = "";
 			asset = null;
-			guid = null;
-			resourcesPath = null;
+			EditOption = false;
+			resourcesPath = "";
 			loadAsset = null;
 		}
 		private ValueDropdownList<Object> GetResourcesPrefabs()
 		{
-			bool isPrefabs = typeof(T).IsSubclassOf(typeof(MonoBehaviour));
+			bool isPrefabs = typeof(T).IsSubclassOf(typeof(Component)) || typeof(T).Equals(typeof(GameObject));
 
 			ValueDropdownList<Object> list = new ValueDropdownList<Object>();
 			HashSet<(string,Object)> tList = new HashSet<(string,Object)>();
 			int length = rootPath == null ? 0 : rootPath.Length;
 			for(int i = 0 ; i < length ; i++)
 			{
+				string _rootPath = rootPath[i].Replace('\\','/');
 
-				string folderPath = AssetPathConvertResourcesPath(rootPath[i]);
+				string folderPath = AssetPathConvertResourcesPath(_rootPath);
 
 				if(isPrefabs)
 				{
@@ -133,7 +140,7 @@ namespace BC.Base
 					foreach(var tAsset in allTAssets)
 					{
 						string assetPath = UnityEditor.AssetDatabase.GetAssetPath(tAsset);
-						assetPath = assetPath.Replace($"{rootPath[i]}/", "");
+						assetPath = assetPath.Replace($"{_rootPath}/", "");
 						assetPath = Path.ChangeExtension(assetPath, null);
 						tList.Add((assetPath, tAsset));
 					}
@@ -154,7 +161,11 @@ namespace BC.Base
 			{
 				if(item.Item2 is GameObject prefab)
 				{
-					if(prefab.TryGetComponent<T>(out var tComponent))
+					if(typeof(T).Equals(typeof(GameObject)))
+					{
+						list.Add(item.Item1, item.Item2);
+					}
+					else if(prefab.TryGetComponent<T>(out var tComponent))
 					{
 						list.Add(item.Item1, item.Item2);
 					}
@@ -189,8 +200,8 @@ namespace BC.Base
 			}
 			return assetPath;
 		}
-
-		private void _OnValidate()
+		private void _OnValidate() => OnValidate();
+		private void OnValidate()
 		{
 			OnValidate(null);
 		}

@@ -15,6 +15,21 @@ namespace BC.Base
 
 		private bool pause;
 		private T pauseValue;
+		public ObserverValue()
+		{
+			this.callback = null;
+			this.value = default;
+		}
+		public ObserverValue(T value)
+		{
+			this.callback = null;
+			this.value = value;
+		}
+		public ObserverValue(Action<T> callback)
+		{
+			this.callback = callback;
+			this.value = default;
+		}
 		public ObserverValue(Action<T> callback, T value)
 		{
 			this.callback = callback;
