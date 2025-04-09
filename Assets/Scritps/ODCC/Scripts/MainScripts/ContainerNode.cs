@@ -222,6 +222,7 @@ namespace BC.ODCC
 		{
 			if(target == null) return;
 			if(tList.Contains(target)) return;
+			if(target is IOdccData) target.OdccItemContainer = thisObject.OdccItemContainer;
 			tList.Add(target);
 			TypeIndexUpdate();
 		}
@@ -231,8 +232,10 @@ namespace BC.ODCC
 			if(length == 0) return;
 			for(int i = 0 ; i < length ; i++)
 			{
-				if(tList.Contains(targets[i])) continue;
-				tList.Add(targets[i]);
+				var target = targets[i];
+				if(tList.Contains(target)) continue;
+				if(target is IOdccData) target.OdccItemContainer = thisObject.OdccItemContainer;
+				tList.Add(target);
 			}
 			TypeIndexUpdate();
 		}
@@ -240,6 +243,7 @@ namespace BC.ODCC
 		{
 			if(target == null) return;
 			if(!tList.Contains(target)) return;
+			if(target is IOdccData) target.OdccItemContainer = null;
 			tList.Remove(target);
 			TypeIndexUpdate();
 		}
@@ -249,8 +253,10 @@ namespace BC.ODCC
 			if(length == 0) return;
 			for(int i = 0 ; i < length ; i++)
 			{
-				if(!tList.Contains(targets[i])) continue;
-				tList.Remove(targets[i]);
+				var target = targets[i];
+				if(!tList.Contains(target)) continue;
+				if(target is IOdccData) target.OdccItemContainer = null;
+				tList.Remove(target);
 			}
 			TypeIndexUpdate();
 		}

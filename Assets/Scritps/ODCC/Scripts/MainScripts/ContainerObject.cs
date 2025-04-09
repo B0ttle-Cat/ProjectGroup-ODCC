@@ -630,6 +630,18 @@ namespace BC.ODCC
 			}
 			ContainerNode.AddItems(datas.ToList());
 		}
+		public void AddDatas(List<IOdccData> datas)
+		{
+			int length = datas.Count;
+			for(int i = 0 ; i < length ; i++)
+			{
+				if(datas[i] is DataObject dataObject)
+				{
+					dataObject.ThisContainer = this;
+				}
+			}
+			ContainerNode.AddItems(datas.ToList());
+		}
 		public void AddData(DataObject data = null)
 		{
 			if(data != null) ContainerNode.AddItem(data);
@@ -667,7 +679,6 @@ namespace BC.ODCC
 
 			if(target != null)
 			{
-				target.ThisContainer = null;
 				ContainerNode.RemoveItem(target);
 				return true;
 			}
@@ -675,6 +686,12 @@ namespace BC.ODCC
 			{
 				return false;
 			}
+		}
+		public void RemoveDatas(List<IOdccData> targets)
+		{
+			if(targets == null) return;
+
+			ContainerNode.RemoveItems(targets);
 		}
 		#endregion
 		#endregion

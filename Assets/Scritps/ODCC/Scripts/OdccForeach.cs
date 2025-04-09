@@ -117,6 +117,7 @@ namespace BC.ODCC
 				if(item is IOdccUpdate update && update._IsCanEnterUpdate)
 				{
 					foreachAction.Enqueue(() => {
+						if(update.PassUpdate) return;
 						update.BaseUpdate();
 					});
 				}
@@ -145,6 +146,7 @@ namespace BC.ODCC
 				if(item is IOdccUpdate.Late update && item._IsCanEnterUpdate)
 				{
 					foreachAction.Enqueue(() => {
+						if(update.PassUpdate) return;
 						update.BaseLateUpdate();
 					});
 				}
@@ -173,6 +175,7 @@ namespace BC.ODCC
 				if(item is IOdccUpdate.Fast update && item._IsCanEnterUpdate)
 				{
 					foreachAction.Enqueue(() => {
+						if(update.PassUpdate) return;
 						update.BaseFastUpdate();
 					});
 				}
@@ -201,6 +204,7 @@ namespace BC.ODCC
 				if(item is IOdccUpdate.Fixed update && item._IsCanEnterUpdate)
 				{
 					foreachAction.Enqueue(() => {
+						if(update.PassUpdate) return;
 						update.BaseFixedUpdate();
 					});
 				}

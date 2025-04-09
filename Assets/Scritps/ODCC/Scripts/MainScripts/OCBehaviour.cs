@@ -11,6 +11,9 @@ namespace BC.ODCC
 		public Transform ThisTransform => transform;
 		public GameObject GameObject => gameObject;
 		public MonoBehaviour ThisMono { get => this; }
+		public abstract ContainerObject ThisContainer { get; internal set; }
+		ContainerObject IOdccItem.OdccItemContainer { get => ThisContainer; set => ThisContainer = value; }
+
 		public Scene ThisScene => gameObject.scene;
 		public int ComponentIndex => GetComponentIndex();
 		public IOCBehaviour ThisBehaviour => this;

@@ -8,6 +8,7 @@ namespace BC.ODCC
 {
 	public interface IOdccItem
 	{
+		public ContainerObject OdccItemContainer { get; internal set; }
 		internal int odccTypeIndex { get; set; }
 		internal int[] odccTypeInheritanceIndex { get; set; }
 		public int OdccTypeIndex => odccTypeIndex == 0 ? odccTypeIndex = OdccManager.GetTypeToIndex(GetType()) : odccTypeIndex;
@@ -81,23 +82,24 @@ DestroyState : {DestroyState}
 	public interface IOdccUpdate : IOCBehaviour
 	{
 		public int UpdatePriority { get => 0; }
+		public bool PassUpdate { get => false; }
 		public void BaseUpdate();
 		public interface Fast : IOCBehaviour
 		{
 			public int UpdatePriority { get => 0; }
-
+			public bool PassUpdate { get => false; }
 			public void BaseFastUpdate();
 		}
 		public interface Late : IOCBehaviour
 		{
 			public int UpdatePriority { get => 0; }
-
+			public bool PassUpdate { get => false; }
 			public void BaseLateUpdate();
 		}
 		public interface Fixed : IOCBehaviour
 		{
 			public int UpdatePriority { get => 0; }
-
+			public bool PassUpdate { get => false; }
 			public void BaseFixedUpdate();
 		}
 	}

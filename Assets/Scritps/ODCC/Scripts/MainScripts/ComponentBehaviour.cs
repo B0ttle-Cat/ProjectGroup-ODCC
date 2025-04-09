@@ -11,13 +11,20 @@ namespace BC.ODCC
 		[ReadOnly, ShowInInspector]
 		[PropertyOrder(-50), PropertySpace(SpaceBefore = 0, SpaceAfter = 10)]
 		public ObjectBehaviour ThisObject { get; internal set; }
-		public ContainerObject ThisContainer {
+		public override ContainerObject ThisContainer {
 			get {
 #if UNITY_EDITOR
 				if(ThisObject == null) Reset();
 				if(ThisObject == null) return null;
 #endif
 				return ThisObject.ThisContainer;
+			}
+			internal set {
+#if UNITY_EDITOR
+				if(ThisObject == null) Reset();
+				if(ThisObject != null)
+#endif
+					ThisObject.ThisContainer  =value;
 			}
 		}
 

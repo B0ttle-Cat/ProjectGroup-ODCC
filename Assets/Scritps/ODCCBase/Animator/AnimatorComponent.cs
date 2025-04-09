@@ -314,4 +314,156 @@ namespace BC.OdccBase
 		}
 		#endregion
 	}
+	public partial class AnimatorComponent // SaveLoad Animator
+	{
+		[Serializable]
+		public class AnimatorLayerState
+		{
+			public int layerIndex;
+			public int stateHash;
+			public float normalizedTime;
+			public bool isInTransition;
+		}
+
+		[Serializable]
+		public class AnimatorSaveData
+		{
+			public List<AnimatorLayerState> layers = new();
+			public List<Params<float>> floatParams = new();
+			public List<Params<int>> intParams = new();
+			public List<Params<bool>> boolParams = new();
+			public List<string> activeTriggers = new();
+
+			[Serializable]
+			public struct Params<T>
+			{
+				public string Key;
+				public T Value;
+
+				public Params(string key, T value) : this()
+				{
+					Key=key;
+					Value =value;
+				}
+			}
+
+			// 수정 가능한 Animator 속성
+			public float speed;
+			public float playbackTime;
+			public bool applyRootMotion;
+			public AnimatorUpdateMode updateMode;
+			public AnimatorCullingMode cullingMode;
+			public bool animatePhysics;
+			public bool keepAnimatorStateOnDisable;
+			public bool writeDefaultValuesOnDisable;
+		}
+
+		public AnimatorSaveData SaveAnimatorState()
+		{
+			if(animator == null)
+			{
+				animator = GetComponentInChildren<Animator>(true);
+				if(animator == null)
+				{
+					animator = gameObject.AddComponent<Animator>();
+				}
+			}
+
+			AnimatorSaveData data = new AnimatorSaveData();
+
+			// 상태 저장 (Layer별)
+			for(int i = 0 ; i < animator.layerCount ; i++)
+			{
+				var stateInfo = animator.GetCurrentAnimatorStateInfo(i);
+				bool isInTransition = animator.IsInTransition(i);
+
+				AnimatorLayerState layerState = new AnimatorLayerState
+				{
+					layerIndex = i,
+					stateHash = stateInfo.shortNameHash,
+					normalizedTime = stateInfo.normalizedTime,
+					isInTransition = isInTransition
+				};
+
+				data.layers.Add(layerState);
+			}
+
+			// 파라미터 저장
+			foreach(var param in animator.parameters)
+			{
+				switch(param.type)
+				{
+					case AnimatorControllerParameterType.Float:
+						data.floatParams.Add(new AnimatorSaveData.Params<float>(param.name, animator.GetFloat(param.name)));
+						break;
+					case AnimatorControllerParameterType.Int:
+						data.intParams.Add(new AnimatorSaveData.Params<int>(param.name, animator.GetInteger(param.name)));
+						break;
+					case AnimatorControllerParameterType.Bool:
+						data.boolParams.Add(new AnimatorSaveData.Params<bool>(param.name, animator.GetBool(param.name)));
+						break;
+					case AnimatorControllerParameterType.Trigger:
+						if(animator.GetBool(param.name)) data.activeTriggers.Add(param.name);
+						break;
+				}
+			}
+
+			// Animator 속성 저장
+			data.speed = animator.speed;
+			data.playbackTime = animator.playbackTime;
+			data.applyRootMotion = animator.applyRootMotion;
+			data.updateMode = animator.updateMode;
+			data.cullingMode = animator.cullingMode;
+			data.animatePhysics = animator.animatePhysics;
+			data.keepAnimatorStateOnDisable = animator.keepAnimatorStateOnDisable;
+			data.writeDefaultValuesOnDisable = animator.writeDefaultValuesOnDisable;
+
+			return data;
+		}
+
+		public void LoadAnimatorState(AnimatorSaveData data)
+		{
+			if(animator == null)
+			{
+				animator = GetComponentInChildren<Animator>(true);
+				if(animator == null)
+				{
+					animator = gameObject.AddComponent<Animator>();
+				}
+			}
+			if(data == null) return;
+
+			// 파라미터 복원
+			foreach(var kv in data.floatParams)
+				animator.SetFloat(kv.Key, kv.Value);
+
+			foreach(var kv in data.intParams)
+				animator.SetInteger(kv.Key, kv.Value);
+
+			foreach(var kv in data.boolParams)
+				animator.SetBool(kv.Key, kv.Value);
+
+			foreach(var trigger in data.activeTriggers)
+				animator.SetTrigger(trigger);
+
+			// 상태 복원
+			foreach(var layer in data.layers)
+			{
+				animator.Play(layer.stateHash, layer.layerIndex, layer.normalizedTime);
+			}
+
+			// Animator 속성 복원
+			animator.speed = data.speed;
+			animator.playbackTime = data.playbackTime;
+			animator.applyRootMotion = data.applyRootMotion;
+			animator.updateMode = data.updateMode;
+			animator.cullingMode = data.cullingMode;
+			animator.animatePhysics = data.animatePhysics;
+			animator.keepAnimatorStateOnDisable = data.keepAnimatorStateOnDisable;
+			animator.writeDefaultValuesOnDisable = data.writeDefaultValuesOnDisable;
+
+			// 강제 업데이트 (즉시 반영)
+			animator.Update(0);
+		}
+	}
 }

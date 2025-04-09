@@ -35,6 +35,7 @@ namespace BC.ODCC
 		int IOdccItem.odccTypeIndex { get; set; }
 		int[] IOdccItem.odccTypeInheritanceIndex { get; set; }
 		public ContainerObject ThisContainer { get; internal set; }
+		ContainerObject IOdccItem.OdccItemContainer { get => ThisContainer; set => ThisContainer = value; }
 #if UNITY_EDITOR
 		protected bool IsMustNotNull(params object[] objects) => Array.TrueForAll(objects, obj => obj != null);
 #endif

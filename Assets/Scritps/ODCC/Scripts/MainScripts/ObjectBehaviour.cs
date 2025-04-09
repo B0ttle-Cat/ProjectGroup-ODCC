@@ -10,7 +10,7 @@ namespace BC.ODCC
 	{
 		[HideLabel, InlineProperty, SerializeField, PropertyOrder(-5), PropertySpace(0, 10)]
 		private ContainerObject _container;
-		public ContainerObject ThisContainer {
+		public override ContainerObject ThisContainer {
 			get {
 				if(_container is null)
 				{
@@ -24,7 +24,7 @@ namespace BC.ODCC
 				}
 				return _container;
 			}
-			private set {
+			internal set {
 				_container = value;
 			}
 		}
