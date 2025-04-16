@@ -35,7 +35,8 @@ namespace BC.OdccBase
 		private Dictionary<int, AnimatorStateInfo> statePlayListToInfo = new Dictionary<int, AnimatorStateInfo>();
 		private HashSet<int> animatorStatePlayList = new HashSet<int>();
 		private HashSet<int> machineStatePlayList = new HashSet<int>();
-
+		public Action<int> onActionMachineStateEnter;
+		public Action<int> onActionMachineStateExit;
 		protected override void BaseValidate(in bool isPrefab = false)
 		{
 			animator = GetComponentInChildren<Animator>(true);
@@ -64,7 +65,9 @@ namespace BC.OdccBase
 		protected override void BaseDestroy()
 		{
 			if(animatorStatePlayList != null) animatorStatePlayList.Clear();
+			onActionMachineStateEnter = null;
 			if(machineStatePlayList != null) machineStatePlayList.Clear();
+			onActionMachineStateExit = null;
 		}
 
 		#region Parameter
@@ -87,6 +90,17 @@ namespace BC.OdccBase
 		public void SetTrigger(int id) => Animator.SetTrigger(id);
 		public void ResetTrigger(string name) => Animator.ResetTrigger(name);
 		public void ResetTrigger(int id) => Animator.ResetTrigger(id);
+
+		public void SetTrigger(string name, bool value)
+		{
+			if(value) { Animator.SetTrigger(name); }
+			else { Animator.ResetTrigger(name); }
+		}
+		public void SetTrigger(int id, bool value)
+		{
+			if(value) { Animator.SetTrigger(id); }
+			else { Animator.ResetTrigger(id); }
+		}
 		#endregion
 		#region Layer
 		public string GetLayerName(int layerIndex) => Animator.GetLayerName(layerIndex);
@@ -141,13 +155,20 @@ namespace BC.OdccBase
 		public virtual void OnMachineStateEnter(int stateMachinePathHash)
 		{
 			if(machineStatePlayList == null) return;
-			machineStatePlayList.Add(stateMachinePathHash);
+			if(machineStatePlayList.Add(stateMachinePathHash))
+			{
+				onActionMachineStateEnter?.Invoke(stateMachinePathHash);
+			}
 		}
 		public virtual void OnMachineStateExit(int stateMachinePathHash)
 		{
 			if(machineStatePlayList == null) return;
-			machineStatePlayList.Remove(stateMachinePathHash);
+			if(machineStatePlayList.Remove(stateMachinePathHash))
+			{
+				onActionMachineStateExit?.Invoke(stateMachinePathHash);
+			}
 		}
+
 		public bool IsAnimatorStatePlay(string fullPathStateName)
 		{
 			return IsAnimatorStatePlay(StringToHash(fullPathStateName));

@@ -46,9 +46,12 @@ namespace BC.ODCC
 		internal void OdccDisable();
 		internal void OdccStart();
 	}
-	public interface IOdccObject : IOCBehaviour
+	public interface IOdccContainer
 	{
 		public ContainerObject ThisContainer { get; }
+	}
+	public interface IOdccObject : IOCBehaviour, IOdccContainer
+	{
 		string DetailLog()
 		{
 			string log
@@ -66,18 +69,16 @@ DestroyState : {DestroyState}
 		}
 		internal void CreateThisContainer(ContainerNode target);
 	}
-	public interface IOdccComponent : IOCBehaviour, IOdccItem
+	public interface IOdccComponent : IOCBehaviour, IOdccContainer, IOdccItem
 	{
 		public ObjectBehaviour ThisObject { get; }
-		public ContainerObject ThisContainer { get; }
 
 		internal void ConnectThisObject(ContainerNode target);
 	}
 
-	public interface IOdccData : IOdccItem, IDisposable
+	public interface IOdccData : IOdccContainer, IOdccItem, IDisposable
 	{
 		internal bool IsData { get; }
-		public ContainerObject ThisContainer { get; }
 	}
 	public interface IOdccUpdate : IOCBehaviour
 	{
