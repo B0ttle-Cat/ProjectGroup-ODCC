@@ -199,66 +199,84 @@ namespace BC.ODCC
 
 		internal void AddItem(IOdccData target)
 		{
-			AddItem(ref datas, target);
-			OdccManager.UpdateQuery(thisObject);
+			if(AddItem(ref datas, target))
+			{
+				OdccManager.UpdateQuery(thisObject);
+			}
 		}
 		internal void AddItems(List<IOdccData> targets)
 		{
-			AddItems(ref datas, targets);
-			OdccManager.UpdateQuery(thisObject);
+			if(AddItems(ref datas, targets))
+			{
+				OdccManager.UpdateQuery(thisObject);
+			}
 		}
 		internal void RemoveItem(IOdccData target)
 		{
-			RemoveItem(ref datas, target);
-			OdccManager.UpdateQuery(thisObject);
+			if(RemoveItem(ref datas, target))
+			{
+				OdccManager.UpdateQuery(thisObject);
+			}
 		}
 		internal void RemoveItems(List<IOdccData> targets)
 		{
-			RemoveItems(ref datas, targets);
-			OdccManager.UpdateQuery(thisObject);
+			if(RemoveItems(ref datas, targets))
+			{
+				OdccManager.UpdateQuery(thisObject);
+			}
 		}
 
-		private void AddItem<T>(ref List<T> tList, T target) where T : IOdccItem
+		private bool AddItem<T>(ref List<T> tList, T target) where T : IOdccItem
 		{
-			if(target == null) return;
-			if(tList.Contains(target)) return;
+			if(target == null) return false;
+			if(tList.Contains(target)) return false;
 			if(target is IOdccData) target.OdccItemContainer = thisObject.OdccItemContainer;
 			tList.Add(target);
 			TypeIndexUpdate();
+			return true;
 		}
-		private void AddItems<T>(ref List<T> tList, List<T> targets) where T : IOdccItem
+		private bool AddItems<T>(ref List<T> tList, List<T> targets) where T : IOdccItem
 		{
 			int length = targets.Count;
-			if(length == 0) return;
+			if(length == 0) return false;
+			bool change = false;
 			for(int i = 0 ; i < length ; i++)
 			{
 				var target = targets[i];
 				if(tList.Contains(target)) continue;
 				if(target is IOdccData) target.OdccItemContainer = thisObject.OdccItemContainer;
 				tList.Add(target);
+				change = true;
 			}
 			TypeIndexUpdate();
+			return change;
 		}
-		private void RemoveItem<T>(ref List<T> tList, T target) where T : IOdccItem
+		private bool RemoveItem<T>(ref List<T> tList, T target) where T : IOdccItem
 		{
-			if(target == null) return;
-			if(!tList.Contains(target)) return;
+			if(target == null) return false;
+			if(!tList.Contains(target)) return false;
 			if(target is IOdccData) target.OdccItemContainer = null;
-			tList.Remove(target);
+			bool change = tList.Remove(target);
 			TypeIndexUpdate();
+			return change;
 		}
-		private void RemoveItems<T>(ref List<T> tList, List<T> targets) where T : IOdccItem
+		private bool RemoveItems<T>(ref List<T> tList, List<T> targets) where T : IOdccItem
 		{
 			int length = targets.Count;
-			if(length == 0) return;
+			if(length == 0) return false;
+			bool change = false;
 			for(int i = 0 ; i < length ; i++)
 			{
 				var target = targets[i];
 				if(!tList.Contains(target)) continue;
 				if(target is IOdccData) target.OdccItemContainer = null;
-				tList.Remove(target);
+				if(tList.Remove(target))
+				{
+					change = true;
+				}
 			}
 			TypeIndexUpdate();
+			return change;
 		}
 
 		internal bool TryGetObject<T>(out T @object, Func<T, bool> condition)

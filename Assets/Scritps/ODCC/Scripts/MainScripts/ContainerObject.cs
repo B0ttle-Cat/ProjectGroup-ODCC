@@ -693,6 +693,12 @@ namespace BC.ODCC
 
 			ContainerNode.RemoveItems(targets);
 		}
+		public void RemoveDatas(IOdccData[] targets)
+		{
+			if(targets == null) return;
+
+			ContainerNode.RemoveItems(targets.ToList());
+		}
 		#endregion
 		#endregion
 
