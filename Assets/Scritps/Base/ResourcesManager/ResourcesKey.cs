@@ -25,7 +25,9 @@ namespace BC.Base
 #endif
 			resourcesPath = "";
 			loadAsset = null;
+#if UNITY_EDITOR
 			OnValidate();
+#endif
 		}
 		public ResourcesKey(string[] path)
 		{

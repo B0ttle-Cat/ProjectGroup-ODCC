@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using System.Diagnostics;
 
 namespace BC.Base
@@ -7,7 +8,6 @@ namespace BC.Base
 		public static string LastPingType = "";
 		public static double LastPingClickTime = -1; // 마지막 클릭 시간을 기록
 		public const double DoubleClickOpenTime = 0.25; // 클릭 간격
-		[Conditional("UNITY_EDITOR")]
 		public static void PingScript(System.Type type, bool doubleClickOpen = true)
 		{
 			string scriptName = type.Name;
@@ -61,3 +61,4 @@ namespace BC.Base
 		}
 	}
 }
+#endif

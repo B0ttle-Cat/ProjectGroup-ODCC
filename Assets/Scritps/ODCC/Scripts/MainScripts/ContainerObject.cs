@@ -43,54 +43,33 @@ namespace BC.ODCC
 			callActionQueue ??= new Queue<Action>();
 			if(action == null) return;
 
-			if(callActionQueue.Count > 0)
-			{
-				/// action 진행중에 내부적으로 다시 action 이 호출 되는 경우가 있더라 하도러도 먼저 호출된 action 이 먼저 진행되도록 보장한다.
-				callActionQueue.Enqueue(action);
-			}
-			else
-			{
-				// action 추가 
-				callActionQueue.Enqueue(action);
+			// action 추가 
+			callActionQueue.Enqueue(action);
 
-				// Queue 순서에 맞게 실행
-				do
-				{
-					callActionQueue.Peek()?.Invoke();
-					callActionQueue.Dequeue();
-				}
-				while(callActionQueue.Count > 0);
+			// Queue 순서에 맞게 실행
+			do
+			{
+				callActionQueue.Dequeue()?.Invoke();
 			}
+			while(callActionQueue.Count > 0);
 		}
 		internal void CallingActionQueue(List<Action> actions)
 		{
 			callActionQueue ??= new Queue<Action>();
 			if(actions.Count == 0) return;
 
-			if(callActionQueue.Count > 0)
+			// action 추가 
+			for(int i = 0 ; i < actions.Count ; i++)
 			{
-				/// action 진행중에 내부적으로 다시 action 이 호출 되는 경우가 있더라 하도러도 먼저 호출된 action 이 먼저 진행되도록 보장한다.
-				for(int i = 0 ; i < actions.Count ; i++)
-				{
-					callActionQueue.Enqueue(actions[i]);
-				}
+				callActionQueue.Enqueue(actions[i]);
 			}
-			else
-			{
-				// action 추가 
-				for(int i = 0 ; i < actions.Count ; i++)
-				{
-					callActionQueue.Enqueue(actions[i]);
-				}
 
-				// Queue 순서에 맞게 실행
-				do
-				{
-					callActionQueue.Peek()?.Invoke();
-					callActionQueue.Dequeue();
-				}
-				while(callActionQueue.Count > 0);
+			// Queue 순서에 맞게 실행
+			do
+			{
+				callActionQueue.Dequeue()?.Invoke();
 			}
+			while(callActionQueue.Count > 0);
 		}
 
 		#region GetObject OdccItem
@@ -727,7 +706,7 @@ namespace BC.ODCC
 		#endregion
 
 		#region CallAction OdccItem
-		public void CallActionObject<T>(Action<T> tAction, Func<T, bool> condition = null) where T : class, IOdccObject
+		public void CallActionChildObject<T>(Action<T> tAction, Func<T, bool> condition = null) where T : class, IOdccObject
 		{
 			if(tAction is null) return;
 			ChildObject.GetAction<T, IOdccObject>(GetAction, condition);
@@ -736,7 +715,7 @@ namespace BC.ODCC
 				CallingActionQueue(() => tAction.Invoke(t));
 			}
 		}
-		public void CallActionAllObject<T>(Action<T> tAction, Func<bool> isBreak = null, Func<T, bool> condition = null) where T : class, IOdccObject
+		public void CallActionAllChildObject<T>(Action<T> tAction, Func<bool> isBreak = null, Func<T, bool> condition = null) where T : class, IOdccObject
 		{
 			if(tAction is null) return;
 			ChildObject.GetAllAction<T, IOdccObject>(GetAction, isBreak, condition);

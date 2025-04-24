@@ -10,6 +10,8 @@ using ReadOnlyAttribute = Sirenix.OdinInspector.ReadOnlyAttribute;
 namespace BC.OdccBase
 {
 	public partial class AnimatorComponent : ComponentBehaviour//, IOdccUpdate
+		, IAnimatorStateCheckListener
+		, IMachineStateCheckListener
 	{
 		[SerializeField, ReadOnly]
 		private Animator animator;
@@ -35,8 +37,11 @@ namespace BC.OdccBase
 		private Dictionary<int, AnimatorStateInfo> statePlayListToInfo = new Dictionary<int, AnimatorStateInfo>();
 		private HashSet<int> animatorStatePlayList = new HashSet<int>();
 		private HashSet<int> machineStatePlayList = new HashSet<int>();
-		public Action<string> onActionMachineStateEnter;
-		public Action<string> onActionMachineStateExit;
+
+		public Action<IStateMachineListener.AnimationEventLabel> onActionAnimatorStateEnter;
+		public Action<IStateMachineListener.AnimationEventLabel> onActionAnimatorStateExit;
+		public Action<IStateMachineListener.AnimationEventLabel> onActionMachineStateEnter;
+		public Action<IStateMachineListener.AnimationEventLabel> onActionMachineStateExit;
 		protected override void BaseValidate(in bool isPrefab = false)
 		{
 			animator = GetComponentInChildren<Animator>(true);
@@ -65,8 +70,11 @@ namespace BC.OdccBase
 		protected override void BaseDestroy()
 		{
 			if(animatorStatePlayList != null) animatorStatePlayList.Clear();
-			onActionMachineStateEnter = null;
 			if(machineStatePlayList != null) machineStatePlayList.Clear();
+
+			onActionAnimatorStateEnter = null;
+			onActionAnimatorStateExit = null;
+			onActionMachineStateEnter = null;
 			onActionMachineStateExit = null;
 		}
 
@@ -126,48 +134,41 @@ namespace BC.OdccBase
 
 		#endregion
 		#region StateMachine
-		public virtual void OnAnimatorStateEnter(AnimatorStateInfo stateInfo)
+		public virtual void OnAnimatorStateEnter(AnimatorStateInfo stateInfo, IStateMachineListener.AnimationEventLabel eventKey)
 		{
 			if(animatorStatePlayList == null) return;
 			if(animatorStatePlayList.Add(stateInfo.fullPathHash))
 			{
 				statePlayListToInfo.Add(stateInfo.fullPathHash, stateInfo);
+
+				if(eventKey != null) onActionAnimatorStateEnter?.Invoke(eventKey);
 			}
 		}
-		public virtual void OnAnimatorStateExit(AnimatorStateInfo stateInfo)
+		public virtual void OnAnimatorStateExit(AnimatorStateInfo stateInfo, IStateMachineListener.AnimationEventLabel eventKey)
 		{
 			if(animatorStatePlayList == null) return;
 
 			if(animatorStatePlayList.Remove(stateInfo.fullPathHash))
 			{
 				statePlayListToInfo.Remove(stateInfo.fullPathHash);
-			}
-		}
-		public virtual void OnAnimatorStateEnd(AnimatorStateInfo stateInfo)
-		{
-			if(animatorStatePlayList == null) return;
 
-			if(animatorStatePlayList.Remove(stateInfo.fullPathHash))
-			{
-				statePlayListToInfo.Remove(stateInfo.fullPathHash);
+				if(eventKey != null) onActionAnimatorStateExit?.Invoke(eventKey);
 			}
 		}
-		public virtual void OnMachineStateEnter(int stateMachinePathHash, string eventKey)
+		public virtual void OnMachineStateEnter(int stateMachinePathHash, IStateMachineListener.AnimationEventLabel eventKey)
 		{
 			if(machineStatePlayList == null) return;
 			if(machineStatePlayList.Add(stateMachinePathHash))
 			{
-				if(!string.IsNullOrWhiteSpace(eventKey))
-					onActionMachineStateEnter?.Invoke(eventKey);
+				if(eventKey != null) onActionMachineStateEnter?.Invoke(eventKey);
 			}
 		}
-		public virtual void OnMachineStateExit(int stateMachinePathHash, string eventKey)
+		public virtual void OnMachineStateExit(int stateMachinePathHash, IStateMachineListener.AnimationEventLabel eventKey)
 		{
 			if(machineStatePlayList == null) return;
 			if(machineStatePlayList.Remove(stateMachinePathHash))
 			{
-				if(!string.IsNullOrWhiteSpace(eventKey))
-					onActionMachineStateExit?.Invoke(eventKey);
+				if(eventKey != null) onActionMachineStateExit?.Invoke(eventKey);
 			}
 		}
 
