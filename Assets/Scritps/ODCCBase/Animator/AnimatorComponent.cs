@@ -35,8 +35,8 @@ namespace BC.OdccBase
 		private Dictionary<int, AnimatorStateInfo> statePlayListToInfo = new Dictionary<int, AnimatorStateInfo>();
 		private HashSet<int> animatorStatePlayList = new HashSet<int>();
 		private HashSet<int> machineStatePlayList = new HashSet<int>();
-		public Action<int> onActionMachineStateEnter;
-		public Action<int> onActionMachineStateExit;
+		public Action<string> onActionMachineStateEnter;
+		public Action<string> onActionMachineStateExit;
 		protected override void BaseValidate(in bool isPrefab = false)
 		{
 			animator = GetComponentInChildren<Animator>(true);
@@ -152,20 +152,22 @@ namespace BC.OdccBase
 				statePlayListToInfo.Remove(stateInfo.fullPathHash);
 			}
 		}
-		public virtual void OnMachineStateEnter(int stateMachinePathHash)
+		public virtual void OnMachineStateEnter(int stateMachinePathHash, string eventKey)
 		{
 			if(machineStatePlayList == null) return;
 			if(machineStatePlayList.Add(stateMachinePathHash))
 			{
-				onActionMachineStateEnter?.Invoke(stateMachinePathHash);
+				if(!string.IsNullOrWhiteSpace(eventKey))
+					onActionMachineStateEnter?.Invoke(eventKey);
 			}
 		}
-		public virtual void OnMachineStateExit(int stateMachinePathHash)
+		public virtual void OnMachineStateExit(int stateMachinePathHash, string eventKey)
 		{
 			if(machineStatePlayList == null) return;
 			if(machineStatePlayList.Remove(stateMachinePathHash))
 			{
-				onActionMachineStateExit?.Invoke(stateMachinePathHash);
+				if(!string.IsNullOrWhiteSpace(eventKey))
+					onActionMachineStateExit?.Invoke(eventKey);
 			}
 		}
 
