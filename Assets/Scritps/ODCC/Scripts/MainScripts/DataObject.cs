@@ -15,6 +15,7 @@ namespace BC.ODCC
 		[HideLabel, DisplayAsString, EnableGUI]
 		private string ShowInInspector_DataLabel => "";
 		[ShowInInspector, PropertyOrder(float.MinValue), PropertySpace(-26, 6)]
+		[InlineButton("OpenThisDataScript", " Open Script ")]
 		[InlineButton("PingThisDataScript", " This Script ")]
 		[HideLabel, DisplayAsString(EnableRichText = true), EnableGUI]
 		private string ShowInInspector_DataLabel2 => $"<b><size=15>{GetType().Name}</size></b> <size=10>({GetType().Namespace})<size>";
@@ -23,7 +24,11 @@ namespace BC.ODCC
 
 		private void PingThisDataScript()
 		{
-			BC.Base.PingAndOpenScript.PingScript(GetType(), true);
+			BC.Base.PingAndOpenScript.PingScript(GetType(), false);
+		}
+		private void OpenThisDataScript()
+		{
+			BC.Base.PingAndOpenScript.OpenScript(GetType());
 		}
 #endif
 		bool IOdccData.IsData => true;
