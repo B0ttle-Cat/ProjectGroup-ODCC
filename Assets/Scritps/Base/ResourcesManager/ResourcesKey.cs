@@ -1,8 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 
 using Sirenix.OdinInspector;
+
+using UnityEditor;
 
 using UnityEngine;
 
@@ -15,13 +16,11 @@ namespace BC.Base
 	[HideLabel]
 	public partial struct ResourcesKey<T> : IDisposable where T : Object
 	{
-		public ResourcesKey(Object asset)
+		public ResourcesKey(T asset)
 		{
 #if UNITY_EDITOR
-			rootPath = new string[0];
 			guid = "";
 			this.asset = asset;
-			EditOption = false;
 #endif
 			resourcesPath = "";
 			loadAsset = null;
@@ -29,66 +28,39 @@ namespace BC.Base
 			OnValidate();
 #endif
 		}
-		public ResourcesKey(string[] path)
-		{
-#if UNITY_EDITOR
-			rootPath = path;
-			guid = "";
-			asset = null;
-			EditOption = false;
-#endif
-			resourcesPath = "";
-			loadAsset = null;
-		}
 
-		public ResourcesKey(string path)
-		{
 #if UNITY_EDITOR
-			rootPath = new string[1] { path };
-			guid = "";
-			asset = null;
-			EditOption = false;
-#endif
-			resourcesPath = "";
-			loadAsset = null;
-		}
-#if UNITY_EDITOR
-		[FoldoutGroup("@resourcesName"), PropertyOrder(-50)]
-		[ShowInInspector, HideLabel, ReadOnly, EnableGUI, PreviewField(55, ObjectFieldAlignment.Center)]
-		[HorizontalGroup("@resourcesName/H1", width: 55)]
-		public Object preview => asset;
+		[FoldoutGroup("@ResourcesPathGroupName"), PropertyOrder(-50)]
+		[ShowInInspector, HideLabel, ReadOnly, EnableGUI, PreviewField(68, ObjectFieldAlignment.Center)]
+		[HorizontalGroup("@ResourcesPathGroupName/H1", width: 68)]
+		public Object preview => IsPrefabs ? AssetDatabase.LoadAssetAtPath(AssetDatabase.GetAssetPath(asset), typeof(Object)) : asset;
 
-		[FoldoutGroup("@resourcesName"), PropertyOrder(-50)]
-		[ShowInInspector, HideLabel, ValueDropdown("GetResourcesPrefabs")]
-		[HorizontalGroup("@resourcesName/H1"), VerticalGroup("@resourcesName/H1/V1")]
+		[PropertyOrder(-50), ShowInInspector, HideLabel]
+		[AssetList(CustomFilterMethod = "GetAssetList")]
+		[VerticalGroup("@ResourcesPathGroupName/H1/V1")]
+		[HorizontalGroup("@ResourcesPathGroupName/H1/V1/H2")]
 		[OnValueChanged("_OnValidate")]
-		[InlineButton("Clear")]
-		[InlineButton("_OnValidate", "Update")]
-		private Object asset {
+		private T asset {
 			get;
 			set;
 		}
-		[FoldoutGroup("@resourcesName"), ToggleGroup("@resourcesName/EditOption"), PropertyOrder(-10), ShowInInspector]
-		private bool EditOption { get; set; }
-		[FoldoutGroup("@resourcesName"), ToggleGroup("@resourcesName/EditOption")]
-		[ShowInInspector, LabelWidth(45), DisplayAsString]
+
+
+		[FoldoutGroup("@ResourcesPathGroupName/H1/V1/Detail"), PropertyOrder(-10), ShowInInspector]
+		[LabelWidth(45), LabelText("GUID:"), DisplayAsString]
 		private string guid;
-		[FoldoutGroup("@resourcesName"), ToggleGroup("@resourcesName/EditOption")]
-		[ShowInInspector, FolderPath]
-		private string[] rootPath;
 #endif
-		[FoldoutGroup("@resourcesName")]
-		[HorizontalGroup("@resourcesName/H1"), VerticalGroup("@resourcesName/H1/V1")]
-		[HideLabel, Multiline(2), ReadOnly, EnableGUI, DisplayAsString]
+		[FoldoutGroup("@ResourcesPathGroupName/H1/V1/Detail")]
+		[LabelWidth(45), LabelText("Path:"), Multiline(2), ReadOnly, EnableGUI, DisplayAsString]
 		public string resourcesPath;
 
 		private T loadAsset { get; set; }
 
-		public string resourcesName => ResourcesPathToName();
+		public string resourcesName => ResourcesToName();
 		public bool IsEmpty => string.IsNullOrWhiteSpace(resourcesPath);
 		public T LoadAsset()
 		{
-			if(loadAsset == null)
+			if (loadAsset == null)
 				loadAsset = Resources.Load<T>(resourcesPath);
 			return loadAsset;
 		}
@@ -102,89 +74,39 @@ namespace BC.Base
 			{
 				Resources.UnloadAsset(loadAsset);
 			}
-			catch(Exception ex) { }
+			catch (Exception ex) { }
 			loadAsset = null;
 		}
-
-		private string ResourcesPathToName()
+		private string ResourcesToName()
 		{
-			if(resourcesPath == null) return "";
+			if (resourcesPath == null) return $"Null ({typeof(T).FullName})";
 			int lastSlashIndex = resourcesPath.LastIndexOf('/');
-			return lastSlashIndex >= 0 ? resourcesPath.Substring(lastSlashIndex + 1) : resourcesPath;
-
+			string path = lastSlashIndex >= 0 ? resourcesPath.Substring(lastSlashIndex + 1) : resourcesPath;
+			return string.IsNullOrWhiteSpace(path) ? $"Null ({typeof(T).FullName})" : path;
 		}
 #if UNITY_EDITOR
-		private void Clear()
+		private string ResourcesPathGroupName => string.IsNullOrWhiteSpace(resourcesPath) ? $"Null ({typeof(T).FullName})" : resourcesPath;
+		private bool IsPrefabs => typeof(T).IsSubclassOf(typeof(Component)) || typeof(T).Equals(typeof(GameObject));
+		private bool GetAssetList(T asset)
 		{
-			rootPath = new string[1] { "" };
-			guid = "";
-			asset = null;
-			EditOption = false;
-			resourcesPath = "";
-			loadAsset = null;
-		}
-		private ValueDropdownList<Object> GetResourcesPrefabs()
-		{
-			bool isPrefabs = typeof(T).IsSubclassOf(typeof(Component)) || typeof(T).Equals(typeof(GameObject));
+			if (asset == null) return false;
+			if (asset.name.StartsWith("_")) return false;
 
-			ValueDropdownList<Object> list = new ValueDropdownList<Object>();
-			HashSet<(string,Object)> tList = new HashSet<(string,Object)>();
-			int length = rootPath == null ? 0 : rootPath.Length;
-			for(int i = 0 ; i < length ; i++)
-			{
-				string _rootPath = rootPath[i].Replace('\\','/');
+			string path = AssetDatabase.GetAssetPath(asset);
+			if (string.IsNullOrWhiteSpace(path)) return false;
+			path = path.Replace('\\', '/');
 
-				string folderPath = AssetPathConvertResourcesPath(_rootPath);
+			if (path.StartsWith("Resources/")) return true;
+			else if (path.Contains("/Resources/")) return true;
 
-				if(isPrefabs)
-				{
-					var allTAssets = Resources.LoadAll<GameObject>(folderPath);
-					foreach(var tAsset in allTAssets)
-					{
-						string assetPath = UnityEditor.AssetDatabase.GetAssetPath(tAsset);
-						assetPath = assetPath.Replace($"{_rootPath}/", "");
-						assetPath = Path.ChangeExtension(assetPath, null);
-						tList.Add((assetPath, tAsset));
-					}
-				}
-				else
-				{
-					var allTAssets = Resources.LoadAll<T>(folderPath);
-					foreach(var tAsset in allTAssets)
-					{
-						string assetPath = UnityEditor.AssetDatabase.GetAssetPath(tAsset);
-						assetPath = assetPath.Replace($"{rootPath[i]}/", "");
-						assetPath = Path.ChangeExtension(assetPath, null);
-						tList.Add((assetPath, tAsset));
-					}
-				}
-			}
-			foreach(var item in tList)
-			{
-				if(item.Item2 is GameObject prefab)
-				{
-					if(typeof(T).Equals(typeof(GameObject)))
-					{
-						list.Add(item.Item1, item.Item2);
-					}
-					else if(prefab.TryGetComponent<T>(out var tComponent))
-					{
-						list.Add(item.Item1, item.Item2);
-					}
-				}
-				else if(item.Item2 is T tAsset)
-				{
-					list.Add(item.Item1, item.Item2);
-				}
-			}
-			return list;
+			return false;
 		}
 		string AssetPathConvertResourcesPath(string assetPath)
 		{
 			string keyword = "Resources";
 			int stopIndex = assetPath.IndexOf(keyword) + keyword.Length;
 
-			if(stopIndex != -1) // 문자열이 존재하는 경우
+			if (stopIndex != -1) // 문자열이 존재하는 경우
 			{
 				assetPath = assetPath.Substring(stopIndex).TrimStart('\\', '/');
 				assetPath = Path.ChangeExtension(assetPath, null);
@@ -196,37 +118,32 @@ namespace BC.Base
 			string keyword = "Resources";
 			int stopIndex = assetPath.IndexOf(keyword);
 
-			if(stopIndex != -1) // 문자열이 존재하는 경우
+			if (stopIndex != -1) // 문자열이 존재하는 경우
 			{
 				return assetPath.Substring(0, stopIndex + keyword.Length);
 			}
 			return assetPath;
 		}
+		[HorizontalGroup("@ResourcesPathGroupName/H1/V1/H2", width: 50)]
+		[VerticalGroup("@ResourcesPathGroupName/H1/V1/H2/V2")]
+		[Button("Update")]
 		private void _OnValidate() => OnValidate();
-		private void OnValidate()
+		public void OnValidate()
 		{
-			OnValidate(null);
-		}
-		public void OnValidate(params string[] rootPath)
-		{
-			if(rootPath != null && rootPath.Length > 0)
+			if (asset == null)
 			{
-				this.rootPath = rootPath;
-			}
-			if(asset == null)
-			{
-				if(guid.IsNotNullOrWhiteSpace())
+				if (guid.IsNotNullOrWhiteSpace())
 				{
 					string path = UnityEditor.AssetDatabase.GUIDToAssetPath(guid);
 					resourcesPath = AssetPathConvertResourcesPath(path);
-					if(resourcesPath.IsNotNullOrWhiteSpace())
+					if (resourcesPath.IsNotNullOrWhiteSpace())
 					{
-						asset = Resources.Load<Object>(resourcesPath);
+						asset = Resources.Load<T>(resourcesPath);
 					}
 				}
-				else if(resourcesPath.IsNotNullOrWhiteSpace())
+				else if (resourcesPath.IsNotNullOrWhiteSpace())
 				{
-					asset = Resources.Load<Object>(resourcesPath);
+					asset = Resources.Load<T>(resourcesPath);
 					string assetPath = UnityEditor.AssetDatabase.GetAssetPath(asset);
 					guid = UnityEditor.AssetDatabase.AssetPathToGUID(assetPath);
 				}
@@ -237,23 +154,17 @@ namespace BC.Base
 				guid = UnityEditor.AssetDatabase.AssetPathToGUID(assetPath);
 				resourcesPath = AssetPathConvertResourcesPath(assetPath);
 			}
-			if(asset != null && (rootPath == null || rootPath.Length == 0))
-			{
-				if(!string.IsNullOrWhiteSpace(resourcesPath))
-				{
-					string addPath = resourcesPath.Substring(0,resourcesPath.IndexOf("/"));
-					string assetPath = UnityEditor.AssetDatabase.GetAssetPath(asset);
-					rootPath = new string[1] {
-						$"{AssetPathCutoutResourcesPath(assetPath)}/{addPath}"
-					};
-				}
-			}
+		}
+
+		[VerticalGroup("@ResourcesPathGroupName/H1/V1/H2/V2")]
+		[Button("Clear")]
+		private void Clear()
+		{
+			guid = "";
+			asset = null;
+			resourcesPath = "";
+			loadAsset = null;
 		}
 #endif
-	}
-
-	public static class UtilResourcesKey
-	{
-
 	}
 }

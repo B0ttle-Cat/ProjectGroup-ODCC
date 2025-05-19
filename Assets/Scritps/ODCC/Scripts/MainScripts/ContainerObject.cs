@@ -41,7 +41,7 @@ namespace BC.ODCC
 		internal void CallingActionQueue(Action action)
 		{
 			callActionQueue ??= new Queue<Action>();
-			if(action == null) return;
+			if (action == null) return;
 
 			// action 추가 
 			callActionQueue.Enqueue(action);
@@ -51,15 +51,15 @@ namespace BC.ODCC
 			{
 				callActionQueue.Dequeue()?.Invoke();
 			}
-			while(callActionQueue.Count > 0);
+			while (callActionQueue.Count > 0);
 		}
 		internal void CallingActionQueue(List<Action> actions)
 		{
 			callActionQueue ??= new Queue<Action>();
-			if(actions.Count == 0) return;
+			if (actions.Count == 0) return;
 
 			// action 추가 
-			for(int i = 0 ; i < actions.Count ; i++)
+			for (int i = 0; i < actions.Count; i++)
 			{
 				callActionQueue.Enqueue(actions[i]);
 			}
@@ -69,16 +69,16 @@ namespace BC.ODCC
 			{
 				callActionQueue.Dequeue()?.Invoke();
 			}
-			while(callActionQueue.Count > 0);
+			while (callActionQueue.Count > 0);
 		}
 
 		#region GetObject OdccItem
 		public bool TryGetObject<T>(out T t, Func<T, bool> condition = null) where T : class, IOdccObject
 		{
 			t = ThisObject is T v ? v : null;
-			if(t is not null)
+			if (t is not null)
 			{
-				if(condition == null || condition.Invoke(t)) return true;
+				if (condition == null || condition.Invoke(t)) return true;
 			}
 			return false;
 		}
@@ -103,8 +103,8 @@ namespace BC.ODCC
 		}
 		public T GetParentObject<T>(Func<T, bool> condition = null) where T : class, IOdccObject
 		{
-			if(ParentObject is null) return null;
-			else if(ParentObject is T t && (condition == null || condition.Invoke(t)))
+			if (ParentObject is null) return null;
+			else if (ParentObject is T t && (condition == null || condition.Invoke(t)))
 			{
 				return t;
 			}
@@ -125,7 +125,7 @@ namespace BC.ODCC
 		{
 			T t = null;
 			cancelToken ??= ThisObject.DestroyCancelToken;
-			while(!cancelToken.Value.IsCancellationRequested && !TryGetObject(out t, condition))
+			while (!cancelToken.Value.IsCancellationRequested && !TryGetObject(out t, condition))
 			{
 				try
 				{
@@ -133,7 +133,7 @@ namespace BC.ODCC
 				}
 				catch
 				{
-					t= null;
+					t = null;
 					break;
 				}
 			}
@@ -143,7 +143,7 @@ namespace BC.ODCC
 		{
 			T t = null;
 			cancelToken ??= ThisObject.DestroyCancelToken;
-			while(!cancelToken.Value.IsCancellationRequested && !TryGetParentObject(out t, condition))
+			while (!cancelToken.Value.IsCancellationRequested && !TryGetParentObject(out t, condition))
 			{
 				try
 				{
@@ -151,7 +151,7 @@ namespace BC.ODCC
 				}
 				catch
 				{
-					t= null;
+					t = null;
 					break;
 				}
 			}
@@ -161,7 +161,7 @@ namespace BC.ODCC
 		{
 			T t = null;
 			cancelToken ??= ThisObject.DestroyCancelToken;
-			while(!cancelToken.Value.IsCancellationRequested && !TryGetChildObject(out t, condition))
+			while (!cancelToken.Value.IsCancellationRequested && !TryGetChildObject(out t, condition))
 			{
 				try
 				{
@@ -169,7 +169,7 @@ namespace BC.ODCC
 				}
 				catch
 				{
-					t= null;
+					t = null;
 					break;
 				}
 			}
@@ -179,7 +179,7 @@ namespace BC.ODCC
 		{
 			List<T> t = null;
 			cancelToken ??= ThisObject.DestroyCancelToken;
-			while(!cancelToken.Value.IsCancellationRequested && !TryGetChildObjectList(out t, condition))
+			while (!cancelToken.Value.IsCancellationRequested && !TryGetChildObjectList(out t, condition))
 			{
 				try
 				{
@@ -187,7 +187,7 @@ namespace BC.ODCC
 				}
 				catch
 				{
-					t= null;
+					t = null;
 					break;
 				}
 			}
@@ -195,34 +195,34 @@ namespace BC.ODCC
 		}
 		public async void NextGetObject<T>(Action<T> callback, Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccObject
 		{
-			if(callback is null) return;
+			if (callback is null) return;
 
 			var t = await AwaitGetObject<T>(condition, cancelToken);
-			if(t is null) return;
+			if (t is null) return;
 			callback.Invoke(t);
 		}
 		public async void NextGetParentObject<T>(Action<T> callback, Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccObject
 		{
-			if(callback is null) return;
+			if (callback is null) return;
 
 			var t = await AwaitGetParentObject<T>(condition, cancelToken);
-			if(t is null) return;
+			if (t is null) return;
 			callback.Invoke(t);
 		}
 		public async void NextGetChildObject<T>(Action<T> callback, Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccObject
 		{
-			if(callback is null) return;
+			if (callback is null) return;
 
 			var t = await AwaitGetChildObject<T>(condition, cancelToken);
-			if(t is null) return;
+			if (t is null) return;
 			callback.Invoke(t);
 		}
 		public async void NextGetChildObjectList<T>(Action<List<T>> callback, Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccObject
 		{
-			if(callback is null) return;
+			if (callback is null) return;
 
 			var t = await AwaitGetChildObjectList<T>(condition, cancelToken);
-			if(t is null) return;
+			if (t is null) return;
 			callback.Invoke(t);
 		}
 		#endregion
@@ -234,13 +234,13 @@ namespace BC.ODCC
 		public T GetComponentInChild<T>(Func<T, bool> condition = null) where T : class, IOdccComponent
 		{
 			T t = ComponentList.Get<T, IOdccComponent>(condition);
-			if(t is not null) return t;
+			if (t is not null) return t;
 
 			int length = ChildObject.Count;
-			for(int i = 0 ; i < length ; i++)
+			for (int i = 0; i < length; i++)
 			{
 				t = ChildObject[i].ThisContainer.GetComponentInChild<T>(condition);
-				if(t is not null) return t;
+				if (t is not null) return t;
 			}
 			return null;
 		}
@@ -254,7 +254,7 @@ namespace BC.ODCC
 			resultArray.AddRange(ComponentList.GetAll<T, IOdccComponent>(condition));
 
 			int length = ChildObject.Count;
-			for(int i = 0 ; i < length ; i++)
+			for (int i = 0; i < length; i++)
 			{
 				var childList = new List<T>();
 				ChildObject[i].ThisContainer.GetAllComponentInChild(out childList, condition);
@@ -285,7 +285,7 @@ namespace BC.ODCC
 		{
 			T t = null;
 			cancelToken ??= ThisObject.DestroyCancelToken;
-			while(!cancelToken.Value.IsCancellationRequested && !TryGetComponent(out t, condition))
+			while (!cancelToken.Value.IsCancellationRequested && !TryGetComponent(out t, condition))
 			{
 				try
 				{
@@ -293,7 +293,7 @@ namespace BC.ODCC
 				}
 				catch
 				{
-					t= null;
+					t = null;
 					break;
 				}
 			}
@@ -303,7 +303,7 @@ namespace BC.ODCC
 		{
 			T t = null;
 			cancelToken ??= ThisObject.DestroyCancelToken;
-			while(!cancelToken.Value.IsCancellationRequested && !TryGetComponentInChild(out t, condition))
+			while (!cancelToken.Value.IsCancellationRequested && !TryGetComponentInChild(out t, condition))
 			{
 				try
 				{
@@ -311,7 +311,7 @@ namespace BC.ODCC
 				}
 				catch
 				{
-					t= null;
+					t = null;
 					break;
 				}
 			}
@@ -321,7 +321,7 @@ namespace BC.ODCC
 		{
 			List<T> t = null;
 			cancelToken ??= ThisObject.DestroyCancelToken;
-			while(!cancelToken.Value.IsCancellationRequested && !TryGetComponentList(out t, condition))
+			while (!cancelToken.Value.IsCancellationRequested && !TryGetComponentList(out t, condition))
 			{
 				try
 				{
@@ -329,7 +329,7 @@ namespace BC.ODCC
 				}
 				catch
 				{
-					t= null;
+					t = null;
 					break;
 				}
 			}
@@ -339,7 +339,7 @@ namespace BC.ODCC
 		{
 			List<T> t = null;
 			cancelToken ??= ThisObject.DestroyCancelToken;
-			while(!cancelToken.Value.IsCancellationRequested && !TryGetAllComponentInChild(out t, condition))
+			while (!cancelToken.Value.IsCancellationRequested && !TryGetAllComponentInChild(out t, condition))
 			{
 				try
 				{
@@ -347,7 +347,7 @@ namespace BC.ODCC
 				}
 				catch
 				{
-					t= null;
+					t = null;
 					break;
 				}
 			}
@@ -355,34 +355,34 @@ namespace BC.ODCC
 		}
 		public async void NextGetComponent<T>(Action<T> callback, Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccComponent
 		{
-			if(callback is null) return;
+			if (callback is null) return;
 
 			var t = await AwaitGetComponent<T>(condition, cancelToken);
-			if(t is null) return;
+			if (t is null) return;
 			callback.Invoke(t);
 		}
 		public async void NextGetComponentInChild<T>(Action<T> callback, Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccComponent
 		{
-			if(callback is null) return;
+			if (callback is null) return;
 
 			var t = await AwaitGetComponentInChild<T>(condition, cancelToken);
-			if(t is null) return;
+			if (t is null) return;
 			callback.Invoke(t);
 		}
 		public async void NextGetComponentList<T>(Action<List<T>> callback, Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccComponent
 		{
-			if(callback is null) return;
+			if (callback is null) return;
 
 			var t = await AwaitGetComponentList<T>(condition, cancelToken);
-			if(t is null) return;
+			if (t is null) return;
 			callback.Invoke(t);
 		}
 		public async void NextGetAllComponentList<T>(Action<List<T>> callback, Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccComponent
 		{
-			if(callback is null) return;
+			if (callback is null) return;
 
 			var t = await AwaitGetAllComponentList<T>(condition, cancelToken);
-			if(t is null) return;
+			if (t is null) return;
 			callback.Invoke(t);
 		}
 		#endregion
@@ -411,7 +411,7 @@ namespace BC.ODCC
 		{
 			T t = null;
 			cancelToken ??= ThisObject.DestroyCancelToken;
-			while(!cancelToken.Value.IsCancellationRequested && !TryGetData(out t, condition))
+			while (!cancelToken.Value.IsCancellationRequested && !TryGetData(out t, condition))
 			{
 				try
 				{
@@ -419,7 +419,7 @@ namespace BC.ODCC
 				}
 				catch
 				{
-					t= null;
+					t = null;
 					break;
 				}
 			}
@@ -429,7 +429,7 @@ namespace BC.ODCC
 		{
 			List<T> t = null;
 			cancelToken ??= ThisObject.DestroyCancelToken;
-			while(!cancelToken.Value.IsCancellationRequested && !TryGetDataList(out t, condition))
+			while (!cancelToken.Value.IsCancellationRequested && !TryGetDataList(out t, condition))
 			{
 				try
 				{
@@ -437,7 +437,7 @@ namespace BC.ODCC
 				}
 				catch
 				{
-					t= null;
+					t = null;
 					break;
 				}
 			}
@@ -445,24 +445,24 @@ namespace BC.ODCC
 		}
 		public async void NextGetData<T>(Action<T> callback, Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccData
 		{
-			if(callback is null) return;
+			if (callback is null) return;
 
 			var t = await AwaitGetData<T>(condition, cancelToken);
-			if(t is null) return;
+			if (t is null) return;
 			callback.Invoke(t);
 		}
 		public async void NextGetDataList<T>(Action<List<T>> callback, Func<T, bool> condition = null, CancellationToken? cancelToken = null) where T : class, IOdccData
 		{
-			if(callback is null) return;
+			if (callback is null) return;
 
 			var t = await AwaitGetDataList<T>(condition, cancelToken);
-			if(t is null) return;
+			if (t is null) return;
 			callback.Invoke(t);
 		}
 		#region DataAPIPlus
 		public void InitData<TData>(Action<TData> initData) where TData : DataObject, new()
 		{
-			if(TryGetData<TData>(out var tData))
+			if (TryGetData<TData>(out var tData))
 			{
 				initData?.Invoke(tData);
 			}
@@ -486,16 +486,16 @@ namespace BC.ODCC
 		public List<T> FindAllType<T>()
 		{
 			List<T> t = new List<T>();
-			if(ThisObject is T tObj) t.Add(tObj);
+			if (ThisObject is T tObj) t.Add(tObj);
 			int length = DataList.Count;
-			for(int i = 0 ; i < length ; i++)
+			for (int i = 0; i < length; i++)
 			{
-				if(DataList[i] is T tData) t.Add(tData);
+				if (DataList[i] is T tData) t.Add(tData);
 			}
 			length = ComponentList.Count;
-			for(int i = 0 ; i < length ; i++)
+			for (int i = 0; i < length; i++)
 			{
-				if(ComponentList[i] is T tData) t.Add(tData);
+				if (ComponentList[i] is T tData) t.Add(tData);
 			}
 			return t;
 		}
@@ -523,7 +523,7 @@ namespace BC.ODCC
 		internal bool _TryGetComponents<T>(out List<T> t, Func<T, bool> condition = null) where T : class, IOdccItem
 		{
 			t = _GetComponents<T>(condition);
-			return t is not null && t.Count >0;
+			return t is not null && t.Count > 0;
 		}
 		internal bool _TryGetComponents<T>(int typeID, out List<T> t, Func<IOdccItem, bool> condition = null) where T : class, IOdccItem
 		{
@@ -543,7 +543,7 @@ namespace BC.ODCC
 		internal bool _TryGetDatas<T>(out List<T> t, Func<T, bool> condition = null) where T : class, IOdccItem
 		{
 			t = _GetDatas<T>(condition);
-			return t is not null && t.Count >0;
+			return t is not null && t.Count > 0;
 		}
 		internal bool _TryGetDatas<T>(int typeID, out List<T> t, Func<IOdccItem, bool> condition = null) where T : class, IOdccItem
 		{
@@ -570,7 +570,7 @@ namespace BC.ODCC
 		}
 		public T AddChildObject<T>(Transform parent, bool onActive, string name = "") where T : ObjectBehaviour
 		{
-			if(string.IsNullOrWhiteSpace(name))
+			if (string.IsNullOrWhiteSpace(name))
 			{
 				name = $"new {typeof(T).Name}";
 			}
@@ -580,7 +580,7 @@ namespace BC.ODCC
 			newObject.transform.parent = parent;
 
 			T newTObject = newObject.AddComponent<T>();
-			if(onActive) newObject.SetActive(true);
+			if (onActive) newObject.SetActive(true);
 			else OdccManager.OdccAwake(newTObject);
 			return newTObject;
 		}
@@ -590,7 +590,7 @@ namespace BC.ODCC
 		}
 		public T AddData<T>(T data = null) where T : DataObject, new()
 		{
-			if(data == null)
+			if (data == null)
 				data = new T();
 
 			data.ThisContainer = this;
@@ -600,9 +600,9 @@ namespace BC.ODCC
 		public void AddDatas(params IOdccData[] datas)
 		{
 			int length = datas.Length;
-			for(int i = 0 ; i < length ; i++)
+			for (int i = 0; i < length; i++)
 			{
-				if(datas[i] is DataObject dataObject)
+				if (datas[i] is DataObject dataObject)
 				{
 					dataObject.ThisContainer = this;
 				}
@@ -612,9 +612,9 @@ namespace BC.ODCC
 		public void AddDatas(List<IOdccData> datas)
 		{
 			int length = datas.Count;
-			for(int i = 0 ; i < length ; i++)
+			for (int i = 0; i < length; i++)
 			{
-				if(datas[i] is DataObject dataObject)
+				if (datas[i] is DataObject dataObject)
 				{
 					dataObject.ThisContainer = this;
 				}
@@ -623,25 +623,25 @@ namespace BC.ODCC
 		}
 		public void AddData(DataObject data = null)
 		{
-			if(data != null) ContainerNode.AddItem(data);
+			if (data != null) ContainerNode.AddItem(data);
 		}
 		#endregion
 		#region Remove OdccItem
 		[Obsolete("되도록, Object.Destroy 또는 DestroyThis 를 사용해 직접 삭제 할 것.", true)]
 		public void RemoveChildObject<T>(T target = null, bool removeThisGameObject = false) where T : ObjectBehaviour
 		{
-			if(target == null)
+			if (target == null)
 				target = GetChildObject<T>();
 
-			if(target != null)
+			if (target != null)
 				target.DestroyThis(removeThisGameObject);
 		}
 		public bool RemoveComponent<T>(T target = null) where T : ComponentBehaviour
 		{
-			if(target == null)
+			if (target == null)
 				target = GetComponent<T>();
 
-			if(target != null)
+			if (target != null)
 			{
 				GameObject.Destroy(target);
 				return true;
@@ -653,10 +653,10 @@ namespace BC.ODCC
 		}
 		public bool RemoveData<T>(T target = null) where T : DataObject
 		{
-			if(target == null)
+			if (target == null)
 				target = GetData<T>();
 
-			if(target != null)
+			if (target != null)
 			{
 				ContainerNode.RemoveItem(target);
 				return true;
@@ -668,13 +668,13 @@ namespace BC.ODCC
 		}
 		public void RemoveDatas(List<IOdccData> targets)
 		{
-			if(targets == null) return;
+			if (targets == null) return;
 
 			ContainerNode.RemoveItems(targets);
 		}
 		public void RemoveDatas(IOdccData[] targets)
 		{
-			if(targets == null) return;
+			if (targets == null) return;
 
 			ContainerNode.RemoveItems(targets.ToList());
 		}
@@ -685,11 +685,11 @@ namespace BC.ODCC
 		public DataObject GetData(Type type)
 		{
 			int length = DataList.Count;
-			for(int i = 0 ; i < length ; i++)
+			for (int i = 0; i < length; i++)
 			{
-				if(DataList[i].GetType().Equals(type))
+				if (DataList[i].GetType().Equals(type))
 				{
-					if(DataList[i] is DataObject data)
+					if (DataList[i] is DataObject data)
 					{
 						return data;
 					}
@@ -708,7 +708,7 @@ namespace BC.ODCC
 		#region CallAction OdccItem
 		public void CallActionChildObject<T>(Action<T> tAction, Func<T, bool> condition = null) where T : class, IOdccObject
 		{
-			if(tAction is null) return;
+			if (tAction is null) return;
 			ChildObject.GetAction<T, IOdccObject>(GetAction, condition);
 			void GetAction(T t)
 			{
@@ -717,7 +717,7 @@ namespace BC.ODCC
 		}
 		public void CallActionAllChildObject<T>(Action<T> tAction, Func<bool> isBreak = null, Func<T, bool> condition = null) where T : class, IOdccObject
 		{
-			if(tAction is null) return;
+			if (tAction is null) return;
 			ChildObject.GetAllAction<T, IOdccObject>(GetAction, isBreak, condition);
 			void GetAction(T t)
 			{
@@ -726,7 +726,7 @@ namespace BC.ODCC
 		}
 		public void CallActionComponent<T>(Action<T> tAction, Func<T, bool> condition = null) where T : class, IOdccComponent
 		{
-			if(tAction is null) return;
+			if (tAction is null) return;
 			ComponentList.GetAction<T, IOdccComponent>(GetAction, condition);
 			void GetAction(T t)
 			{
@@ -735,7 +735,7 @@ namespace BC.ODCC
 		}
 		public void CallActionAllComponent<T>(Action<T> tAction, Func<bool> isBreak = null, Func<T, bool> condition = null) where T : class, IOdccComponent
 		{
-			if(tAction is null) return;
+			if (tAction is null) return;
 			ComponentList.GetAllAction<T, IOdccComponent>(GetAction, isBreak, condition);
 			void GetAction(T t)
 			{
@@ -744,13 +744,13 @@ namespace BC.ODCC
 		}
 		public void CallActionAllComponentInChildObject<T>(Action<T> tAction, Func<T, bool> condition = null) where T : class, IOdccComponent
 		{
-			if(tAction is not null && TryGetAllComponentInChild<T>(out List<T> tList, condition))
+			if (tAction is not null && TryGetAllComponentInChild<T>(out List<T> tList, condition))
 			{
 				List<Action> actions = new List<Action>();
 				int Count = tList.Count;
-				for(int i = 0 ; i < Count ; i++)
+				for (int i = 0; i < Count; i++)
 				{
-					if(tList[i] is not null)
+					if (tList[i] is not null)
 					{
 						int index = i;
 						actions.Add(() => {
@@ -769,6 +769,43 @@ namespace BC.ODCC
 		{
 			DataList.GetAllDataAction<T, IOdccData>(tAction, isBreak, condition);
 		}
+
+		public async void CallDelayActionChildObject<T>(float delayTime, Action<T> tAction, Func<T, bool> condition = null) where T : class, IOdccObject
+		{
+			await Awaitable.WaitForSecondsAsync(delayTime, ThisObject.DestroyCancelToken);
+			CallActionChildObject(tAction, condition);
+		}
+		public async void CallDelayActionAllChildObject<T>(float delayTime, Action<T> tAction, Func<bool> isBreak = null, Func<T, bool> condition = null) where T : class, IOdccObject
+		{
+			await Awaitable.WaitForSecondsAsync(delayTime, ThisObject.DestroyCancelToken);
+			CallActionAllChildObject(tAction, isBreak, condition);
+		}
+		public async void CallDelayActionComponent<T>(float delayTime, Action<T> tAction, Func<T, bool> condition = null) where T : class, IOdccComponent
+		{
+			await Awaitable.WaitForSecondsAsync(delayTime, ThisObject.DestroyCancelToken);
+			CallActionComponent(tAction, condition);
+		}
+		public async void CallDelayActionAllComponent<T>(float delayTime, Action<T> tAction, Func<bool> isBreak = null, Func<T, bool> condition = null) where T : class, IOdccComponent
+		{
+			await Awaitable.WaitForSecondsAsync(delayTime, ThisObject.DestroyCancelToken);
+			CallActionAllComponent(tAction, isBreak, condition);
+		}
+		public async void CallDelayActionAllComponentInChildObject<T>(float delayTime, Action<T> tAction, Func<T, bool> condition = null) where T : class, IOdccComponent
+		{
+			await Awaitable.WaitForSecondsAsync(delayTime, ThisObject.DestroyCancelToken);
+			CallActionAllComponentInChildObject(tAction, condition);
+		}
+		public async void CallDelayActionData<T>(float delayTime, Action<T> tAction, Func<T, bool> condition = null) where T : class, IOdccData
+		{
+			await Awaitable.WaitForSecondsAsync(delayTime, ThisObject.DestroyCancelToken);
+			CallActionData(tAction, condition);
+		}
+		public async void CallDelayActionAllData<T>(float delayTime, Action<T> tAction, Func<bool> isBreak = null, Func<T, bool> condition = null) where T : class, IOdccData
+		{
+			await Awaitable.WaitForSecondsAsync(delayTime, ThisObject.DestroyCancelToken);
+			CallActionAllData(tAction, isBreak, condition);
+		}
+
 		#endregion
 	}
 	internal static class WorkOdccItem
@@ -776,10 +813,10 @@ namespace BC.ODCC
 		public static T Get<T, TT>(this List<TT> thisList, Func<T, bool> condition = null) where T : class where TT : class, IOdccItem
 		{
 			int count = thisList.Count;
-			for(int i = 0 ; i < count ; i++)
+			for (int i = 0; i < count; i++)
 			{
 				var item = thisList[i];
-				if(item is T tt && (condition is null || condition(tt)))
+				if (item is T tt && (condition is null || condition(tt)))
 				{
 					return tt;
 				}
@@ -790,10 +827,10 @@ namespace BC.ODCC
 		{
 			List<T> list = new List<T>();
 			int count = thisList.Count;
-			for(int i = 0 ; i < count ; i++)
+			for (int i = 0; i < count; i++)
 			{
 				var item = thisList[i];
-				if(item is T tt && (condition is null || condition(tt)))
+				if (item is T tt && (condition is null || condition(tt)))
 				{
 					list.Add(tt);
 				}
@@ -806,13 +843,13 @@ namespace BC.ODCC
 
 			// 기본 필터링 조건
 			var find = thisList.Where(item =>
-				(item.OdccTypeIndex == typeID || item.OdccTypeInheritanceIndex.Contains(typeID)) && (condition is null  || condition(item))
+				(item.OdccTypeIndex == typeID || item.OdccTypeInheritanceIndex.Contains(typeID)) && (condition is null || condition(item))
 			);
 
 			// 결과를 반환 타입 T에 추가
-			foreach(var item in find)
+			foreach (var item in find)
 			{
-				if(item is T tt && (condition is null || condition(tt)))
+				if (item is T tt && (condition is null || condition(tt)))
 				{
 					list.Add(tt);
 				}
@@ -825,10 +862,10 @@ namespace BC.ODCC
 		public static T GetData<T, TT>(this List<TT> thisList, Func<T, bool> condition = null) where T : class where TT : class, IOdccItem
 		{
 			int count = thisList.Count;
-			for(int i = 0 ; i < count ; i++)
+			for (int i = 0; i < count; i++)
 			{
 				var item = thisList[i];
-				if(item is T tt && (condition is null || condition.Invoke(tt)))
+				if (item is T tt && (condition is null || condition.Invoke(tt)))
 				{
 					return tt;
 				}
@@ -839,10 +876,10 @@ namespace BC.ODCC
 		{
 			List<T> list = new List<T>();
 			int count = thisList.Count;
-			for(int i = 0 ; i < count ; i++)
+			for (int i = 0; i < count; i++)
 			{
 				var item = thisList[i];
-				if(item is T t && (condition is null || condition.Invoke(t)))
+				if (item is T t && (condition is null || condition.Invoke(t)))
 				{
 					list.Add(t);
 				}
@@ -855,13 +892,13 @@ namespace BC.ODCC
 
 			// 기본 필터링 조건
 			var find = thisList.Where(item =>
-				(item.OdccTypeIndex == typeID || item.OdccTypeInheritanceIndex.Contains(typeID)) && (condition is null  || condition(item))
+				(item.OdccTypeIndex == typeID || item.OdccTypeInheritanceIndex.Contains(typeID)) && (condition is null || condition(item))
 			);
 
 			// 결과를 반환 타입 T에 추가
-			foreach(var item in find)
+			foreach (var item in find)
 			{
-				if(item is T t && (condition is null || condition.Invoke(t)))
+				if (item is T t && (condition is null || condition.Invoke(t)))
 				{
 					list.Add(t);
 				}
@@ -873,10 +910,10 @@ namespace BC.ODCC
 		public static void GetAction<T, TT>(this List<TT> thisList, Action<T> action, Func<T, bool> condition = null) where T : class where TT : class, IOdccItem
 		{
 			int count = thisList.Count;
-			for(int i = 0 ; i < count ; i++)
+			for (int i = 0; i < count; i++)
 			{
 				var item = thisList[i];
-				if(item is T tt && (condition is null || condition.Invoke(tt)))
+				if (item is T tt && (condition is null || condition.Invoke(tt)))
 				{
 					action(tt);
 					return;
@@ -886,15 +923,15 @@ namespace BC.ODCC
 		public static void GetAllAction<T, TT>(this List<TT> thisList, Action<T> action, Func<bool> isBreak = null, Func<T, bool> condition = null) where T : class where TT : class, IOdccItem
 		{
 			int count = thisList.Count;
-			for(int i = 0 ; i < count ; i++)
+			for (int i = 0; i < count; i++)
 			{
 				var item = thisList[i];
-				if(item is T tt && (condition is null || condition.Invoke(tt)))
+				if (item is T tt && (condition is null || condition.Invoke(tt)))
 				{
 					action(tt);
 				}
 
-				if(isBreak is not null && isBreak())
+				if (isBreak is not null && isBreak())
 				{
 					break;
 				}
@@ -904,10 +941,10 @@ namespace BC.ODCC
 		public static void GetDataAction<T, TT>(this List<TT> thisList, Action<T> action, Func<T, bool> condition = null) where T : class, IOdccItem
 		{
 			int count = thisList.Count;
-			for(int i = 0 ; i < count ; i++)
+			for (int i = 0; i < count; i++)
 			{
 				var item = thisList[i];
-				if(item is T tt && (condition is null || condition.Invoke(tt)))
+				if (item is T tt && (condition is null || condition.Invoke(tt)))
 				{
 					action(tt);
 					return;
@@ -917,15 +954,15 @@ namespace BC.ODCC
 		public static void GetAllDataAction<T, TT>(this List<TT> thisList, Action<T> action, Func<bool> isBreak = null, Func<T, bool> condition = null) where T : class, IOdccItem
 		{
 			int count = thisList.Count;
-			for(int i = 0 ; i < count ; i++)
+			for (int i = 0; i < count; i++)
 			{
 				var item = thisList[i];
-				if(item is T tt && (condition is null || condition.Invoke(tt)))
+				if (item is T tt && (condition is null || condition.Invoke(tt)))
 				{
 					action(tt);
 				}
 
-				if(isBreak is not null && isBreak())
+				if (isBreak is not null && isBreak())
 				{
 					break;
 				}

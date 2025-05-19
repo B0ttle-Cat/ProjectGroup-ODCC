@@ -17,10 +17,10 @@ namespace BC.OdccBase
 		private Animator animator;
 		public Animator Animator {
 			get {
-				if(animator == null)
+				if (animator == null)
 				{
 					animator = GetComponentInChildren<Animator>(true);
-					if(animator == null)
+					if (animator == null)
 					{
 						animator = gameObject.AddComponent<Animator>();
 					}
@@ -49,11 +49,11 @@ namespace BC.OdccBase
 		}
 		protected override void BaseAwake()
 		{
-			if(animator == null)
+			if (animator == null)
 			{
 				animator = GetComponentInChildren<Animator>(true);
 			}
-			if(animator != null && overrideController == null)
+			if (animator != null && overrideController == null)
 			{
 				overrideController = animator.runtimeAnimatorController is AnimatorOverrideController animOverride
 					? new AnimatorOverrideController(animOverride.runtimeAnimatorController)
@@ -69,8 +69,8 @@ namespace BC.OdccBase
 		}
 		protected override void BaseDestroy()
 		{
-			if(animatorStatePlayList != null) animatorStatePlayList.Clear();
-			if(machineStatePlayList != null) machineStatePlayList.Clear();
+			if (animatorStatePlayList != null) animatorStatePlayList.Clear();
+			if (machineStatePlayList != null) machineStatePlayList.Clear();
 
 			onActionAnimatorStateEnter = null;
 			onActionAnimatorStateExit = null;
@@ -101,12 +101,12 @@ namespace BC.OdccBase
 
 		public void SetTrigger(string name, bool value)
 		{
-			if(value) { Animator.SetTrigger(name); }
+			if (value) { Animator.SetTrigger(name); }
 			else { Animator.ResetTrigger(name); }
 		}
 		public void SetTrigger(int id, bool value)
 		{
-			if(value) { Animator.SetTrigger(id); }
+			if (value) { Animator.SetTrigger(id); }
 			else { Animator.ResetTrigger(id); }
 		}
 		#endregion
@@ -136,39 +136,39 @@ namespace BC.OdccBase
 		#region StateMachine
 		public virtual void OnAnimatorStateEnter(AnimatorStateInfo stateInfo, IStateMachineListener.AnimationEventLabel eventKey)
 		{
-			if(animatorStatePlayList == null) return;
-			if(animatorStatePlayList.Add(stateInfo.fullPathHash))
+			if (animatorStatePlayList == null) return;
+			if (animatorStatePlayList.Add(stateInfo.fullPathHash))
 			{
 				statePlayListToInfo.Add(stateInfo.fullPathHash, stateInfo);
 
-				if(eventKey != null) onActionAnimatorStateEnter?.Invoke(eventKey);
+				if (eventKey.IsNotEmpty) onActionAnimatorStateEnter?.Invoke(eventKey);
 			}
 		}
 		public virtual void OnAnimatorStateExit(AnimatorStateInfo stateInfo, IStateMachineListener.AnimationEventLabel eventKey)
 		{
-			if(animatorStatePlayList == null) return;
+			if (animatorStatePlayList == null) return;
 
-			if(animatorStatePlayList.Remove(stateInfo.fullPathHash))
+			if (animatorStatePlayList.Remove(stateInfo.fullPathHash))
 			{
 				statePlayListToInfo.Remove(stateInfo.fullPathHash);
 
-				if(eventKey != null) onActionAnimatorStateExit?.Invoke(eventKey);
+				if (eventKey.IsNotEmpty) onActionAnimatorStateExit?.Invoke(eventKey);
 			}
 		}
 		public virtual void OnMachineStateEnter(int stateMachinePathHash, IStateMachineListener.AnimationEventLabel eventKey)
 		{
-			if(machineStatePlayList == null) return;
-			if(machineStatePlayList.Add(stateMachinePathHash))
+			if (machineStatePlayList == null) return;
+			if (machineStatePlayList.Add(stateMachinePathHash))
 			{
-				if(eventKey != null) onActionMachineStateEnter?.Invoke(eventKey);
+				if (eventKey.IsNotEmpty) onActionMachineStateEnter?.Invoke(eventKey);
 			}
 		}
 		public virtual void OnMachineStateExit(int stateMachinePathHash, IStateMachineListener.AnimationEventLabel eventKey)
 		{
-			if(machineStatePlayList == null) return;
-			if(machineStatePlayList.Remove(stateMachinePathHash))
+			if (machineStatePlayList == null) return;
+			if (machineStatePlayList.Remove(stateMachinePathHash))
 			{
-				if(eventKey != null) onActionMachineStateExit?.Invoke(eventKey);
+				if (eventKey.IsNotEmpty) onActionMachineStateExit?.Invoke(eventKey);
 			}
 		}
 
@@ -178,7 +178,7 @@ namespace BC.OdccBase
 		}
 		public bool IsAnimatorStatePlay(int fullPathStateHash)
 		{
-			if(animatorStatePlayList == null) return false;
+			if (animatorStatePlayList == null) return false;
 			return animatorStatePlayList.Contains(fullPathStateHash);
 		}
 		public bool IsMachineStatePlay(string stateMachinePathName)
@@ -187,7 +187,7 @@ namespace BC.OdccBase
 		}
 		public bool IsMachineStatePlay(int stateMachinePathHash)
 		{
-			if(machineStatePlayList == null) return false;
+			if (machineStatePlayList == null) return false;
 			return machineStatePlayList.Contains(stateMachinePathHash);
 		}
 		#endregion
@@ -202,13 +202,13 @@ namespace BC.OdccBase
 		}
 		public async Awaitable<bool> WaitAnimatorStateExit(CancellationToken cancellationToken, int waitStateID, int layerIndex = 0, float waitEnterTime = 1f, float waitClipTime = 1f)
 		{
-			if(animator == null || animator.runtimeAnimatorController == null) return false;
+			if (animator == null || animator.runtimeAnimatorController == null) return false;
 			float timeout = waitEnterTime;
 
-			while(!IsValid())
+			while (!IsValid())
 			{
 				timeout -= Time.deltaTime;
-				if(timeout <= 0f)
+				if (timeout <= 0f)
 				{
 					return false;
 				}
@@ -216,14 +216,14 @@ namespace BC.OdccBase
 			}
 
 
-			while(IsValid())
+			while (IsValid())
 			{
-				if(IsHasState(out _))
+				if (IsHasState(out _))
 				{
 					break;
 				}
 				timeout -= Time.deltaTime;
-				if(timeout <= 0f)
+				if (timeout <= 0f)
 				{
 					return false;
 				}
@@ -231,15 +231,15 @@ namespace BC.OdccBase
 			}
 
 			timeout = waitClipTime;
-			while(IsValid())
+			while (IsValid())
 			{
-				if(!IsHasState(out var animatorStateInfo))
+				if (!IsHasState(out var animatorStateInfo))
 				{
 					break;
 				}
 
 				timeout -= animatorStateInfo.speed * Time.deltaTime;
-				if(timeout <= 0f)
+				if (timeout <= 0f)
 				{
 					return false;
 				}
@@ -249,16 +249,16 @@ namespace BC.OdccBase
 			return IsValid();
 			bool IsValid()
 			{
-				if(Animator == null) return false;
-				if(animatorStatePlayList == null) return false;
-				if(DestroyCancelToken.IsCancellationRequested) return false;
-				if(!cancellationToken.CanBeCanceled) return false;
+				if (Animator == null) return false;
+				if (animatorStatePlayList == null) return false;
+				if (DestroyCancelToken.IsCancellationRequested) return false;
+				if (!cancellationToken.CanBeCanceled) return false;
 				return true;
 			}
 			bool IsHasState(out AnimatorStateInfo animatorStateInfo)
 			{
 				animatorStateInfo = default;
-				if(statePlayListToInfo == null) return false;
+				if (statePlayListToInfo == null) return false;
 				return statePlayListToInfo.TryGetValue(waitStateID, out animatorStateInfo);
 			}
 		}
@@ -266,34 +266,34 @@ namespace BC.OdccBase
 		{
 			float timeout = waitEnterTime;
 
-			while(!IsValid())
+			while (!IsValid())
 			{
 				timeout -= Time.deltaTime;
-				if(timeout <= 0f)
+				if (timeout <= 0f)
 				{
 					return false;
 				}
 				await Awaitable.NextFrameAsync(cancellationToken);
 			}
 
-			while(IsValid())
+			while (IsValid())
 			{
-				if(IsHasState())
+				if (IsHasState())
 				{
 					break;
 				}
 
 				timeout -= Time.deltaTime;
-				if(timeout <= 0f)
+				if (timeout <= 0f)
 				{
 					return false;
 				}
 				await Awaitable.NextFrameAsync(cancellationToken);
 			}
 
-			while(IsValid())
+			while (IsValid())
 			{
-				if(!IsHasState())
+				if (!IsHasState())
 				{
 					break;
 				}
@@ -303,10 +303,10 @@ namespace BC.OdccBase
 			return IsValid();
 			bool IsValid()
 			{
-				if(Animator == null) return false;
-				if(machineStatePlayList == null) return false;
-				if(DestroyCancelToken.IsCancellationRequested) return false;
-				if(!cancellationToken.CanBeCanceled) return false;
+				if (Animator == null) return false;
+				if (machineStatePlayList == null) return false;
+				if (DestroyCancelToken.IsCancellationRequested) return false;
+				if (!cancellationToken.CanBeCanceled) return false;
 				return true;
 			}
 			bool IsHasState()
@@ -318,9 +318,9 @@ namespace BC.OdccBase
 		#region OverrideClip
 		public void OverrideAnimationClip(AnimationClip originalClip, AnimationClip overrideClip)
 		{
-			if(originalClip == null || overrideController == null) return;
+			if (originalClip == null || overrideController == null) return;
 			try { overrideController[originalClip] = overrideClip; }
-			catch(Exception ex) { Debug.LogException(ex); }
+			catch (Exception ex) { Debug.LogException(ex); }
 		}
 		public void OverrideAnimationClear(AnimationClip originalClip)
 		{
@@ -328,9 +328,9 @@ namespace BC.OdccBase
 		}
 		public void OverrideAnimationClipList(List<KeyValuePair<AnimationClip, AnimationClip>> animationKeyValue)
 		{
-			if(animationKeyValue == null || animationKeyValue.Count == 0 || overrideController == null) return;
+			if (animationKeyValue == null || animationKeyValue.Count == 0 || overrideController == null) return;
 			try { overrideController.ApplyOverrides(animationKeyValue); }
-			catch(Exception ex) { Debug.LogException(ex); }
+			catch (Exception ex) { Debug.LogException(ex); }
 		}
 		public void OverrideAnimationClearList()
 		{
@@ -366,8 +366,8 @@ namespace BC.OdccBase
 
 				public Params(string key, T value) : this()
 				{
-					Key=key;
-					Value =value;
+					Key = key;
+					Value = value;
 				}
 			}
 
@@ -384,10 +384,10 @@ namespace BC.OdccBase
 
 		public AnimatorSaveData SaveAnimatorState()
 		{
-			if(animator == null)
+			if (animator == null)
 			{
 				animator = GetComponentInChildren<Animator>(true);
-				if(animator == null)
+				if (animator == null)
 				{
 					animator = gameObject.AddComponent<Animator>();
 				}
@@ -396,13 +396,12 @@ namespace BC.OdccBase
 			AnimatorSaveData data = new AnimatorSaveData();
 
 			// 상태 저장 (Layer별)
-			for(int i = 0 ; i < animator.layerCount ; i++)
+			for (int i = 0; i < animator.layerCount; i++)
 			{
 				var stateInfo = animator.GetCurrentAnimatorStateInfo(i);
 				bool isInTransition = animator.IsInTransition(i);
 
-				AnimatorLayerState layerState = new AnimatorLayerState
-				{
+				AnimatorLayerState layerState = new AnimatorLayerState {
 					layerIndex = i,
 					stateHash = stateInfo.shortNameHash,
 					normalizedTime = stateInfo.normalizedTime,
@@ -413,9 +412,9 @@ namespace BC.OdccBase
 			}
 
 			// 파라미터 저장
-			foreach(var param in animator.parameters)
+			foreach (var param in animator.parameters)
 			{
-				switch(param.type)
+				switch (param.type)
 				{
 					case AnimatorControllerParameterType.Float:
 						data.floatParams.Add(new AnimatorSaveData.Params<float>(param.name, animator.GetFloat(param.name)));
@@ -427,7 +426,7 @@ namespace BC.OdccBase
 						data.boolParams.Add(new AnimatorSaveData.Params<bool>(param.name, animator.GetBool(param.name)));
 						break;
 					case AnimatorControllerParameterType.Trigger:
-						if(animator.GetBool(param.name)) data.activeTriggers.Add(param.name);
+						if (animator.GetBool(param.name)) data.activeTriggers.Add(param.name);
 						break;
 				}
 			}
@@ -447,31 +446,31 @@ namespace BC.OdccBase
 
 		public void LoadAnimatorState(AnimatorSaveData data)
 		{
-			if(animator == null)
+			if (animator == null)
 			{
 				animator = GetComponentInChildren<Animator>(true);
-				if(animator == null)
+				if (animator == null)
 				{
 					animator = gameObject.AddComponent<Animator>();
 				}
 			}
-			if(data == null) return;
+			if (data == null) return;
 
 			// 파라미터 복원
-			foreach(var kv in data.floatParams)
+			foreach (var kv in data.floatParams)
 				animator.SetFloat(kv.Key, kv.Value);
 
-			foreach(var kv in data.intParams)
+			foreach (var kv in data.intParams)
 				animator.SetInteger(kv.Key, kv.Value);
 
-			foreach(var kv in data.boolParams)
+			foreach (var kv in data.boolParams)
 				animator.SetBool(kv.Key, kv.Value);
 
-			foreach(var trigger in data.activeTriggers)
+			foreach (var trigger in data.activeTriggers)
 				animator.SetTrigger(trigger);
 
 			// 상태 복원
-			foreach(var layer in data.layers)
+			foreach (var layer in data.layers)
 			{
 				animator.Play(layer.stateHash, layer.layerIndex, layer.normalizedTime);
 			}

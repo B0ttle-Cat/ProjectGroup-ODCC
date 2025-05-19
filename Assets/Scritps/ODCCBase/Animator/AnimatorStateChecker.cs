@@ -28,27 +28,46 @@ namespace BC.OdccBase
 			Event,
 		}
 		[Serializable]
-		public class AnimationEventLabel
+		public struct AnimationEventLabelStruct
+		{
+			[LabelText("Delay")]
+			public float delayTime;
+			[HideLabel, InlineProperty, Title("EventLabel")]
+			public AnimationEventLabel eventLabel;
+			public bool IsEmpty => eventLabel.IsEmpty;
+		}
+		[Serializable]
+		public struct AnimationEventLabel
 		{
 			[LabelText("Function")]
 			[ValueDropdown("GetFunctionName", AppendNextDrawer = true, IsUniqueList = true)]
 			public string functionName;
-			[LabelText("String")]
-			public string stringParameter = "";
-			[LabelText("Float")]
-			public float floatParameter = 0;
-			[LabelText("Int")]
-			public int intParameter = 0;
-			[LabelText("Object")]
-			public Object objectReferenceParameter = null;
+			[LabelText("String"), DisableIf("IsEmpty")]
+			public string stringParameter;
+			[LabelText("Float"), DisableIf("IsEmpty")]
+			public float floatParameter;
+			[LabelText("Int"), DisableIf("IsEmpty")]
+			public int intParameter;
+			[LabelText("Object"), DisableIf("IsEmpty")]
+			public Object objectReferenceParameter;
 
+			public bool IsEmpty => string.IsNullOrWhiteSpace(functionName);
+			public bool IsNotEmpty => !string.IsNullOrWhiteSpace(functionName);
+			public AnimationEventLabel(string function = null) : this()
+			{
+				functionName = string.IsNullOrWhiteSpace(function) ? "OnTrigger" : function;
+				stringParameter = string.Empty;
+				floatParameter = 0f;
+				intParameter = 0;
+				objectReferenceParameter = null;
+			}
 			private ValueDropdownList<string> GetFunctionName()
 			{
 				ValueDropdownList<string> list = new ValueDropdownList<string>();
 				string[] names = Enum.GetNames(typeof(IStateMachineListener.EventFunctionNameList));
 
 				int length = names.Length;
-				for(int i = 0 ; i < length ; i++)
+				for (int i = 0; i < length; i++)
 				{
 					list.Add(names[i], names[i]);
 				}
@@ -77,40 +96,45 @@ namespace BC.OdccBase
 	{
 		[TitleGroup("EventKey")]
 		[HorizontalGroup("EventKey/H"), SerializeField]
-		private AnimationEventLabel[] enterEventKey = new AnimationEventLabel[0];
+		private AnimationEventLabelStruct[] enterEventKey = new AnimationEventLabelStruct[0];
 		[HorizontalGroup("EventKey/H"), SerializeField]
-		private AnimationEventLabel[] exitEventKey = new AnimationEventLabel[0];
+		private AnimationEventLabelStruct[] exitEventKey = new AnimationEventLabelStruct[0];
 
 		public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
 		{
 			var _object = animator.GetComponentInParent<ObjectBehaviour>();
-			if(_object == null) return;
+			if (_object == null) return;
 			int length = enterEventKey == null ? 0 : enterEventKey.Length;
-			if(length == 0) return;
+			if (length == 0) return;
 
-			_object.ThisContainer.CallActionAllComponent<IAnimatorStateCheckListener>(call => {
-				for(int i = 0 ; i < length ; i++)
-				{
-					if(enterEventKey[i] == null) continue;
-					call.OnAnimatorStateEnter(stateInfo, enterEventKey[i]);
-				}
-			});
+
+			for (int i = 0; i < length; i++)
+			{
+				var delayTime = enterEventKey[i].delayTime;
+				var eventLabel = enterEventKey[i].eventLabel;
+				if (eventLabel.IsEmpty) continue;
+				_object.ThisContainer.CallDelayActionAllComponent<IAnimatorStateCheckListener>(delayTime, call => {
+					call.OnAnimatorStateEnter(stateInfo, eventLabel);
+				});
+			}
 		}
 
 		public override void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
 		{
 			var _object = animator.GetComponentInParent<ObjectBehaviour>();
-			if(_object == null) return;
+			if (_object == null) return;
 			int length = exitEventKey == null ? 0 : exitEventKey.Length;
-			if(length == 0) return;
+			if (length == 0) return;
 
-			_object.ThisContainer.CallActionAllComponent<IAnimatorStateCheckListener>(call => {
-				for(int i = 0 ; i < length ; i++)
-				{
-					if(exitEventKey[i] == null) continue;
-					call.OnAnimatorStateExit(stateInfo, exitEventKey[i]);
-				}
-			});
+			for (int i = 0; i < length; i++)
+			{
+				var delayTime = enterEventKey[i].delayTime;
+				var eventLabel = enterEventKey[i].eventLabel;
+				if (eventLabel.IsEmpty) continue;
+				_object.ThisContainer.CallDelayActionAllComponent<IAnimatorStateCheckListener>(delayTime, call => {
+					call.OnAnimatorStateExit(stateInfo, eventLabel);
+				});
+			}
 		}
 	}
 }
