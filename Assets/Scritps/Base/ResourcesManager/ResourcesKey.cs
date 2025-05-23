@@ -4,7 +4,9 @@ using System.Linq;
 
 using Sirenix.OdinInspector;
 
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 
 using UnityEngine;
 
@@ -203,8 +205,8 @@ namespace BC.Base
 		private void _OnValidate()
 		{
 			var asset = Resources.Load<T>(resourcesPath);
-			fullPath = UnityEditor.AssetDatabase.GetAssetPath(asset);
-			guid = UnityEditor.AssetDatabase.AssetPathToGUID(fullPath);
+			fullPath = AssetDatabase.GetAssetPath(asset);
+			guid = AssetDatabase.AssetPathToGUID(fullPath);
 		}
 		public void OnValidate(bool showPreview)
 		{
@@ -224,30 +226,57 @@ namespace BC.Base
 		}
 		public void OnValidate()
 		{
-			//if (asset == null)
+			if (!string.IsNullOrWhiteSpace(fullPath))
 			{
-				if (guid.IsNotNullOrWhiteSpace())
+				if (AssetDatabase.AssetPathExists(fullPath))
 				{
-					fullPath = UnityEditor.AssetDatabase.GUIDToAssetPath(guid);
-					resourcesPath = AssetPathConvertResourcesPath(fullPath);
-					if (resourcesPath.IsNotNullOrWhiteSpace())
+					var asset = AssetDatabase.LoadAssetAtPath<T>(fullPath);
+					if (asset != null)
 					{
-						//		asset = Resources.Load<T>(resourcesPath);
+						var tempResourcesPath = AssetPathConvertResourcesPath(fullPath);
+						if (!string.IsNullOrWhiteSpace(tempResourcesPath))
+						{
+							Object tempLoad = Resources.Load(tempResourcesPath);
+							if (tempLoad != null)
+							{
+								resourcesPath = tempResourcesPath;
+								guid = AssetDatabase.AssetPathToGUID(fullPath);
+								return;
+							}
+						}
 					}
 				}
-				else if (resourcesPath.IsNotNullOrWhiteSpace())
+			}
+
+			if (!string.IsNullOrWhiteSpace(guid))
+			{
+				var tempFullPath = AssetDatabase.GUIDToAssetPath(guid);
+				if (AssetDatabase.AssetPathExists(tempFullPath))
 				{
-					var asset = Resources.Load<T>(resourcesPath);
-					fullPath = UnityEditor.AssetDatabase.GetAssetPath(asset);
-					guid = UnityEditor.AssetDatabase.AssetPathToGUID(fullPath);
+					var tempResourcesPath = AssetPathConvertResourcesPath(tempFullPath);
+					if (!string.IsNullOrWhiteSpace(tempResourcesPath))
+					{
+						Object tempLoad = Resources.Load(tempResourcesPath);
+						if (tempLoad != null)
+						{
+							resourcesPath = tempResourcesPath;
+							fullPath = tempFullPath;
+							return;
+						}
+					}
 				}
 			}
-			//else
-			//{
-			//	fullPath = UnityEditor.AssetDatabase.GetAssetPath(asset);
-			//	guid = UnityEditor.AssetDatabase.AssetPathToGUID(fullPath);
-			//	resourcesPath = AssetPathConvertResourcesPath(fullPath);
-			//}
+
+			if (!string.IsNullOrWhiteSpace(resourcesPath))
+			{
+				Object tempLoad = Resources.Load(resourcesPath);
+				if (tempLoad != null)
+				{
+					fullPath = AssetDatabase.GetAssetPath(tempLoad);
+					guid = AssetDatabase.AssetPathToGUID(fullPath);
+					return;
+				}
+			}
 		}
 
 		//[VerticalGroup("@ResourcesPathGroupName/H1/V1/H2/V2")]
