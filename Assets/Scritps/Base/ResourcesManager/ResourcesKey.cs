@@ -39,8 +39,8 @@ namespace BC.Base
 			ShowDetail = resourcesKey.ShowDetail;
 			guid = resourcesKey.guid;
 			FilterPath = resourcesKey.FilterPath;
-			fullPath = "";
-			resourcesPath = "";
+			fullPath = resourcesKey.fullPath;
+			resourcesPath = resourcesKey.resourcesPath;
 			loadAsset = null;
 			OnValidate();
 		}
@@ -264,6 +264,8 @@ namespace BC.Base
 		{
 			EditorGUIUtility.PingObject(preview);
 		}
+
+		public object Log() => throw new NotImplementedException();
 #endif
 	}
 }
