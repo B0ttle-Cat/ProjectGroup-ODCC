@@ -22,7 +22,7 @@ namespace BC.Base
 		public ResourcesKey(T asset)
 		{
 #if UNITY_EDITOR
-			ShowPreview = true;
+			ShowDetail = true;
 			guid = "";
 			fullPath = "";
 			FilterPath = "";
@@ -36,7 +36,7 @@ namespace BC.Base
 #if UNITY_EDITOR
 		public ResourcesKey(ResourcesKey<T> resourcesKey)
 		{
-			ShowPreview = resourcesKey.ShowPreview;
+			ShowDetail = resourcesKey.ShowDetail;
 			guid = resourcesKey.guid;
 			FilterPath = resourcesKey.FilterPath;
 			fullPath = "";
@@ -47,26 +47,12 @@ namespace BC.Base
 #endif
 
 #if UNITY_EDITOR
-		public bool ShowPreview { get; set; }
-		public bool HidePreview => !ShowPreview;
-		[FoldoutGroup("@ResourcesPathGroupName", VisibleIf = "ShowPreview"), PropertyOrder(-50)]
+		public bool ShowDetail { get; set; }
+		public bool HideDetail => !ShowDetail;
+		[FoldoutGroup("@ResourcesPathGroupName", VisibleIf = "ShowDetail"), PropertyOrder(-50)]
 		[ShowInInspector, HideLabel, ReadOnly, EnableGUI, PreviewField(68, ObjectFieldAlignment.Center)]
 		[HorizontalGroup("@ResourcesPathGroupName/H1", width: 68)]
 		public Object preview => AssetDatabase.LoadAssetAtPath(fullPath, typeof(Object));
-
-		//[PropertyOrder(-50), ShowInInspector, HideLabel]
-		////[AssetList(CustomFilterMethod = "GetAssetList")]
-		//[ValueDropdown("GetAssetList", IsUniqueList = true)]
-		//[VerticalGroup(VisibleIf = "HidePreview")]
-		//[VerticalGroup("@ResourcesPathGroupName/H1/V1")]
-		//[OnValueChanged("_OnValidate")]
-		//[InlineButton("Clear")]
-		//[InlineButton("_OnValidate", "Update")]
-		//private T asset {
-		//	get;
-		//	set;
-		//}
-
 		[FoldoutGroup("@ResourcesPathGroupName/H1/V1/Detail"), PropertyOrder(-10), ShowInInspector]
 		[LabelWidth(100), LabelText("GUID:"), DisplayAsString(Overflow = false)]
 		private string guid;
@@ -76,16 +62,14 @@ namespace BC.Base
 		[LabelWidth(100), LabelText("FilterPath:"), DisplayAsString(Overflow = false)]
 		private string FilterPath;
 #endif
-		//[FoldoutGroup("@ResourcesPathGroupName/H1/V1/Detail")]
-		//[LabelWidth(100), LabelText("ResourcesPath:"), DisplayAsString(Overflow = false)]
 		[PropertyOrder(-20), ShowInInspector, HideLabel]
-		//[AssetList(CustomFilterMethod = "GetAssetList")]
 		[ValueDropdown("GetAssetList", IsUniqueList = true)]
-		[VerticalGroup(VisibleIf = "HidePreview")]
+		[VerticalGroup(VisibleIf = "HideDetail")]
 		[VerticalGroup("@ResourcesPathGroupName/H1/V1")]
 		[OnValueChanged("_OnValidate")]
 		[InlineButton("Clear")]
 		[InlineButton("_OnValidate", "Update")]
+		[InlineButton("Select", ShowIf = "HideDetail")]
 		public string resourcesPath;
 
 		private T loadAsset { get; set; }
@@ -145,7 +129,7 @@ namespace BC.Base
 				allPaths = AssetDatabase.FindAssets($"t: {typeof(T).Name}", folders.ToArray()).Select(AssetDatabase.GUIDToAssetPath).ToArray();
 			}
 			int length = allPaths.Length;
-			for (int i = 0; i < length; i++)
+			for (int i = 0 ; i < length ; i++)
 			{
 				string resourcesPath = AssetPathConvertResourcesPath(allPaths[i]);
 				string fileName = Path.GetFileName(resourcesPath);
@@ -173,20 +157,7 @@ namespace BC.Base
 
 			return list;
 		}
-		//private bool GetAssetList(T asset)
-		//{
-		//	if (asset == null) return false;
-		//	if (asset.name.StartsWith("_")) return false;
 
-		//	string path = AssetDatabase.GetAssetPath(asset);
-		//	if (string.IsNullOrWhiteSpace(path)) return false;
-		//	path = path.Replace('\\', '/');
-
-		//	if (path.StartsWith("Resources/")) return true;
-		//	else if (path.Contains("/Resources/")) return true;
-
-		//	return false;
-		//}
 		string AssetPathConvertResourcesPath(string assetPath)
 		{
 			string keyword = "Resources";
@@ -210,7 +181,7 @@ namespace BC.Base
 		}
 		public void OnValidate(bool showPreview)
 		{
-			ShowPreview = showPreview;
+			ShowDetail = showPreview;
 			OnValidate();
 		}
 		public void OnValidate(string filter)
@@ -220,7 +191,7 @@ namespace BC.Base
 		}
 		public void OnValidate(bool showPreview, string filter)
 		{
-			ShowPreview = showPreview;
+			ShowDetail = showPreview;
 			FilterPath = filter;
 			OnValidate();
 		}
@@ -288,6 +259,10 @@ namespace BC.Base
 			resourcesPath = "";
 			fullPath = "";
 			loadAsset = null;
+		}
+		private void Select()
+		{
+			EditorGUIUtility.PingObject(preview);
 		}
 #endif
 	}
