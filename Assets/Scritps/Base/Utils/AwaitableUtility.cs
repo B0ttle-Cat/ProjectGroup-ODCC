@@ -9,19 +9,19 @@ namespace BC.Base
 	{
 		public static async Awaitable WaitTrue(Func<bool> condition, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			if(condition == null) return;
-			while(true)
+			if (condition == null) return;
+			while (true)
 			{
 				try
 				{
 					cancellationToken.ThrowIfCancellationRequested();
-					if(condition())
+					if (condition())
 					{
 						return;
 					}
 					await Awaitable.NextFrameAsync(cancellationToken);
 				}
-				catch(Exception ex)
+				catch (Exception ex)
 				{
 					Debug.LogException(ex);
 					return;
@@ -30,16 +30,16 @@ namespace BC.Base
 		}
 		public static async Awaitable WaitFalse(Func<bool> condition, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			if(condition == null) return;
-			while(true)
+			if (condition == null) return;
+			while (true)
 			{
 				try
 				{
 					cancellationToken.ThrowIfCancellationRequested();
-					if(!condition()) return;
+					if (!condition()) return;
 					await Awaitable.NextFrameAsync(cancellationToken);
 				}
-				catch(Exception ex)
+				catch (Exception ex)
 				{
 					Debug.LogException(ex);
 					return;
@@ -48,17 +48,17 @@ namespace BC.Base
 		}
 		public static async Awaitable<T> WaitNotNull<T>(Func<T> checkT, CancellationToken cancellationToken = default(CancellationToken)) where T : class
 		{
-			if(checkT == null) return null;
-			while(true)
+			if (checkT == null) return null;
+			while (true)
 			{
 				try
 				{
 					cancellationToken.ThrowIfCancellationRequested();
 					var t = checkT();
-					if(t != null) return t;
+					if (t != null) return t;
 					await Awaitable.NextFrameAsync(cancellationToken);
 				}
-				catch(Exception ex)
+				catch (Exception ex)
 				{
 					Debug.LogException(ex);
 					return null;
@@ -67,17 +67,17 @@ namespace BC.Base
 		}
 		public static async Awaitable<T> WaitIsNull<T>(Func<T> checkT, CancellationToken cancellationToken = default(CancellationToken)) where T : class
 		{
-			if(checkT == null) return null;
-			while(true)
+			if (checkT == null) return null;
+			while (true)
 			{
 				try
 				{
 					cancellationToken.ThrowIfCancellationRequested();
 					var t = checkT();
-					if(t == null) return t;
+					if (t == null) return t;
 					await Awaitable.NextFrameAsync(cancellationToken);
 				}
-				catch(Exception ex)
+				catch (Exception ex)
 				{
 					Debug.LogException(ex);
 					return null;
@@ -90,15 +90,15 @@ namespace BC.Base
 		}
 		public static async Awaitable WaitAll(CancellationToken cancellationToken, params Awaitable[] awaitables)
 		{
-			foreach(var awaitable in awaitables)
+			foreach (var awaitable in awaitables)
 			{
 
 				try
 				{
-					if(awaitable == null || !cancellationToken.CanBeCanceled) continue;
+					if (awaitable == null || !cancellationToken.CanBeCanceled) continue;
 					await awaitable;
 				}
-				catch(Exception ex)
+				catch (Exception ex)
 				{
 					Debug.LogException(ex);
 					continue;
@@ -114,15 +114,15 @@ namespace BC.Base
 		{
 			int length = awaitables.Length;
 			T[] result = new T[length];
-			for(int i = 0 ; i<length ; i++)
+			for (int i = 0 ; i<length ; i++)
 			{
 				try
 				{
 					var awaitable = awaitables[i];
-					if(awaitable == null || !cancellationToken.CanBeCanceled) continue;
+					if (awaitable == null || !cancellationToken.CanBeCanceled) continue;
 					result[i] = await awaitable;
 				}
-				catch(Exception ex)
+				catch (Exception ex)
 				{
 					Debug.LogException(ex);
 					continue;
@@ -138,13 +138,13 @@ namespace BC.Base
 		public static async Awaitable ParallelWaitAll(CancellationToken cancellationToken, params Awaitable[] awaitables)
 		{
 			int waitParallel = awaitables.Length;
-			foreach(var awaitable in awaitables)
+			foreach (var awaitable in awaitables)
 			{
-				if(awaitable == null) continue;
+				if (awaitable == null) continue;
 				ParallelUpdate(awaitable);
 			}
 
-			while(waitParallel > 0 && cancellationToken.CanBeCanceled)
+			while (waitParallel > 0 && cancellationToken.CanBeCanceled)
 			{
 				await Awaitable.NextFrameAsync(cancellationToken);
 			}
@@ -163,10 +163,10 @@ namespace BC.Base
 			int length = awaitables.Length;
 			T[] result = new T[length];
 			int waitParallel = length;
-			for(int i = 0 ; i<length ; i++)
+			for (int i = 0 ; i<length ; i++)
 			{
 				Awaitable<T> awaitable = awaitables[i];
-				if(awaitable == null)
+				if (awaitable == null)
 				{
 					waitParallel--;
 					continue;
@@ -174,7 +174,7 @@ namespace BC.Base
 				ParallelUpdate(i, awaitable);
 			}
 
-			while(waitParallel > 0 && cancellationToken.CanBeCanceled)
+			while (waitParallel > 0 && cancellationToken.CanBeCanceled)
 			{
 				await Awaitable.NextFrameAsync(cancellationToken);
 			}
@@ -196,10 +196,10 @@ namespace BC.Base
 			T result = default;
 			int waitParallel = length + 1;
 			ResultParallelUpdate(resultAwaitables);
-			for(int i = 0 ; i<length ; i++)
+			for (int i = 0 ; i<length ; i++)
 			{
 				Awaitable awaitable = awaitables[i];
-				if(awaitable == null)
+				if (awaitable == null)
 				{
 					waitParallel--;
 					continue;
@@ -207,7 +207,7 @@ namespace BC.Base
 				ParallelUpdate(awaitable);
 			}
 
-			while(waitParallel > 0 && cancellationToken.CanBeCanceled)
+			while (waitParallel > 0 && cancellationToken.CanBeCanceled)
 			{
 				await Awaitable.NextFrameAsync(cancellationToken);
 			}
@@ -233,23 +233,23 @@ namespace BC.Base
 		public static async Awaitable ParallelWaitAny(CancellationToken cancellationToken, params Awaitable[] awaitables)
 		{
 			bool waitParallel = true;
-			foreach(Awaitable awaitable in awaitables)
+			foreach (Awaitable awaitable in awaitables)
 			{
-				if(awaitable == null || !cancellationToken.CanBeCanceled) continue;
+				if (awaitable == null || !cancellationToken.CanBeCanceled) continue;
 				ParallelUpdate(awaitable);
 			}
 
-			while(waitParallel || cancellationToken.CanBeCanceled)
+			while (waitParallel || cancellationToken.CanBeCanceled)
 			{
 				await Awaitable.NextFrameAsync(cancellationToken);
 			}
-			foreach(var awaitable in awaitables)
+			foreach (var awaitable in awaitables)
 			{
 				try
 				{
 					awaitable.Cancel();
 				}
-				catch(System.OperationCanceledException cancel) { }
+				catch (System.OperationCanceledException cancel) { }
 			}
 			async void ParallelUpdate(Awaitable awaitable)
 			{
@@ -266,29 +266,29 @@ namespace BC.Base
 		{
 			T result = default;
 			bool waitParallel = true;
-			foreach(var awaitable in awaitables)
+			foreach (var awaitable in awaitables)
 			{
-				if(awaitable == null || !cancellationToken.CanBeCanceled) continue;
+				if (awaitable == null || !cancellationToken.CanBeCanceled) continue;
 				ParallelUpdate(awaitable);
 			}
 
-			while(waitParallel && cancellationToken.CanBeCanceled)
+			while (waitParallel && cancellationToken.CanBeCanceled)
 			{
 				await Awaitable.NextFrameAsync(cancellationToken);
 			}
-			foreach(var awaitable in awaitables)
+			foreach (var awaitable in awaitables)
 			{
 				try
 				{
 					awaitable.Cancel();
 				}
-				catch(System.OperationCanceledException cancel) { }
+				catch (System.OperationCanceledException cancel) { }
 			}
 			return result;
 			async void ParallelUpdate(Awaitable<T> awaitable)
 			{
 				var _result = await awaitable;
-				if(waitParallel)
+				if (waitParallel)
 				{
 					result = _result;
 				}
@@ -305,23 +305,23 @@ namespace BC.Base
 			T result = default;
 			bool waitResult = true;
 			bool waitParallel = true;
-			foreach(var awaitable in awaitables)
+			foreach (var awaitable in awaitables)
 			{
-				if(awaitable == null || !cancellationToken.CanBeCanceled) continue;
+				if (awaitable == null || !cancellationToken.CanBeCanceled) continue;
 				ParallelUpdate(awaitable);
 			}
 
-			while((waitParallel || waitResult) && cancellationToken.CanBeCanceled)
+			while ((waitParallel || waitResult) && cancellationToken.CanBeCanceled)
 			{
 				await Awaitable.NextFrameAsync(cancellationToken);
 			}
-			foreach(var awaitable in awaitables)
+			foreach (var awaitable in awaitables)
 			{
 				try
 				{
 					awaitable.Cancel();
 				}
-				catch(System.OperationCanceledException cancel) { }
+				catch (System.OperationCanceledException cancel) { }
 			}
 			return result;
 			async void ParallelUpdate(Awaitable awaitable)

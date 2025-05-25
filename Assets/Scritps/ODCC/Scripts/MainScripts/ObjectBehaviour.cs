@@ -12,11 +12,11 @@ namespace BC.ODCC
 		private ContainerObject _container;
 		public override ContainerObject ThisContainer {
 			get {
-				if(_container is null)
+				if (_container is null)
 				{
 					_container = new ContainerObject(new ContainerNode(this));
 				}
-				if(_container.ThisObject == null)
+				if (_container.ThisObject == null)
 				{
 					_container.ContainerNode.thisObject = this;
 					_container.ContainerNode.CurrentInit();
@@ -30,7 +30,7 @@ namespace BC.ODCC
 		}
 		void IOdccObject.CreateThisContainer(ContainerNode target)
 		{
-			if(_container == null)
+			if (_container == null)
 			{
 				_container = new ContainerObject(target);
 			}
@@ -47,9 +47,9 @@ namespace BC.ODCC
 		{
 			try
 			{
-				if(UnityEditor.EditorApplication.isPlaying) return;
-				if(!gameObject.scene.isLoaded) return;
-				if(ThisTransform == null) return;
+				if (UnityEditor.EditorApplication.isPlaying) return;
+				if (!gameObject.scene.isLoaded) return;
+				if (ThisTransform == null) return;
 
 				_container = new ContainerObject(new ContainerNode(this));
 				_container.ContainerNode.CurrentInit();
@@ -60,13 +60,13 @@ namespace BC.ODCC
 
 
 				_container.ComponentList?.ForEach(item => {
-					if(item is ComponentBehaviour behaviour) behaviour.Reset();
+					if (item is ComponentBehaviour behaviour) behaviour.Reset();
 				});
 				_container.ChildObject?.ForEach(item => {
-					if(item is ObjectBehaviour behaviour) behaviour.Reset();
+					if (item is ObjectBehaviour behaviour) behaviour.Reset();
 				});
 			}
-			catch(Exception ex)
+			catch (Exception ex)
 			{
 				Debug.LogError("Exception Reset : " + gameObject.name);
 				Debug.LogException(ex);
@@ -76,15 +76,15 @@ namespace BC.ODCC
 		{
 			try
 			{
-				if(UnityEditor.EditorApplication.isPlaying) return;
-				if(!gameObject.scene.isLoaded) return;
-				if(ThisTransform == null) return;
+				if (UnityEditor.EditorApplication.isPlaying) return;
+				if (!gameObject.scene.isLoaded) return;
+				if (ThisTransform == null) return;
 
-				if(_container == null || _container.ContainerNode == null)
+				if (_container == null || _container.ContainerNode == null)
 				{
 					_container = new ContainerObject(new ContainerNode(this));
 				}
-				if(_container.ThisObject == null)
+				if (_container.ThisObject == null)
 				{
 					_container.ContainerNode.thisObject = this;
 					_container.ContainerNode.CurrentInit();
@@ -94,13 +94,13 @@ namespace BC.ODCC
 				BaseValidate();
 
 				_container.ComponentList?.ForEach(item => {
-					if(item is ComponentBehaviour behaviour) behaviour.OnValidate();
+					if (item is ComponentBehaviour behaviour) behaviour.OnValidate();
 				});
 				_container.ChildObject?.ForEach(item => {
-					if(item is ObjectBehaviour behaviour) behaviour.OnValidate();
+					if (item is ObjectBehaviour behaviour) behaviour.OnValidate();
 				});
 			}
-			catch(Exception ex)
+			catch (Exception ex)
 			{
 				Debug.LogError("Exception OnValidate : " + gameObject.name);
 				Debug.LogException(ex);
@@ -110,7 +110,7 @@ namespace BC.ODCC
 		[ContextMenu("ContainerUpdateInEditor")]
 		public void ContainerUpdateInEditor()
 		{
-			if(_container != null && _container.ContainerNode != null)
+			if (_container != null && _container.ContainerNode != null)
 			{
 				_container.ContainerNode.thisObject = this;
 				_container.ContainerNode.CurrentInit();
