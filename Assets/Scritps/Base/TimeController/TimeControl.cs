@@ -51,12 +51,12 @@ namespace BC.Base
 		}
 
 		/// <summary>
-		/// 되도록 using 을 사용하여 제어하는 것을 권장합니다.
-		/// 예) using (UsingSmoothness(ControlSmoothnessType.Smooth, 0.5f)) { ... }
+		/// <code>컨트롤 동작에 일시적으로 부드러움(Smoothness) 타입과 지속 시간을 설정합니다.
+		/// 자동으로 Dispose 되도록 using 과 함께 사용하여 제어하는 것을 권장합니다.
+		/// 예) using (UsingSmoothness(...,...)) { ... }</code>
 		/// </summary>
-		/// <param name="smoothness"></param>
-		/// <param name="time"></param>
-		/// <returns></returns>
+		/// <param name="smoothness">일시적으로 적용할 부드러움 타입입니다.</param>
+		/// <param name="time">설정을 유지할 시간(초)입니다. 0보다 커야 합니다.</param>
 		public static IDisposable UsingSmoothness(ControlSmoothnessType smoothness, float time)
 		{
 			TempSmoothness = smoothness;
