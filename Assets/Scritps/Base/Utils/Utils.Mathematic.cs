@@ -23,13 +23,13 @@ namespace BC.Base
 		}
 
 		/// <summary> <code>
-		/// µÎ ¹éÅÍÀÇ °¢ÀÌ ¾ó¸¶³ª ÀÏÄ¡ ÇÏ´ÂÁö
-		/// ÀÏÄ¡ ÇÒ¼ö·Ï 1
-		/// ºÒÀÏÄ¡ ÇÒ¼ö·Ï 0
+		/// ë‘ ë°±í„°ì˜ ê°ì´ ì–¼ë§ˆë‚˜ ì¼ì¹˜ í•˜ëŠ”ì§€
+		/// ì¼ì¹˜ í• ìˆ˜ë¡ 1
+		/// ë¶ˆì¼ì¹˜ í• ìˆ˜ë¡ 0
 		/// </code> </summary>
 		public static float CalculateDirectionalMatch(Vector3 diractionA, Vector3 diractionB)
 		{
-			// µÎ º¤ÅÍ °£ÀÇ °¢µµ °è»ê
+			// ë‘ ë²¡í„° ê°„ì˜ ê°ë„ ê³„ì‚°
 			// Dot => 1 ~ -1
 			// + 1 => 2 ~ 0
 			// *.5 => 1 ~ 0
@@ -39,9 +39,9 @@ namespace BC.Base
 			return (Vector3.Dot(diractionA.normalized, diractionB.normalized) + 1) * 0.5f;
 		}
 		/// <summary> <code>
-		/// µÎ ¹éÅÍÀÇ °¢ÀÌ ¾ó¸¶³ª ºÒÀÏÄ¡ ÇÏ´ÂÁö
-		/// ÀÏÄ¡ ÇÒ¼ö·Ï 0
-		/// ºÒÀÏÄ¡ ÇÒ¼ö·Ï 1
+		/// ë‘ ë°±í„°ì˜ ê°ì´ ì–¼ë§ˆë‚˜ ë¶ˆì¼ì¹˜ í•˜ëŠ”ì§€
+		/// ì¼ì¹˜ í• ìˆ˜ë¡ 0
+		/// ë¶ˆì¼ì¹˜ í• ìˆ˜ë¡ 1
 		/// </code> </summary>
 		public static float CalculateDirectionalMissmatch(Vector3 diractionA, Vector3 diractionB)
 		{
@@ -50,10 +50,10 @@ namespace BC.Base
 
 		/// <summary><code>
 		/// Close - Packing of Spheres (https://en.wikipedia.org/wiki/Close-packing_of_equal_spheres)
-		/// center : Áß½É ÁÂÇ¥
-		/// size : ¿µ¿ªÀÇ Å©±â
-		/// sphereRadius : °ø°£À» Ã¤¿ï ±¸ÀÇ ¹İÁö¸§
-		/// pattern: °ø°£À» Ã¤¿ì´Â ¹æ¼®
+		/// center : ì¤‘ì‹¬ ì¢Œí‘œ
+		/// size : ì˜ì—­ì˜ í¬ê¸°
+		/// sphereRadius : ê³µê°„ì„ ì±„ìš¸ êµ¬ì˜ ë°˜ì§€ë¦„
+		/// pattern: ê³µê°„ì„ ì±„ìš°ëŠ” ë°©ì„
 		/// pattern == 0 : SC
 		/// pattern == 1 : XZ => HCP + Y => SC
 		/// pattern == 2 : HCP
@@ -160,7 +160,7 @@ namespace BC.Base
 		}
 
 		/// <summary>
-		/// Vector3.Distance ÀÇ Sqr ¹öÀü
+		/// Vector3.Distance ì˜ Sqr ë²„ì „
 		/// </summary>
 		/// <param name="a"></param>
 		/// <param name="b"></param>
@@ -176,13 +176,13 @@ namespace BC.Base
 
 
 		/// <summary>
-		/// ÁÖ¾îÁø Á¡ÀÌ µÎ²²¸¦ °í·ÁÇÑ »ï°¢Çü ³»ºÎ¿¡ ÀÖ´ÂÁö °Ë»çÇÏ´Â ÇÔ¼ö
+		/// ì£¼ì–´ì§„ ì ì´ ë‘ê»˜ë¥¼ ê³ ë ¤í•œ ì‚¼ê°í˜• ë‚´ë¶€ì— ìˆëŠ”ì§€ ê²€ì‚¬í•˜ëŠ” í•¨ìˆ˜
 		/// </summary>
 		public static bool PointInTriangle(Vector3 point, Vector3 vertex1, Vector3 vertex2, Vector3 vertex3, float thickness)
 		{
 			return IsPointInTriangle() && Mathf.Abs(PointToPlaneDistance()) <= Mathf.Abs(thickness);
 
-			// ÁÖ¾îÁø ÁöÁ¡°ú »ï°¢ÇüÀÇ °¢ ²ÀÁöÁ¡À¸·Î ¸¸µé¾îÁø Æò¸é°úÀÇ °Å¸®¸¦ °è»êÇÏ´Â ÇÔ¼ö
+			// ì£¼ì–´ì§„ ì§€ì ê³¼ ì‚¼ê°í˜•ì˜ ê° ê¼­ì§€ì ìœ¼ë¡œ ë§Œë“¤ì–´ì§„ í‰ë©´ê³¼ì˜ ê±°ë¦¬ë¥¼ ê³„ì‚°í•˜ëŠ” í•¨ìˆ˜
 			float PointToPlaneDistance()
 			{
 				Vector3 normal = Vector3.Cross(vertex2 - vertex1, vertex3 - vertex1).normalized;
@@ -190,7 +190,7 @@ namespace BC.Base
 				return distance;
 			}
 
-			// ÁÖ¾îÁø Á¡ÀÌ »ï°¢Çü ³»ºÎ¿¡ ÀÖ´ÂÁö °Ë»çÇÏ´Â ÇÔ¼ö (2D¿¡¼­ ±×´ë·Î »ç¿ë)
+			// ì£¼ì–´ì§„ ì ì´ ì‚¼ê°í˜• ë‚´ë¶€ì— ìˆëŠ”ì§€ ê²€ì‚¬í•˜ëŠ” í•¨ìˆ˜ (2Dì—ì„œ ê·¸ëŒ€ë¡œ ì‚¬ìš©)
 			bool IsPointInTriangle()
 			{
 				Vector3 v0 = vertex3 - vertex1;
@@ -212,7 +212,7 @@ namespace BC.Base
 		}
 
 		/// <summary>
-		/// ¼±ÀÌ Bounds¸¦ °¡·ÎÁö¸£´ÂÁö ¿©ºÎ¸¦ È®ÀÎ
+		/// ì„ ì´ Boundsë¥¼ ê°€ë¡œì§€ë¥´ëŠ”ì§€ ì—¬ë¶€ë¥¼ í™•ì¸
 		/// </summary>
 		public static bool IsLineIntersectingBox(Vector3 start, Vector3 end, Vector3 center, Vector3 halfSize)
 		{

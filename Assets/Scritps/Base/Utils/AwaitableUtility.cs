@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading;
 
 using UnityEngine;
@@ -95,7 +95,7 @@ namespace BC.Base
 
 				try
 				{
-					if (awaitable == null || !cancellationToken.CanBeCanceled) continue;
+					if (awaitable == null || cancellationToken.IsCancellationRequested) continue;
 					await awaitable;
 				}
 				catch (Exception ex)
@@ -119,7 +119,7 @@ namespace BC.Base
 				try
 				{
 					var awaitable = awaitables[i];
-					if (awaitable == null || !cancellationToken.CanBeCanceled) continue;
+					if (awaitable == null || cancellationToken.IsCancellationRequested) continue;
 					result[i] = await awaitable;
 				}
 				catch (Exception ex)
@@ -144,7 +144,7 @@ namespace BC.Base
 				ParallelUpdate(awaitable);
 			}
 
-			while (waitParallel > 0 && cancellationToken.CanBeCanceled)
+			while (waitParallel > 0 && !cancellationToken.IsCancellationRequested)
 			{
 				await Awaitable.NextFrameAsync(cancellationToken);
 			}
@@ -174,7 +174,7 @@ namespace BC.Base
 				ParallelUpdate(i, awaitable);
 			}
 
-			while (waitParallel > 0 && cancellationToken.CanBeCanceled)
+			while (waitParallel > 0 && !cancellationToken.IsCancellationRequested)
 			{
 				await Awaitable.NextFrameAsync(cancellationToken);
 			}
@@ -207,7 +207,7 @@ namespace BC.Base
 				ParallelUpdate(awaitable);
 			}
 
-			while (waitParallel > 0 && cancellationToken.CanBeCanceled)
+			while (waitParallel > 0 && !cancellationToken.IsCancellationRequested)
 			{
 				await Awaitable.NextFrameAsync(cancellationToken);
 			}
@@ -235,11 +235,11 @@ namespace BC.Base
 			bool waitParallel = true;
 			foreach (Awaitable awaitable in awaitables)
 			{
-				if (awaitable == null || !cancellationToken.CanBeCanceled) continue;
+				if (awaitable == null || cancellationToken.IsCancellationRequested) continue;
 				ParallelUpdate(awaitable);
 			}
 
-			while (waitParallel || cancellationToken.CanBeCanceled)
+			while (waitParallel || !cancellationToken.IsCancellationRequested)
 			{
 				await Awaitable.NextFrameAsync(cancellationToken);
 			}
@@ -268,11 +268,11 @@ namespace BC.Base
 			bool waitParallel = true;
 			foreach (var awaitable in awaitables)
 			{
-				if (awaitable == null || !cancellationToken.CanBeCanceled) continue;
+				if (awaitable == null || cancellationToken.IsCancellationRequested) continue;
 				ParallelUpdate(awaitable);
 			}
 
-			while (waitParallel && cancellationToken.CanBeCanceled)
+			while (waitParallel || !cancellationToken.IsCancellationRequested)
 			{
 				await Awaitable.NextFrameAsync(cancellationToken);
 			}
@@ -307,11 +307,11 @@ namespace BC.Base
 			bool waitParallel = true;
 			foreach (var awaitable in awaitables)
 			{
-				if (awaitable == null || !cancellationToken.CanBeCanceled) continue;
+				if (awaitable == null || cancellationToken.IsCancellationRequested) continue;
 				ParallelUpdate(awaitable);
 			}
 
-			while ((waitParallel || waitResult) && cancellationToken.CanBeCanceled)
+			while ((waitParallel || waitResult) && !cancellationToken.IsCancellationRequested)
 			{
 				await Awaitable.NextFrameAsync(cancellationToken);
 			}

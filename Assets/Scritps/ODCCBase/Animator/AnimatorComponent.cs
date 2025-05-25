@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 
@@ -252,7 +252,7 @@ namespace BC.OdccBase
 				if (Animator == null) return false;
 				if (animatorStatePlayList == null) return false;
 				if (DestroyCancelToken.IsCancellationRequested) return false;
-				if (!cancellationToken.CanBeCanceled) return false;
+				if (cancellationToken.IsCancellationRequested) return false;
 				return true;
 			}
 			bool IsHasState(out AnimatorStateInfo animatorStateInfo)
@@ -306,7 +306,7 @@ namespace BC.OdccBase
 				if (Animator == null) return false;
 				if (machineStatePlayList == null) return false;
 				if (DestroyCancelToken.IsCancellationRequested) return false;
-				if (!cancellationToken.CanBeCanceled) return false;
+				if (cancellationToken.IsCancellationRequested) return false;
 				return true;
 			}
 			bool IsHasState()
@@ -396,12 +396,13 @@ namespace BC.OdccBase
 			AnimatorSaveData data = new AnimatorSaveData();
 
 			// 상태 저장 (Layer별)
-			for (int i = 0; i < animator.layerCount; i++)
+			for (int i = 0 ; i < animator.layerCount ; i++)
 			{
 				var stateInfo = animator.GetCurrentAnimatorStateInfo(i);
 				bool isInTransition = animator.IsInTransition(i);
 
-				AnimatorLayerState layerState = new AnimatorLayerState {
+				AnimatorLayerState layerState = new AnimatorLayerState
+				{
 					layerIndex = i,
 					stateHash = stateInfo.shortNameHash,
 					normalizedTime = stateInfo.normalizedTime,
@@ -417,17 +418,17 @@ namespace BC.OdccBase
 				switch (param.type)
 				{
 					case AnimatorControllerParameterType.Float:
-						data.floatParams.Add(new AnimatorSaveData.Params<float>(param.name, animator.GetFloat(param.name)));
-						break;
+					data.floatParams.Add(new AnimatorSaveData.Params<float>(param.name, animator.GetFloat(param.name)));
+					break;
 					case AnimatorControllerParameterType.Int:
-						data.intParams.Add(new AnimatorSaveData.Params<int>(param.name, animator.GetInteger(param.name)));
-						break;
+					data.intParams.Add(new AnimatorSaveData.Params<int>(param.name, animator.GetInteger(param.name)));
+					break;
 					case AnimatorControllerParameterType.Bool:
-						data.boolParams.Add(new AnimatorSaveData.Params<bool>(param.name, animator.GetBool(param.name)));
-						break;
+					data.boolParams.Add(new AnimatorSaveData.Params<bool>(param.name, animator.GetBool(param.name)));
+					break;
 					case AnimatorControllerParameterType.Trigger:
-						if (animator.GetBool(param.name)) data.activeTriggers.Add(param.name);
-						break;
+					if (animator.GetBool(param.name)) data.activeTriggers.Add(param.name);
+					break;
 				}
 			}
 
