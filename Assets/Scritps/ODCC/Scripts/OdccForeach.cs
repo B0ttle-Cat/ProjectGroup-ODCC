@@ -1,8 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
-using UnityEngine;
+using BC.Base;
+
 using UnityEngine.SceneManagement;
+
+using Debug = UnityEngine.Debug;
 
 namespace BC.ODCC
 {
@@ -102,116 +105,120 @@ namespace BC.ODCC
 		/// </summary>
 		private static void OCBehaviourUpdate(IEnumerable<IOdccUpdate> behaviour)
 		{
-			if(behaviour == null) return;
+			if (behaviour == null) return;
 
 			// CallForeach 액션 큐를 비웁니다.
-			while(foreachAction.Count > 0)
+			while (foreachAction.Count > 0)
 			{
 				foreachAction.Dequeue().Invoke();
 			}
 
 			// 각 OCBehaviour 객체에 대해 업데이트 작업을 수행합니다.
-			foreach(var _item in behaviour)
+			foreach (var _item in behaviour)
 			{
 				var item = _item;
-				if(item is IOdccUpdate update && update._IsCanEnterUpdate)
+				if (item is IOdccUpdate update && update._IsCanEnterUpdate)
 				{
 					foreachAction.Enqueue(() => {
-						if(update.PassUpdate) return;
+						if (update.PassUpdate) return;
+						TimeControl.ApplyTypeScale(update.TimeID);
 						update.BaseUpdate();
 					});
 				}
 			}
 
 			// CallForeach 액션 큐를 다시 비웁니다.
-			while(foreachAction.Count > 0)
+			while (foreachAction.Count > 0)
 			{
 				foreachAction.Dequeue().Invoke();
 			}
 		}
 		private static void OCBehaviourLateUpdate(IEnumerable<IOdccUpdate.Late> behaviour)
 		{
-			if(behaviour == null) return;
+			if (behaviour == null) return;
 
 			// CallForeach 액션 큐를 비웁니다.
-			while(foreachAction.Count > 0)
+			while (foreachAction.Count > 0)
 			{
 				foreachAction.Dequeue().Invoke();
 			}
 
 			// 각 OCBehaviour 객체에 대해 LateUpdate 작업을 수행합니다.
-			foreach(var _item in behaviour)
+			foreach (var _item in behaviour)
 			{
 				var item = _item;
-				if(item is IOdccUpdate.Late update && item._IsCanEnterUpdate)
+				if (item is IOdccUpdate.Late update && item._IsCanEnterUpdate)
 				{
 					foreachAction.Enqueue(() => {
-						if(update.PassUpdate) return;
+						if (update.PassUpdate) return;
+						TimeControl.ApplyTypeScale(update.TimeID);
 						update.BaseLateUpdate();
 					});
 				}
 			}
 
 			// CallForeach 액션 큐를 다시 비웁니다.
-			while(foreachAction.Count > 0)
+			while (foreachAction.Count > 0)
 			{
 				foreachAction.Dequeue().Invoke();
 			}
 		}
 		private static void OCBehaviourFastUpdate(IEnumerable<IOdccUpdate.Fast> behaviour)
 		{
-			if(behaviour == null) return;
+			if (behaviour == null) return;
 
 			// CallForeach 액션 큐를 비웁니다.
-			while(foreachAction.Count > 0)
+			while (foreachAction.Count > 0)
 			{
 				foreachAction.Dequeue().Invoke();
 			}
 
 			// 각 OCBehaviour 객체에 대해 FastUpdate 작업을 수행합니다.
-			foreach(var _item in behaviour)
+			foreach (var _item in behaviour)
 			{
 				var item = _item;
-				if(item is IOdccUpdate.Fast update && item._IsCanEnterUpdate)
+				if (item is IOdccUpdate.Fast update && item._IsCanEnterUpdate)
 				{
 					foreachAction.Enqueue(() => {
-						if(update.PassUpdate) return;
+						if (update.PassUpdate) return;
+						TimeControl.ApplyTypeScale(update.TimeID);
 						update.BaseFastUpdate();
 					});
 				}
 			}
 
 			// CallForeach 액션 큐를 다시 비웁니다.
-			while(foreachAction.Count > 0)
+			while (foreachAction.Count > 0)
 			{
 				foreachAction.Dequeue().Invoke();
 			}
 		}
 		private static void OCBehaviourFixedUpdate(IEnumerable<IOdccUpdate.Fixed> behaviour)
 		{
-			if(behaviour == null) return;
+			if (behaviour == null) return;
 
 			// CallForeach 액션 큐를 비웁니다.
-			while(foreachAction.Count > 0)
+			while (foreachAction.Count > 0)
 			{
 				foreachAction.Dequeue().Invoke();
 			}
 
 			// 각 OCBehaviour 객체에 대해 FastUpdate 작업을 수행합니다.
-			foreach(var _item in behaviour)
+			foreach (var _item in behaviour)
 			{
 				var item = _item;
-				if(item is IOdccUpdate.Fixed update && item._IsCanEnterUpdate)
+				if (item is IOdccUpdate.Fixed update && item._IsCanEnterUpdate)
 				{
 					foreachAction.Enqueue(() => {
-						if(update.PassUpdate) return;
+						if (update.PassUpdate) return;
+						TimeControl.ApplyTypeScale(update.TimeID);
 						update.BaseFixedUpdate();
 					});
 				}
 			}
 
 			// CallForeach 액션 큐를 다시 비웁니다.
-			while(foreachAction.Count > 0)
+			while (foreachAction.Count > 0)
 			{
 				foreachAction.Dequeue().Invoke();
 			}
@@ -219,35 +226,35 @@ namespace BC.ODCC
 
 		internal static void UpdateOdccCollectorList(IOdccObject behaviour)
 		{
-			if(behaviour is not ObjectBehaviour odccObject)
+			if (behaviour is not ObjectBehaviour odccObject)
 			{
 				return;
 			}
-			while(foreachAction.Count > 0)
+			while (foreachAction.Count > 0)
 			{
 				foreachAction.Dequeue().Invoke();
 			}
-			foreach(var _query in OdccQueryCollectors)
+			foreach (var _query in OdccQueryCollectors)
 			{
 				var queryCollector = _query.Value;
 				foreachAction.Enqueue(() => queryCollector.UpdateObjectInQuery(odccObject));
 			}
-			while(foreachAction.Count > 0)
+			while (foreachAction.Count > 0)
 			{
 				foreachAction.Dequeue().Invoke();
 			}
 		}
 		internal static void RemoveOdccCollectorList(IOdccObject behaviour)
 		{
-			if(behaviour is not ObjectBehaviour odccObject)
+			if (behaviour is not ObjectBehaviour odccObject)
 			{
 				return;
 			}
-			while(foreachAction.Count > 0)
+			while (foreachAction.Count > 0)
 			{
 				foreachAction.Dequeue().Invoke();
 			}
-			foreach(var _query in OdccQueryCollectors)
+			foreach (var _query in OdccQueryCollectors)
 			{
 				var queryCollector = _query.Value;
 				foreachAction.Enqueue(() => {
@@ -255,7 +262,7 @@ namespace BC.ODCC
 					queryCollector.RemoveLifeItem(odccObject);
 				});
 			}
-			while(foreachAction.Count > 0)
+			while (foreachAction.Count > 0)
 			{
 				foreachAction.Dequeue().Invoke();
 			}
@@ -263,7 +270,7 @@ namespace BC.ODCC
 
 		internal static void AddUpdateBehaviour(IOdccUpdate behaviour)
 		{
-			if(behaviour is IOdccObject)
+			if (behaviour is IOdccObject)
 			{
 				TryInsert(ref objectUpdateList, behaviour);
 			}
@@ -274,9 +281,9 @@ namespace BC.ODCC
 			void TryInsert(ref List<IOdccUpdate> list, IOdccUpdate behaviour)
 			{
 				int length = list.Count;
-				for(int i = 0 ; i < length ; i++)
+				for (int i = 0 ; i < length ; i++)
 				{
-					if(list[i].UpdatePriority > behaviour.UpdatePriority)
+					if (list[i].UpdatePriority > behaviour.UpdatePriority)
 					{
 						list.Insert(i, behaviour);
 						return;
@@ -288,7 +295,7 @@ namespace BC.ODCC
 
 		internal static void AddLateUpdateBehaviour(IOdccUpdate.Late behaviour)
 		{
-			if(behaviour is IOdccObject)
+			if (behaviour is IOdccObject)
 			{
 				TryInsert(ref objectLateUpdateList, behaviour);
 			}
@@ -299,9 +306,9 @@ namespace BC.ODCC
 			void TryInsert(ref List<IOdccUpdate.Late> list, IOdccUpdate.Late behaviour)
 			{
 				int length = list.Count;
-				for(int i = 0 ; i < length ; i++)
+				for (int i = 0 ; i < length ; i++)
 				{
-					if(list[i].UpdatePriority > behaviour.UpdatePriority)
+					if (list[i].UpdatePriority > behaviour.UpdatePriority)
 					{
 						list.Insert(i, behaviour);
 						return;
@@ -312,7 +319,7 @@ namespace BC.ODCC
 		}
 		internal static void AddFastUpdateBehaviour(IOdccUpdate.Fast behaviour)
 		{
-			if(behaviour is IOdccObject)
+			if (behaviour is IOdccObject)
 			{
 				TryInsert(ref objectFastUpdateList, behaviour);
 			}
@@ -323,9 +330,9 @@ namespace BC.ODCC
 			void TryInsert(ref List<IOdccUpdate.Fast> list, IOdccUpdate.Fast behaviour)
 			{
 				int length = list.Count;
-				for(int i = 0 ; i < length ; i++)
+				for (int i = 0 ; i < length ; i++)
 				{
-					if(list[i].UpdatePriority > behaviour.UpdatePriority)
+					if (list[i].UpdatePriority > behaviour.UpdatePriority)
 					{
 						list.Insert(i, behaviour);
 						return;
@@ -336,7 +343,7 @@ namespace BC.ODCC
 		}
 		internal static void AddFixedUpdateBehaviour(IOdccUpdate.Fixed behaviour)
 		{
-			if(behaviour is IOdccObject)
+			if (behaviour is IOdccObject)
 			{
 				TryInsert(ref objectFixedUpdateList, behaviour);
 			}
@@ -347,9 +354,9 @@ namespace BC.ODCC
 			void TryInsert(ref List<IOdccUpdate.Fixed> list, IOdccUpdate.Fixed behaviour)
 			{
 				int length = list.Count;
-				for(int i = 0 ; i < length ; i++)
+				for (int i = 0 ; i < length ; i++)
 				{
-					if(list[i].UpdatePriority > behaviour.UpdatePriority)
+					if (list[i].UpdatePriority > behaviour.UpdatePriority)
 					{
 						list.Insert(i, behaviour);
 						return;
@@ -360,7 +367,7 @@ namespace BC.ODCC
 		}
 		internal static void RemoveUpdateBehaviour(IOdccUpdate behaviour)
 		{
-			if(behaviour is IOdccObject)
+			if (behaviour is IOdccObject)
 			{
 				objectUpdateList.Remove(behaviour);
 			}
@@ -371,7 +378,7 @@ namespace BC.ODCC
 		}
 		internal static void RemoveLateUpdateBehaviour(IOdccUpdate.Late behaviour)
 		{
-			if(behaviour is IOdccObject)
+			if (behaviour is IOdccObject)
 			{
 				objectLateUpdateList.Remove(behaviour);
 			}
@@ -382,7 +389,7 @@ namespace BC.ODCC
 		}
 		internal static void RemoveFastUpdateBehaviour(IOdccUpdate.Fast behaviour)
 		{
-			if(behaviour is IOdccObject)
+			if (behaviour is IOdccObject)
 			{
 				objectFastUpdateList.Remove(behaviour);
 			}
@@ -393,7 +400,7 @@ namespace BC.ODCC
 		}
 		internal static void RemoveFixedUpdateBehaviour(IOdccUpdate.Fixed behaviour)
 		{
-			if(behaviour is IOdccObject)
+			if (behaviour is IOdccObject)
 			{
 				objectFixedUpdateList.Remove(behaviour);
 			}
@@ -408,16 +415,16 @@ namespace BC.ODCC
 		/// <param name="updateObject">업데이트할 ObjectBehaviour 객체</param>
 		internal static void UpdateObjectInQuery(ObjectBehaviour updateObject)
 		{
-			if(updateObject is null) return;
+			if (updateObject is null) return;
 
 			// CallForeach 액션 큐를 비웁니다.
-			while(foreachAction.Count > 0)
+			while (foreachAction.Count > 0)
 			{
 				foreachAction.Dequeue().Invoke();
 			}
 
 			// 각 쿼리 컬렉터에 대해 객체를 업데이트합니다.
-			foreach(var _query in OdccQueryCollectors)
+			foreach (var _query in OdccQueryCollectors)
 			{
 				var query = _query;
 				foreachAction.Enqueue(() => {
@@ -427,7 +434,7 @@ namespace BC.ODCC
 			}
 
 			// CallForeach 액션 큐를 다시 비웁니다.
-			while(foreachAction.Count > 0)
+			while (foreachAction.Count > 0)
 			{
 				foreachAction.Dequeue().Invoke();
 			}
@@ -442,22 +449,22 @@ namespace BC.ODCC
 			Action beforeMainUpdate = null;
 			Action afterMainUpdate = null;
 
-			foreach(var orderKey in ForeachQueryUpdate)
+			foreach (var orderKey in ForeachQueryUpdate)
 			{
 				var order = orderKey.Key;
 				var dictionary = orderKey.Value;
 
-				foreach(var item in dictionary)
+				foreach (var item in dictionary)
 				{
 					var key = item.Key;
 					var value = item.Value;
-					if(key is not null)
+					if (key is not null)
 					{
-						if(value is null || value.IsCompleted)
+						if (value is null || value.IsCompleted)
 						{
 							try
 							{
-								if(order<=0)
+								if (order<=0)
 								{
 									beforeMainUpdate += () => dictionary[key] = key.RunAwaitable();
 								}
@@ -466,7 +473,7 @@ namespace BC.ODCC
 									afterMainUpdate += () => dictionary[key] = key.RunAwaitable();
 								}
 							}
-							catch(Exception ex)
+							catch (Exception ex)
 							{
 								Debug.LogException(ex);
 							}
@@ -478,7 +485,9 @@ namespace BC.ODCC
 			beforeMainUpdate?.Invoke();
 			OCBehaviourUpdate(objectUpdateList);
 			OCBehaviourUpdate(componentUpdateList);
+			TimeControl.ApplyTypeScale(null);
 			afterMainUpdate?.Invoke();
+
 		}
 
 		/// <summary>
@@ -489,6 +498,7 @@ namespace BC.ODCC
 			// ObjectBehaviour 리스트의 LateUpdate를 수행합니다.
 			OCBehaviourLateUpdate(objectLateUpdateList);
 			OCBehaviourLateUpdate(componentLateUpdateList);
+			TimeControl.ApplyTypeScale(null);
 		}
 		/// <summary>
 		/// CallForeach 시스템의 FastUpdate를 수행하는 메서드입니다.
@@ -498,6 +508,7 @@ namespace BC.ODCC
 			// ObjectBehaviour 리스트의 LateUpdate를 수행합니다.
 			OCBehaviourFastUpdate(objectFastUpdateList);
 			OCBehaviourFastUpdate(componentFastUpdateList);
+			TimeControl.ApplyTypeScale(null);
 		}
 		/// <summary>
 		/// CallForeach 시스템의 FixedUpdate를 수행하는 메서드입니다.
@@ -508,22 +519,22 @@ namespace BC.ODCC
 			Action beforeMainUpdate = null;
 			Action afterMainUpdate = null;
 
-			foreach(var orderKey in ForeachQueryFixedUpdate)
+			foreach (var orderKey in ForeachQueryFixedUpdate)
 			{
 				var order = orderKey.Key;
 				var dictionary = orderKey.Value;
 
-				foreach(var item in dictionary)
+				foreach (var item in dictionary)
 				{
 					var key = item.Key;
 					var value = item.Value;
-					if(key is not null)
+					if (key is not null)
 					{
-						if(value is null || value.IsCompleted)
+						if (value is null || value.IsCompleted)
 						{
 							try
 							{
-								if(order<=0)
+								if (order<=0)
 								{
 									beforeMainUpdate += () => dictionary[key] = key.RunAwaitable();
 								}
@@ -532,7 +543,7 @@ namespace BC.ODCC
 									afterMainUpdate += () => dictionary[key] = key.RunAwaitable();
 								}
 							}
-							catch(Exception ex)
+							catch (Exception ex)
 							{
 								Debug.LogException(ex);
 							}
@@ -544,7 +555,9 @@ namespace BC.ODCC
 			beforeMainUpdate?.Invoke();
 			OCBehaviourFixedUpdate(objectFixedUpdateList);
 			OCBehaviourFixedUpdate(componentFixedUpdateList);
+			TimeControl.ApplyTypeScale(null);
 			afterMainUpdate?.Invoke();
+
 		}
 		/// <summary>
 		/// LifeItem에서 씬을 기준으로 OCBehaviour를 제거하는 메서드입니다.
@@ -553,13 +566,13 @@ namespace BC.ODCC
 		internal static void RemoveLifeItemOdccCollectorList(Scene scene)
 		{
 			// CallForeach 액션 큐를 비웁니다.
-			while(foreachAction.Count > 0)
+			while (foreachAction.Count > 0)
 			{
 				foreachAction.Dequeue().Invoke();
 			}
 
 			// 각 쿼리 컬렉터에서 씬을 기준으로 OCBehaviour를 제거합니다.
-			foreach(var _query in OdccQueryCollectors)
+			foreach (var _query in OdccQueryCollectors)
 			{
 				OdccQueryCollector queryCollector = _query.Value;
 				foreachAction.Enqueue(() => {
@@ -569,7 +582,7 @@ namespace BC.ODCC
 			}
 
 			// CallForeach 액션 큐를 비웁니다.
-			while(foreachAction.Count > 0)
+			while (foreachAction.Count > 0)
 			{
 				foreachAction.Dequeue().Invoke();
 			}
@@ -577,13 +590,13 @@ namespace BC.ODCC
 
 		internal static bool TryFindOdccObject(OdccQuerySystem findQuery, bool findInCash, out ObjectBehaviour find)
 		{
-			if(findInCash && OdccQueryFindCashList.TryGetValue(findQuery, out find) && find != null)
+			if (findInCash && OdccQueryFindCashList.TryGetValue(findQuery, out find) && find != null)
 			{
 				return true;
 			}
 			find = allObjectBehaviours.Find(item => findQuery.IsSatisfiesQuery(item));
 
-			if(!OdccQueryFindCashList.ContainsKey(findQuery)) OdccQueryFindCashList.Add(findQuery, null);
+			if (!OdccQueryFindCashList.ContainsKey(findQuery)) OdccQueryFindCashList.Add(findQuery, null);
 			OdccQueryFindCashList[findQuery] = find;
 
 			return find != null;

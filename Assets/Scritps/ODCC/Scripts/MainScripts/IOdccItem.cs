@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Threading;
 
@@ -84,23 +84,30 @@ DestroyState : {DestroyState}
 	{
 		public int UpdatePriority { get => 0; }
 		public bool PassUpdate { get => false; }
+		public string TimeID { get => null; }
 		public void BaseUpdate();
 		public interface Fast : IOCBehaviour
 		{
 			public int UpdatePriority { get => 0; }
 			public bool PassUpdate { get => false; }
+			public string TimeID { get => null; }
+
 			public void BaseFastUpdate();
 		}
 		public interface Late : IOCBehaviour
 		{
 			public int UpdatePriority { get => 0; }
 			public bool PassUpdate { get => false; }
+			public string TimeID { get => null; }
+
 			public void BaseLateUpdate();
 		}
 		public interface Fixed : IOCBehaviour
 		{
 			public int UpdatePriority { get => 0; }
 			public bool PassUpdate { get => false; }
+			public string TimeID { get => null; }
+
 			public void BaseFixedUpdate();
 		}
 	}

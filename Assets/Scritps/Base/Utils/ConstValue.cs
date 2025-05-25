@@ -21,13 +21,13 @@ namespace BC.Base
 	{
 		public static bool IsTrue(this bool value, Action @true, Action @false = null)
 		{
-			if(value) @true?.Invoke();
+			if (value) @true?.Invoke();
 			else @false?.Invoke();
 			return value;
 		}
 		public static bool IsFalse(this bool value, Action @false, Action @true = null)
 		{
-			if(value) @true?.Invoke();
+			if (value) @true?.Invoke();
 			else @false?.Invoke();
 			return value;
 		}
@@ -57,15 +57,15 @@ namespace BC.Base
 
 		public static RuntimePlatform EditorToRuntimePlatform(this RuntimePlatform editorPlatform)
 		{
-			if(editorPlatform == RuntimePlatform.WindowsEditor)
+			if (editorPlatform == RuntimePlatform.WindowsEditor)
 			{
 				editorPlatform = RuntimePlatform.WindowsPlayer;
 			}
-			else if(editorPlatform == RuntimePlatform.OSXEditor)
+			else if (editorPlatform == RuntimePlatform.OSXEditor)
 			{
 				editorPlatform = RuntimePlatform.OSXPlayer;
 			}
-			else if(editorPlatform == RuntimePlatform.LinuxEditor)
+			else if (editorPlatform == RuntimePlatform.LinuxEditor)
 			{
 				editorPlatform = RuntimePlatform.LinuxPlayer;
 			}
@@ -78,7 +78,7 @@ namespace BC.Base
 			var list = new Sirenix.OdinInspector.ValueDropdownList<string>();
 			var stringList = Editor_GetAllStringList(typeof(ConstString));
 			int length = stringList.Count;
-			for(int i = 0 ; i < length ; i++)
+			for (int i = 0 ; i < length ; i++)
 			{
 				list.Add(stringList[i].path, stringList[i].value);
 			}
@@ -96,29 +96,29 @@ namespace BC.Base
 		{
 			var fields = type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
 
-			foreach(var field in fields)
+			foreach (var field in fields)
 			{
-				if(field.FieldType != typeof(string)) continue;
+				if (field.FieldType != typeof(string)) continue;
 
 				bool isConst = field.IsLiteral && !field.IsInitOnly;
 				bool isStatic = field.IsStatic && !field.IsLiteral;
 
-				if(isConst)
+				if (isConst)
 				{
 					string value = (string)field.GetRawConstantValue();
 					result.Add(($"{path}/{field.Name}", value));
 				}
-				else if(isStatic)
+				else if (isStatic)
 				{
 					string value = field.GetValue(null) as string;
-					if(value != null)
+					if (value != null)
 					{
 						result.Add(($"{path}/{field.Name}", value));
 					}
 				}
 			}
 
-			foreach(var nested in type.GetNestedTypes(BindingFlags.Public | BindingFlags.NonPublic))
+			foreach (var nested in type.GetNestedTypes(BindingFlags.Public | BindingFlags.NonPublic))
 			{
 				string nestedPath = $"{path}_{nested.Name}";
 				CollectStringFieldsRecursive(nested, nestedPath, result);
@@ -126,5 +126,10 @@ namespace BC.Base
 		}
 
 #endif
+	}
+
+	public static partial class ConstFloat
+	{
+		public const float Epsilon = 1E-06f;
 	}
 }
