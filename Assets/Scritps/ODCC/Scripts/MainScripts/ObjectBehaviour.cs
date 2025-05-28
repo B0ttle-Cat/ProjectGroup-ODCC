@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 using Sirenix.OdinInspector;
 
@@ -140,6 +140,21 @@ namespace BC.ODCC
 		protected virtual bool BaseAddValidation(DataObject data)
 		{
 			return true;
+		}
+
+		protected virtual void OnTransformParentChanged()
+		{
+			var parent = ThisTransform.parent;
+			if (parent == null) return;
+			ObjectBehaviour parentObject = parent.gameObject.GetComponentInParent<ObjectBehaviour>();
+			if (parentObject == null) return;
+			parentObject.ThisContainer.AddChildObject(this);
+		}
+		protected virtual void OnBeforeTransformParentChanged()
+		{
+			var parentObject = ThisContainer.GetParentObject<ObjectBehaviour>();
+			if (parentObject == null) return;
+			parentObject.ThisContainer.RemoveChildObject(this);
 		}
 
 		public override void DestroyThis(bool removeThisGameObject = false)

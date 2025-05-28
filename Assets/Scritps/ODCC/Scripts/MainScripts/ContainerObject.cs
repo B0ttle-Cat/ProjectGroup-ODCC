@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -59,7 +59,7 @@ namespace BC.ODCC
 			if (actions.Count == 0) return;
 
 			// action 추가 
-			for (int i = 0; i < actions.Count; i++)
+			for (int i = 0 ; i < actions.Count ; i++)
 			{
 				callActionQueue.Enqueue(actions[i]);
 			}
@@ -237,7 +237,7 @@ namespace BC.ODCC
 			if (t is not null) return t;
 
 			int length = ChildObject.Count;
-			for (int i = 0; i < length; i++)
+			for (int i = 0 ; i < length ; i++)
 			{
 				t = ChildObject[i].ThisContainer.GetComponentInChild<T>(condition);
 				if (t is not null) return t;
@@ -254,7 +254,7 @@ namespace BC.ODCC
 			resultArray.AddRange(ComponentList.GetAll<T, IOdccComponent>(condition));
 
 			int length = ChildObject.Count;
-			for (int i = 0; i < length; i++)
+			for (int i = 0 ; i < length ; i++)
 			{
 				var childList = new List<T>();
 				ChildObject[i].ThisContainer.GetAllComponentInChild(out childList, condition);
@@ -488,12 +488,12 @@ namespace BC.ODCC
 			List<T> t = new List<T>();
 			if (ThisObject is T tObj) t.Add(tObj);
 			int length = DataList.Count;
-			for (int i = 0; i < length; i++)
+			for (int i = 0 ; i < length ; i++)
 			{
 				if (DataList[i] is T tData) t.Add(tData);
 			}
 			length = ComponentList.Count;
-			for (int i = 0; i < length; i++)
+			for (int i = 0 ; i < length ; i++)
 			{
 				if (ComponentList[i] is T tData) t.Add(tData);
 			}
@@ -560,29 +560,11 @@ namespace BC.ODCC
 		}
 		#endregion
 		#region Add OdccItem
-		public T AddChildObject<T>(bool onActive, string name = "") where T : ObjectBehaviour
+		internal void AddChildObject(IOdccObject child)
 		{
-			return AddChildObject<T>(ThisObject.ThisTransform, onActive, name);
-		}
-		public T AddChildObject<T>(ComponentBehaviour parent, bool onActive, string name = "") where T : ObjectBehaviour
-		{
-			return AddChildObject<T>(parent.ThisTransform, onActive, name);
-		}
-		public T AddChildObject<T>(Transform parent, bool onActive, string name = "") where T : ObjectBehaviour
-		{
-			if (string.IsNullOrWhiteSpace(name))
-			{
-				name = $"new {typeof(T).Name}";
-			}
-
-			GameObject newObject = new GameObject(name);
-			newObject.SetActive(false);
-			newObject.transform.parent = parent;
-
-			T newTObject = newObject.AddComponent<T>();
-			if (onActive) newObject.SetActive(true);
-			else OdccManager.OdccAwake(newTObject);
-			return newTObject;
+			if (child == null) return;
+			child.ThisContainer.ContainerNode.parent = ThisObject;
+			ContainerNode.AddItem(child);
 		}
 		public T AddComponent<T>(GameObject obj = null) where T : ComponentBehaviour
 		{
@@ -600,7 +582,7 @@ namespace BC.ODCC
 		public void AddDatas(params IOdccData[] datas)
 		{
 			int length = datas.Length;
-			for (int i = 0; i < length; i++)
+			for (int i = 0 ; i < length ; i++)
 			{
 				if (datas[i] is DataObject dataObject)
 				{
@@ -612,7 +594,7 @@ namespace BC.ODCC
 		public void AddDatas(List<IOdccData> datas)
 		{
 			int length = datas.Count;
-			for (int i = 0; i < length; i++)
+			for (int i = 0 ; i < length ; i++)
 			{
 				if (datas[i] is DataObject dataObject)
 				{
@@ -627,14 +609,11 @@ namespace BC.ODCC
 		}
 		#endregion
 		#region Remove OdccItem
-		[Obsolete("되도록, Object.Destroy 또는 DestroyThis 를 사용해 직접 삭제 할 것.", true)]
-		public void RemoveChildObject<T>(T target = null, bool removeThisGameObject = false) where T : ObjectBehaviour
+		internal void RemoveChildObject(ObjectBehaviour child)
 		{
-			if (target == null)
-				target = GetChildObject<T>();
-
-			if (target != null)
-				target.DestroyThis(removeThisGameObject);
+			if (child == null) return;
+			child.ThisContainer.ContainerNode.parent = null;
+			ContainerNode.RemoveItem(child);
 		}
 		public bool RemoveComponent<T>(T target = null) where T : ComponentBehaviour
 		{
@@ -685,7 +664,7 @@ namespace BC.ODCC
 		public DataObject GetData(Type type)
 		{
 			int length = DataList.Count;
-			for (int i = 0; i < length; i++)
+			for (int i = 0 ; i < length ; i++)
 			{
 				if (DataList[i].GetType().Equals(type))
 				{
@@ -748,7 +727,7 @@ namespace BC.ODCC
 			{
 				List<Action> actions = new List<Action>();
 				int Count = tList.Count;
-				for (int i = 0; i < Count; i++)
+				for (int i = 0 ; i < Count ; i++)
 				{
 					if (tList[i] is not null)
 					{
@@ -813,7 +792,7 @@ namespace BC.ODCC
 		public static T Get<T, TT>(this List<TT> thisList, Func<T, bool> condition = null) where T : class where TT : class, IOdccItem
 		{
 			int count = thisList.Count;
-			for (int i = 0; i < count; i++)
+			for (int i = 0 ; i < count ; i++)
 			{
 				var item = thisList[i];
 				if (item is T tt && (condition is null || condition(tt)))
@@ -827,7 +806,7 @@ namespace BC.ODCC
 		{
 			List<T> list = new List<T>();
 			int count = thisList.Count;
-			for (int i = 0; i < count; i++)
+			for (int i = 0 ; i < count ; i++)
 			{
 				var item = thisList[i];
 				if (item is T tt && (condition is null || condition(tt)))
@@ -862,7 +841,7 @@ namespace BC.ODCC
 		public static T GetData<T, TT>(this List<TT> thisList, Func<T, bool> condition = null) where T : class where TT : class, IOdccItem
 		{
 			int count = thisList.Count;
-			for (int i = 0; i < count; i++)
+			for (int i = 0 ; i < count ; i++)
 			{
 				var item = thisList[i];
 				if (item is T tt && (condition is null || condition.Invoke(tt)))
@@ -876,7 +855,7 @@ namespace BC.ODCC
 		{
 			List<T> list = new List<T>();
 			int count = thisList.Count;
-			for (int i = 0; i < count; i++)
+			for (int i = 0 ; i < count ; i++)
 			{
 				var item = thisList[i];
 				if (item is T t && (condition is null || condition.Invoke(t)))
@@ -910,7 +889,7 @@ namespace BC.ODCC
 		public static void GetAction<T, TT>(this List<TT> thisList, Action<T> action, Func<T, bool> condition = null) where T : class where TT : class, IOdccItem
 		{
 			int count = thisList.Count;
-			for (int i = 0; i < count; i++)
+			for (int i = 0 ; i < count ; i++)
 			{
 				var item = thisList[i];
 				if (item is T tt && (condition is null || condition.Invoke(tt)))
@@ -923,7 +902,7 @@ namespace BC.ODCC
 		public static void GetAllAction<T, TT>(this List<TT> thisList, Action<T> action, Func<bool> isBreak = null, Func<T, bool> condition = null) where T : class where TT : class, IOdccItem
 		{
 			int count = thisList.Count;
-			for (int i = 0; i < count; i++)
+			for (int i = 0 ; i < count ; i++)
 			{
 				var item = thisList[i];
 				if (item is T tt && (condition is null || condition.Invoke(tt)))
@@ -941,7 +920,7 @@ namespace BC.ODCC
 		public static void GetDataAction<T, TT>(this List<TT> thisList, Action<T> action, Func<T, bool> condition = null) where T : class, IOdccItem
 		{
 			int count = thisList.Count;
-			for (int i = 0; i < count; i++)
+			for (int i = 0 ; i < count ; i++)
 			{
 				var item = thisList[i];
 				if (item is T tt && (condition is null || condition.Invoke(tt)))
@@ -954,7 +933,7 @@ namespace BC.ODCC
 		public static void GetAllDataAction<T, TT>(this List<TT> thisList, Action<T> action, Func<bool> isBreak = null, Func<T, bool> condition = null) where T : class, IOdccItem
 		{
 			int count = thisList.Count;
-			for (int i = 0; i < count; i++)
+			for (int i = 0 ; i < count ; i++)
 			{
 				var item = thisList[i];
 				if (item is T tt && (condition is null || condition.Invoke(tt)))

@@ -178,6 +178,62 @@ namespace BC.Base
 		public static void ResetTypeScale<T>() => ResetTypeScale(typeof(T).Name);
 		public static void ApplyTypeScale<T>() => ApplyTypeScale(typeof(T).Name);
 
+		public static float GetTypeScale(params string[] timeIDs) => GetTypeScale_Multiply(timeIDs);
+		public static float GetTypeScale_Multiply(params string[] timeIDs)
+		{
+			if (timeIDs == null) return 1f;
+			if (timeIDs.Length <= 1) return GetTypeScale(timeIDs[0]);
+
+			float scale = 1f;
+			foreach (var timeID in timeIDs)
+			{
+				typeTimeScales.TryGetValue(timeID, out float _scale);
+				scale *= _scale;
+			}
+			return scale;
+		}
+		public static float GetTypeScale_Average(params string[] timeIDs)
+		{
+			if (timeIDs == null) return 1f;
+			if (timeIDs.Length <= 1) return GetTypeScale(timeIDs[0]);
+
+
+			float scale = 0f;
+			foreach (var timeID in timeIDs)
+			{
+				typeTimeScales.TryGetValue(timeID, out float _scale);
+				scale += _scale;
+			}
+			return scale / timeIDs.Length;
+		}
+		public static float GetTypeScale_Min(params string[] timeIDs)
+		{
+			if (timeIDs == null) return 1f;
+			if (timeIDs.Length <= 1) return GetTypeScale(timeIDs[0]);
+
+
+			float? scale = null;
+			foreach (var timeID in timeIDs)
+			{
+				typeTimeScales.TryGetValue(timeID, out float _scale);
+				if (!scale.HasValue || scale > _scale) scale = _scale;
+			}
+			return scale ?? 1f;
+		}
+		public static float GetTypeScale_Max(params string[] timeIDs)
+		{
+			if (timeIDs == null) return 1f;
+			if (timeIDs.Length <= 1) return GetTypeScale(timeIDs[0]);
+
+
+			float? scale = null;
+			foreach (var timeID in timeIDs)
+			{
+				typeTimeScales.TryGetValue(timeID, out float _scale);
+				if (!scale.HasValue || scale < _scale) scale = _scale;
+			}
+			return scale ?? 1f;
+		}
 		public static void SetTypeScale(float scale, params string[] timeIDs)
 		{
 			int length = timeIDs == null ? 0 : timeIDs.Length;

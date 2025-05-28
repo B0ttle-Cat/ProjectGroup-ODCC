@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading;
 
 using UnityEngine;
@@ -31,17 +31,17 @@ namespace BC.ODCC
 		private CancellationTokenSource disableCancellationSource;
 		private CancellationToken disableCancellationToken {
 			get {
-				if(this == null)
+				if (this == null)
 				{
 					throw new MissingReferenceException("DisableCancelToken token should be called atleast once before destroying the monobehaviour object");
 				}
 
-				if(disableCancellationSource == null)
+				if (disableCancellationSource == null)
 				{
 					disableCancellationSource = new CancellationTokenSource();
 				}
 				var token = disableCancellationSource.Token;
-				if(!enabled)
+				if (!enabled)
 				{
 					disableCancellationSource.Cancel();
 					disableCancellationSource.Dispose();
@@ -56,15 +56,15 @@ namespace BC.ODCC
 #if UNITY_EDITOR
 		internal virtual void Reset()
 		{
-			if(UnityEditor.EditorApplication.isPlaying) return;
-			if(ThisTransform == null) return;
+			if (UnityEditor.EditorApplication.isPlaying) return;
+			if (ThisTransform == null) return;
 			BaseReset();
 			BaseValidate();
 		}
 		internal virtual void OnValidate()
 		{
-			if(UnityEditor.EditorApplication.isPlaying) return;
-			if(ThisTransform == null) return;
+			if (UnityEditor.EditorApplication.isPlaying) return;
+			if (ThisTransform == null) return;
 			BaseValidate();
 		}
 
@@ -79,17 +79,17 @@ namespace BC.ODCC
 		internal void Awake()
 		{
 			callDestroy = false;
-			if(ThisScene.buildIndex == -1) return;
+			if (ThisScene.buildIndex == -1) return;
 
 			//Debug.Log($"Awake|{ThisScene}| {gameObject.name}({GetType()})");//
 
-			if(IOdccItem.odccTypeIndex == 0) IOdccItem.odccTypeIndex = OdccManager.GetTypeToIndex(GetType());
+			if (IOdccItem.odccTypeIndex == 0) IOdccItem.odccTypeIndex = OdccManager.GetTypeToIndex(GetType());
 
 			try
 			{
 				OdccManager.OdccAwake(this);
 			}
-			catch(Exception ex)
+			catch (Exception ex)
 			{
 				Debug.LogError($"AwakeError| {gameObject.name}({GetType()})");
 				Debug.LogException(ex);
@@ -97,19 +97,19 @@ namespace BC.ODCC
 		}
 		protected void OnDestroy()
 		{
-			if(callDestroy) return;
+			if (callDestroy) return;
 			callDestroy = true;
 			Debug.Log($"Destroy| {gameObject.name}({GetType()})");
 			try
 			{
 				OdccManager.OdccDestroy(this);
 			}
-			catch(Exception ex)
+			catch (Exception ex)
 			{
 				Debug.LogException(ex);
 			}
 
-			if(disableCancellationSource != null)
+			if (disableCancellationSource != null)
 			{
 				disableCancellationSource.Cancel();
 				disableCancellationSource.Dispose();
@@ -119,14 +119,14 @@ namespace BC.ODCC
 		protected void OnEnable()
 		{
 			//Debug.Log($"OnEnable| {gameObject.name}({GetType()})");
-			if(disableCancellationSource == null)
+			if (disableCancellationSource == null)
 				disableCancellationSource = new CancellationTokenSource();
 
 			try
 			{
 				OdccManager.OdccEnable(this);
 			}
-			catch(Exception ex)
+			catch (Exception ex)
 			{
 				Debug.LogException(ex);
 			}
@@ -137,12 +137,12 @@ namespace BC.ODCC
 			{
 				OdccManager.OdccDisable(this);
 			}
-			catch(Exception ex)
+			catch (Exception ex)
 			{
 				Debug.LogException(ex);
 			}
 
-			if(disableCancellationSource != null)
+			if (disableCancellationSource != null)
 			{
 				disableCancellationSource.Cancel();
 				disableCancellationSource.Dispose();
@@ -155,22 +155,10 @@ namespace BC.ODCC
 			{
 				OdccManager.OdccStart(this);
 			}
-			catch(Exception ex)
+			catch (Exception ex)
 			{
 				Debug.LogException(ex);
 			}
-		}
-		protected virtual void OnTransformParentChanged()
-		{
-			//Debug.Log($"{gameObject.name} : OnTransformParentChanged");
-		}
-		protected virtual void OnTransformChildrenChanged()
-		{
-			//Debug.Log($"{gameObject.name} : OnTransformChildrenChanged");
-		}
-		protected virtual void OnBeforeTransformParentChanged()
-		{
-			//Debug.Log($"{gameObject.name} : OnBeforeTransformParentChanged");
 		}
 
 		void IOCBehaviour.OdccAwake()
@@ -225,7 +213,7 @@ namespace BC.ODCC
 		}
 		public void Dispose()
 		{
-			if(!disposedValue)
+			if (!disposedValue)
 			{
 				Disposing();
 				disposedValue=true;
@@ -234,10 +222,10 @@ namespace BC.ODCC
 		}
 		public virtual void DestroyThis(bool removeThisGameObject = false)
 		{
-			if(callDestroy) return;
+			if (callDestroy) return;
 
 #if UNITY_EDITOR
-			if(Application.isPlaying)
+			if (Application.isPlaying)
 			{
 #endif
 				Destroy(removeThisGameObject ? gameObject : this);
