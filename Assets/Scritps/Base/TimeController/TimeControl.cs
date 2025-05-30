@@ -140,12 +140,9 @@ namespace BC.Base
 					elapsed += Time.unscaledDeltaTime;
 					float t = Mathf.Clamp01(elapsed / smoothnessTime);
 					typeTimeScales[timeID] = Mathf.Lerp(currentScale, targetScale, curve(t));
-					await Awaitable.NextFrameAsync(cancellationToken);
+					await Awaitable.NextFrameAsync();
 				}
-				if (cancellationToken.IsCancellationRequested)
-				{
-					return;
-				}
+				if (cancellationToken.IsCancellationRequested) return;
 			}
 			catch (OperationCanceledException)
 			{
