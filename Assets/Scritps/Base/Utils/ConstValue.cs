@@ -130,8 +130,9 @@ namespace BC.Base
 
 	public static partial class ConstFloat
 	{
-		public const float Epsilon_Semi = 1E-06f;
-		public const float Epsilon_Real = float.Epsilon;
+		public const float Epsilon_E03 = 1E-03f;       // 0.001f
+		public const float Epsilon_E06 = 1E-06f;           // 0.000001f
+		public const float Epsilon_E45 = float.Epsilon;    // 1.401298E-45f, 가장 작은 양수
 
 		public const float Sqrt2 = 1.4142135f;        // √2, 피타고라스 정리
 		public const float Sqrt3 = 1.7320508f;        // √3, 정삼각형 높이 비율

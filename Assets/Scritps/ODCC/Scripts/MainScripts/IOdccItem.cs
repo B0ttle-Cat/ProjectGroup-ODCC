@@ -33,6 +33,7 @@ namespace BC.ODCC
 		internal bool _IsCanEnterAwake => AwakeState == StateFlag.Off && DestroyState == StateFlag.Off;
 		internal bool _IsCanEnterUpdate => AwakeState == StateFlag.On && EnableState == StateFlag.On && StartState == StateFlag.On && DestroyState == StateFlag.Off;
 		internal bool _IsCanEnterDestroy => DestroyState == StateFlag.Off;
+		public bool IsNotNull => ThisMono != null;
 		public bool IsAwake => AwakeState == StateFlag.On && DestroyState == StateFlag.Off;
 		public bool IsEnable => IsAwake && EnableState == StateFlag.On;
 		public bool IsDestroy => DestroyState == StateFlag.On;

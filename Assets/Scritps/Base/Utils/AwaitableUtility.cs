@@ -140,7 +140,11 @@ namespace BC.Base
 			int waitParallel = awaitables.Length;
 			foreach (var awaitable in awaitables)
 			{
-				if (awaitable == null) continue;
+				if (awaitable == null)
+				{
+					waitParallel--;
+					continue;
+				}
 				ParallelUpdate(awaitable);
 			}
 

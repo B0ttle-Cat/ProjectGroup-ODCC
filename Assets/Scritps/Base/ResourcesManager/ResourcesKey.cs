@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Linq;
 
@@ -113,11 +113,11 @@ namespace BC.Base
 		{
 			ValueDropdownList<string> list = new ValueDropdownList<string>();
 
-			var folders = string.IsNullOrWhiteSpace(FilterPath) ? AssetDatabase.FindAssets("t:Folder Resources")
+			string filter = string.IsNullOrWhiteSpace(FilterPath) ? "t:Folder Resources" : FilterPath;
+			var folders = AssetDatabase.FindAssets(filter)
 				.Select(AssetDatabase.GUIDToAssetPath)
 				.Where(path => Path.GetFileName(path) == "Resources")
-				.Distinct()
-				: new string[1] { FilterPath };
+				.Distinct();
 
 			string[] allPaths = null;
 			if (IsPrefabs)
@@ -139,22 +139,6 @@ namespace BC.Base
 				if (asset == null) continue;
 				list.Add(resourcesPath, resourcesPath);
 			}
-
-
-			//var finds = Resources.FindObjectsOfTypeAll<T>();
-			//int length = finds.Length;
-			//for (int i = 0; i < length; i++)
-			//{
-			//	var asset = finds[i];
-			//	if (asset.name.StartsWith("_")) continue;
-
-			//	string path = AssetDatabase.GetAssetPath(asset);
-			//	if (string.IsNullOrWhiteSpace(path)) continue;
-			//	path = AssetPathConvertResourcesPath(path);
-
-			//	list.Add(path, asset);
-			//}
-
 			return list;
 		}
 
@@ -170,9 +154,6 @@ namespace BC.Base
 			}
 			return assetPath;
 		}
-		//[HorizontalGroup("@ResourcesPathGroupName/H1/V1/H2", width: 50)]
-		//[VerticalGroup("@ResourcesPathGroupName/H1/V1/H2/V2")]
-		//[Button("Update")]
 		private void _OnValidate()
 		{
 			var asset = Resources.Load<T>(resourcesPath);
